@@ -2,7 +2,7 @@
 
 Account and environment baseline for [platform-cdk](../../README.md). It provisions what every
 service built with `@rpallas/platform-cdk` expects to find in an AWS account and publishes it to
-the SSM contract (`/platform/...`, see [ADR 0003](../../docs/adr/0003-ssm-parameter-contract.md)).
+the SSM contract (`/platform/...`, see [ADR 0003](../../docs/adr/0003-ssm-contract.md)).
 
 ```sh
 npx @rpallas/platform-cdk-cli create account my-platform --owner my-org --domain example.com

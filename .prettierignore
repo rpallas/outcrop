@@ -6,4 +6,7 @@
 **/templates/**/*.tpl
 package-lock.json
 CHANGELOG.md
+docs/api
+docs/.vitepress/dist
+docs/.vitepress/cache
 .changeset/*.md

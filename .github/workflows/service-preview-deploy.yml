@@ -188,7 +188,9 @@ jobs:
 
   preview:
     name: Deploy preview
-    if: ${{ !contains(github.event.pull_request.labels.*.name, inputs.skip-label) }}
+    # Never deploy from forks: their workflow runs cannot mint an OIDC token for this
+    # repository, and the guard makes the intent explicit.
+    if: ${{ !contains(github.event.pull_request.labels.*.name, inputs.skip-label) && github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ${{ inputs.runs-on }}
     timeout-minutes: 60
     concurrency:

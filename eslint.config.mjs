@@ -15,6 +15,8 @@ export default tseslint.config(
       "**/templates/**",
       "**/layer/**",
       ".changeset/**",
+      "docs/.vitepress/**",
+      "docs/api/**",
     ],
   },
   {

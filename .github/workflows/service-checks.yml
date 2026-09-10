@@ -1,6 +1,7 @@
 # Reusable workflow: pull request / push checks for a platform-cdk service.
 #
 # Jobs
+#   secret-scan - gitleaks over the full history (opt out with `secret-scan: false`).
 #   checks - install, optional build, lint, test, `cdk synth` and upload `cdk.out` as an artifact.
 #   diff   - (pull requests only, opt-in) assume a read-only role via OIDC and post `cdk diff` as a
 #            sticky PR comment. Enabled when `diff: true` and `readonly-role-arn` is set.
@@ -17,6 +18,7 @@
 #   synth-command              Override; default `npx cdk synth -c env=<synth-env> --quiet`.
 #   aws-region, readonly-role-arn, diff
 #   runs-on                    Runner label (default `ubuntu-latest`).
+#   secret-scan                Run gitleaks over the full history (default `true`).
 #
 # Caller permissions required: contents: read, id-token: write, pull-requests: write.
 #
@@ -102,9 +104,31 @@ on:
         type: string
         required: false
         default: ubuntu-latest
+      secret-scan:
+        description: Run gitleaks against the full history.
+        type: boolean
+        required: false
+        default: true
     secrets: {}
 
 jobs:
+  secret-scan:
+    name: Secret scan
+    if: inputs.secret-scan
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   checks:
     name: Lint, test, synth
     runs-on: ${{ inputs.runs-on }}

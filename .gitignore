@@ -11,3 +11,6 @@ cdk.out/
 cdk.context.json
 integration-env.env
 .agents/skills/
+docs/api/
+docs/.vitepress/dist/
+docs/.vitepress/cache/

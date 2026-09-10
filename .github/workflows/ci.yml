@@ -41,6 +41,9 @@ jobs:
       - name: Denylist scan
         run: npm run denylist
 
+      - name: Docs (API reference + site, fails on dead links)
+        run: npm run docs:api && npm run docs:build
+
   actionlint:
     name: Workflow lint
     runs-on: ubuntu-latest

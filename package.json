@@ -33,6 +33,10 @@
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "denylist": "jest --selectProjects tools",
+    "docs:api": "typedoc",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "npm run build && changeset publish"
@@ -57,7 +61,10 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.13.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.70.0"
+    "typescript-eslint": "^8.70.0",
+    "vitepress": "^1.6.4"
   }
 }

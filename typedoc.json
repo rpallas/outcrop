@@ -1,0 +1,33 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "packages",
+  "entryPoints": [
+    "packages/platform-cdk",
+    "packages/platform-cdk-account",
+    "packages/platform-cdk-runtime",
+    "packages/platform-cdk-neon",
+    "packages/platform-cdk-chatops",
+    "packages/platform-cdk-cli"
+  ],
+  "packageOptions": {
+    "entryPoints": ["src/index.ts"],
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeInternal": true
+  },
+  "out": "docs/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "readme": "none",
+  "outputFileStrategy": "modules",
+  "entryFileName": "index",
+  "hidePageHeader": true,
+  "hideBreadcrumbs": true,
+  "useCodeBlocks": true,
+  "parametersFormat": "table",
+  "propertiesFormat": "table",
+  "enumMembersFormat": "table",
+  "typeDeclarationFormat": "table",
+  "cleanOutputDir": true,
+  "githubPages": false,
+  "treatWarningsAsErrors": false
+}

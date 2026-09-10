@@ -44,8 +44,8 @@ carry it do not get a preview environment; the sticky PR comment says so instead
 
 ### `service-checks.yml`
 
-Lint, test, `cdk synth` (uploads `cdk.out`) and, optionally, a `cdk diff` comment on pull requests
-using a read-only role.
+Secret scan (gitleaks), lint, test, `cdk synth` (uploads `cdk.out`) and, optionally, a `cdk diff`
+comment on pull requests using a read-only role.
 
 | Input                       | Type    | Default                                    | Description                                                      |
 | --------------------------- | ------- | ------------------------------------------ | ---------------------------------------------------------------- |
@@ -61,13 +61,14 @@ using a read-only role.
 | `readonly-role-arn`         | string  | `""`                                       | Read-only role for `cdk diff`.                                   |
 | `diff`                      | boolean | `false`                                    | Post `cdk diff` comment (needs `readonly-role-arn`, PR event).   |
 | `runs-on`                   | string  | `ubuntu-latest`                            |                                                                  |
+| `secret-scan`               | boolean | `true`                                     | Run gitleaks over the full git history.                          |
 
 Permissions: `contents: read`, `id-token: write`, `pull-requests: write`.
 
 ### `service-preview-deploy.yml`
 
 Deploys a per-pull-request preview and posts a sticky comment. Call it on
-`pull_request: types: [opened, synchronize, reopened]`.
+`pull_request: types: [opened, synchronize, reopened]`. Pull requests from forks are skipped.
 
 Steps: preview id (ticket in branch name, e.g. `ABC-123` -> `abc-123`, else `pr-<n>`), OIDC
 login, `cdk deploy --all -c env=<target-env> -c preview=true -c previewId=<id> -c prNumber=<n>`,
