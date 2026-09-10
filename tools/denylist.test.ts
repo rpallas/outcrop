@@ -41,6 +41,7 @@ const ALLOWED_ACCOUNT_IDS = new Set([
 const ALLOWED_HOSTS = [
   /(^|\.)example\.(com|org|net)$/,
   /(^|\.)amazonaws\.com$/,
+  /(^|\.)amazonses\.com$/,
   /(^|\.)amazon\.com$/,
   /(^|\.)aws\.amazon\.com$/,
   /(^|\.)github\.com$/,

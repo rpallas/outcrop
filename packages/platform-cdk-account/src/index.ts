@@ -14,3 +14,6 @@ export * from "./modules/budgets";
 export * from "./modules/security";
 export * from "./modules/network";
 export * from "./modules/log-retention";
+export * from "./org/stack-set";
+export * from "./org/access-role";
+export * from "./org/account-name";

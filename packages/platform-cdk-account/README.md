@@ -87,5 +87,21 @@ not by this package. Stack outputs `DeployRoleArn<Owner><Repo>` and
 
 ## Organisation rollout
 
-`PlatformStackSet` (in `@rpallas/platform-cdk`) can deploy the baseline to every account of an
-OU from a delegated administrator account; see [docs/guides/account-setup.md](../../docs/guides/account-setup.md).
+- `PlatformStackSet` deploys any CDK stack to every account of an OU (service-managed, auto
+  deployment, `addDependency` ordering) from the management or a delegated administrator
+  account. The template is synthesised in a nested stage and embedded inline, or uploaded as an
+  asset above 50 KB. Templates must be asset-free (inline Lambda code) unless every target
+  account has the CDK asset bucket.
+- `OrganizationsAccessRole` creates narrowly trusted cross-account roles, with presets
+  `dnsDelegation(zone)` (for `CrossAccountZoneDelegationRecord`) and `parameterReader()`.
+- `AccountNameLookup` resolves the Organizations account name at deploy time and
+  `environmentFromAccountName("my-platform-dev", { apexDomain: "example.com", workloadPrefix: "my-platform-" })`
+  derives `{ env: "dev", domain: "dev.example.com" }` for account-per-environment layouts.
+
+```ts
+new PlatformStackSet(adminStack, "Baseline", {
+  stackSetName: "platform-baseline",
+  template: (scope) => new AccountBaselineTemplateStack(scope, "Template"),
+  targets: { organizationalUnitIds: ["ou-example-workloads"], regions: ["eu-west-1"] },
+});
+```
