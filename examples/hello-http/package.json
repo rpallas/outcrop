@@ -5,7 +5,7 @@
   "description": "Reference platform-cdk service: HTTP API + Lambda + DynamoDB with preview stacks. Deployed by this repository's CI.",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b tsconfig.build.json",
     "test": "jest",
     "test:snapshot:update": "jest -u",
     "test:integration": "jest --config jest.integration.config.js",

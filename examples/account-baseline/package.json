@@ -5,7 +5,7 @@
   "description": "Reference account baseline app using @rpallas/platform-cdk-account.",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b tsconfig.build.json",
     "test": "jest",
     "synth": "cdk synth -c env=dev",
     "lint": "eslint ."

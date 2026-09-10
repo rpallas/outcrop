@@ -1,0 +1,6072 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`kitchen sink synthesises for a base environment 1`] = `
+{
+  "Description": "Example Platform / orders (dev)",
+  "Outputs": {
+    "ApiBaseUrl": {
+      "Value": "https://orders.dev.example.com",
+    },
+    "ApiDomainName": {
+      "Value": "orders.dev.example.com",
+    },
+    "ApiId": {
+      "Value": {
+        "Ref": "ApiF70053CD",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/platform/env/dev/alerts/topic-arn/high",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/platform/env/dev/alerts/topic-arn/medium",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ApiAccessLogsE9DF007D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/platform/apigateway/orders-api",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ApiAliasRecordBCE933A3": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalDomainName",
+            ],
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalHostedZoneId",
+            ],
+          },
+        },
+        "HostedZoneId": "Z0000000000000000000A",
+        "Name": "orders.dev.example.com.",
+        "Type": "A",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "ApiAuth0AuthorizerF376A18B": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizerType": "JWT",
+        "IdentitySource": [
+          "$request.header.Authorization",
+        ],
+        "JwtConfiguration": {
+          "Audience": [
+            "https://api.example.com",
+          ],
+          "Issuer": "https://example.eu.auth0.com/",
+        },
+        "Name": "Auth0Authorizer",
+      },
+      "Type": "AWS::ApiGatewayV2::Authorizer",
+    },
+    "ApiDefaultStage189A7074": {
+      "DependsOn": [
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "ApiAccessLogsE9DF007D",
+              "Arn",
+            ],
+          },
+          "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","routeKey":"$context.routeKey","path":"$context.path","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength","responseLatency":"$context.responseLatency","integrationLatency":"$context.integrationLatency","integrationStatus":"$context.integrationStatus","integrationError":"$context.integrationErrorMessage","errorMessage":"$context.error.message","userAgent":"$context.identity.userAgent","authorizerError":"$context.authorizer.error","principalId":"$context.authorizer.principalId","jwtSub":"$context.authorizer.claims.sub"}",
+        },
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": true,
+          "ThrottlingBurstLimit": 200,
+          "ThrottlingRateLimit": 100,
+        },
+        "StageName": "$default",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/orders",
+          "platform:service": "orders",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Stage",
+    },
+    "ApiDefaultStageKitchenSinkApiDomainundefined16B30140": {
+      "DependsOn": [
+        "ApiDefaultStage189A7074",
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "DomainName": {
+          "Ref": "ApiDomain2D27DFFC",
+        },
+        "Stage": "$default",
+      },
+      "Type": "AWS::ApiGatewayV2::ApiMapping",
+    },
+    "ApiDomain2D27DFFC": {
+      "Properties": {
+        "DomainName": "orders.dev.example.com",
+        "DomainNameConfigurations": [
+          {
+            "CertificateArn": "arn:aws:acm:eu-west-1:111111111111:certificate/00000000-0000-0000-0000-000000000000",
+            "EndpointType": "REGIONAL",
+          },
+        ],
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/orders",
+          "platform:service": "orders",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::DomainName",
+    },
+    "ApiF70053CD": {
+      "Properties": {
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "authorization",
+            "content-type",
+            "x-request-id",
+            "x-correlation-id",
+          ],
+          "AllowMethods": [
+            "*",
+          ],
+          "AllowOrigins": [
+            "*",
+          ],
+          "MaxAge": 3600,
+        },
+        "Description": "orders api (dev)",
+        "Name": "orders-api",
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/orders",
+          "platform:service": "orders",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Api",
+    },
+    "ApiGEThealthA417CA46": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "AWS_IAM",
+        "RouteKey": "GET /health",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGEThealthInthandlerhealthF6A91CD8",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGEThealthInthandlerhealthF6A91CD8": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGEThealthInthandlerhealthPermissionB5FCD408": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/health",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiGETorders65B0F255": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "ApiAuth0AuthorizerF376A18B",
+        },
+        "RouteKey": "GET /orders",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETordersInthandlerordersD7CC109F",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGETordersInthandlerordersD7CC109F": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGETordersInthandlerordersPermissionC6D052BA": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/orders",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiLatencyAlarmFC74CB69": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] orders: api-latency",
+        "AlarmName": "orders-api-latency",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Latency",
+        "Namespace": "AWS/ApiGateway",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 3000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ApiPOSTorders035B9622": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "ApiAuth0AuthorizerF376A18B",
+        },
+        "RouteKey": "POST /orders",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETordersInthandlerordersD7CC109F",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiPOSTordersInthandlerordersPermissionDBFBCDD7": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/orders",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiServerErrorsAlarm652FC3ED": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[high] orders: api-5xx",
+        "AlarmName": "orders-api-5xx",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "5xx",
+        "Namespace": "AWS/ApiGateway",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
+      "DependsOn": [
+        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+      ],
+      "Properties": {
+        "Code": {
+          "ZipFile": "import boto3  # type: ignore
+import json
+import logging
+import urllib.request
+
+s3 = boto3.client("s3")
+
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
+
+def handler(event: dict, context):
+  response_status = "SUCCESS"
+  error_message = ""
+  try:
+    props = event["ResourceProperties"]
+    notification_configuration = props["NotificationConfiguration"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    skipDestinationValidation = props.get('SkipDestinationValidation', 'false').lower() == 'true'
+    stack_id = event['StackId']
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
+    if managed:
+      config = handle_managed(event["RequestType"], notification_configuration)
+    else:
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config, SkipDestinationValidation=skipDestinationValidation)
+  except Exception as e:
+    logging.exception("Failed to put bucket notification configuration")
+    response_status = "FAILED"
+    error_message = f"Error: {str(e)}. "
+  finally:
+    submit_response(event, context, response_status, error_message)
+
+def handle_managed(request_type, notification_configuration):
+  if request_type == 'Delete':
+    return {}
+  return notification_configuration
+
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def get_id(n):
+    n['Id'] = ''
+    sorted_notifications = sort_filter_rules(n)
+    strToHash=json.dumps(sorted_notifications, sort_keys=True).replace('"Name": "prefix"', '"Name": "Prefix"').replace('"Name": "suffix"', '"Name": "Suffix"')
+    return f"{stack_id}-{hash(strToHash)}"
+  def with_id(n):
+    n['Id'] = get_id(n)
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        old_incoming_ids = [get_id(n) for n in old.get(t, [])]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not get_id(n) in old_incoming_ids]      
+    elif request_type == 'Delete':
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  if request_type == 'Delete':
+    return external_notifications
+
+  notifications = {}
+  for t in CONFIGURATION_TYPES:
+    external = external_notifications.get(t, [])
+    incoming = [with_id(n) for n in notification_configuration.get(t, [])]
+    notifications[t] = external + incoming
+
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
+
+def submit_response(event: dict, context, response_status: str, error_message: str):
+  response_body = json.dumps(
+    {
+      "Status": response_status,
+      "Reason": f"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}",
+      "PhysicalResourceId": event.get("PhysicalResourceId") or event["LogicalResourceId"],
+      "StackId": event["StackId"],
+      "RequestId": event["RequestId"],
+      "LogicalResourceId": event["LogicalResourceId"],
+      "NoEcho": False,
+    }
+  ).encode("utf-8")
+  headers = {"content-type": "", "content-length": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event["ResponseURL"], headers=headers, data=response_body, method="PUT")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode("utf-8"))
+    print("Status code: " + response.reason)
+  except Exception as e:
+      print("send(..) failed executing request.urlopen(..): " + str(e))
+
+def sort_filter_rules(json_obj):
+  if not isinstance(json_obj, dict):
+      return json_obj
+  for key, value in json_obj.items():
+      if isinstance(value, dict):
+          json_obj[key] = sort_filter_rules(value)
+      elif isinstance(value, list):
+          json_obj[key] = [sort_filter_rules(item) for item in value]
+  if "Filter" in json_obj and "Key" in json_obj["Filter"] and "FilterRules" in json_obj["Filter"]["Key"]:
+      filter_rules = json_obj["Filter"]["Key"]["FilterRules"]
+      sorted_filter_rules = sorted(filter_rules, key=lambda x: x["Name"])
+      json_obj["Filter"]["Key"]["FilterRules"] = sorted_filter_rules
+  return json_obj",
+        },
+        "Description": "AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 300,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "Uploads4F6EB0FD",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "Dashboard9E4231ED": {
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{"widgets":[{"type":"text","width":24,"height":1,"x":0,"y":0,"properties":{"markdown":"# orders (dev)"}},{"type":"metric","width":8,"height":6,"x":0,"y":1,"properties":{"view":"timeSeries","title":"API requests","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/ApiGateway","Count","ApiId","",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "",{"stat":"SampleCount"}],["AWS/ApiGateway","5xx","ApiId","",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "",{"stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":8,"height":6,"x":8,"y":1,"properties":{"view":"timeSeries","title":"Handler","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "Handler886CB40B",
+              },
+              "",{"stat":"Sum"}],["AWS/Lambda","Errors","FunctionName","",
+              {
+                "Ref": "Handler886CB40B",
+              },
+              "",{"stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":8,"height":6,"x":16,"y":1,"properties":{"view":"timeSeries","title":"Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "QueueName",
+                ],
+              },
+              "",{"stat":"Maximum"}]],"yAxis":{}}}]}",
+            ],
+          ],
+        },
+        "DashboardName": "orders-overview",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::CloudWatch::Dashboard",
+    },
+    "Handler886CB40B": {
+      "DependsOn": [
+        "HandlerServiceRoleDefaultPolicyCBD0CC91",
+        "HandlerServiceRoleFCDC14AE",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "BUCKET_NAME": {
+              "Ref": "Uploads4F6EB0FD",
+            },
+            "LOG_LEVEL": "info",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "handler",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "orders",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "false",
+            "POWERTOOLS_LOG_LEVEL": "INFO",
+            "POWERTOOLS_SERVICE_NAME": "orders",
+            "QUEUE_URL": {
+              "Ref": "JobsDF1CC2D4",
+            },
+            "TABLE_NAME": {
+              "Ref": "OrdersA9B65338",
+            },
+          },
+        },
+        "FunctionName": "orders-handler",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "HandlerLogGroup881018CA",
+          },
+        },
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "HandlerServiceRoleFCDC14AE",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "HandlerDurationAlarm70CCF618": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] orders: handler-duration",
+        "AlarmName": "orders-handler-duration",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Handler886CB40B",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Duration",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 8000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HandlerErrorsAlarm4119687B": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[high] orders: handler-errors",
+        "AlarmName": "orders-handler-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Handler886CB40B",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HandlerLogGroup881018CA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/orders-handler",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "HandlerServiceRoleDefaultPolicyCBD0CC91": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Uploads4F6EB0FD",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "Uploads4F6EB0FD",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "HandlerServiceRoleDefaultPolicyCBD0CC91",
+        "Roles": [
+          {
+            "Ref": "HandlerServiceRoleFCDC14AE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "HandlerServiceRoleFCDC14AE": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HandlerThrottlesAlarm26792EC4": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] orders: handler-throttles",
+        "AlarmName": "orders-handler-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Handler886CB40B",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Throttles",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "JobsAgeAlarm719561C6": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] orders: jobs-age",
+        "AlarmName": "orders-jobs-age",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "JobsDF1CC2D4",
+                "QueueName",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "MetricName": "ApproximateAgeOfOldestMessage",
+        "Namespace": "AWS/SQS",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 900,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "JobsDF1CC2D4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "MessageRetentionPeriod": 345600,
+        "QueueName": "orders-jobs",
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "JobsDlqB53173A1",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 3,
+        },
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "VisibilityTimeout": 90,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "JobsDlqB53173A1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "MessageRetentionPeriod": 1209600,
+        "QueueName": "orders-jobs-dlq",
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "JobsDlqDepthAlarm5D9DC4B2": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[high] orders: jobs-dlq-depth",
+        "AlarmName": "orders-jobs-dlq-depth",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "JobsDlqB53173A1",
+                "QueueName",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "JobsDlqPolicy1719738E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDlqB53173A1",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "JobsDlqB53173A1",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "JobsPolicy30CCDE58": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": {
+                "ArnLike": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "Uploads4F6EB0FD",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "s3.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "JobsDF1CC2D4",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "OrdersA9B65338": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "gsi1pk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "gsi1pk-index",
+            "KeySchema": [
+              {
+                "AttributeName": "gsi1pk",
+                "KeyType": "HASH",
+              },
+            ],
+            "Projection": {
+              "ProjectionType": "ALL",
+            },
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE",
+          },
+        ],
+        "Replicas": [
+          {
+            "DeletionProtectionEnabled": false,
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "gsi1pk-index",
+              },
+            ],
+            "PointInTimeRecoverySpecification": {
+              "PointInTimeRecoveryEnabled": true,
+            },
+            "Region": "eu-west-1",
+            "Tags": [
+              {
+                "Key": "platform:env",
+                "Value": "dev",
+              },
+              {
+                "Key": "platform:managed-by",
+                "Value": "platform-cdk",
+              },
+              {
+                "Key": "platform:project",
+                "Value": "Example Platform",
+              },
+              {
+                "Key": "platform:repository",
+                "Value": "example-org/orders",
+              },
+              {
+                "Key": "platform:service",
+                "Value": "orders",
+              },
+            ],
+          },
+        ],
+        "SSESpecification": {
+          "SSEEnabled": false,
+        },
+        "StreamSpecification": {
+          "StreamViewType": "NEW_AND_OLD_IMAGES",
+        },
+        "TableName": "orders-orders",
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "OrdersThrottlesAlarm7519FA31": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] orders: orders-throttles",
+        "AlarmName": "orders-orders-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "readThrottles + writeThrottles",
+            "Id": "expr_1",
+            "Label": "Throttle events",
+            "ReturnData": true,
+          },
+          {
+            "Id": "readThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "OrdersA9B65338",
+                    },
+                  },
+                ],
+                "MetricName": "ReadThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "writeThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "OrdersA9B65338",
+                    },
+                  },
+                ],
+                "MetricName": "WriteThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "PlatformProviderSeedHandlerLogGroup7654787D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "PlatformProviderSeedHandlerframeworkonEvent4DF0712C": {
+      "DependsOn": [
+        "PlatformProviderSeedHandlerframeworkonEventServiceRoleDefaultPolicy4E20C4C2",
+        "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (KitchenSink/PlatformProvider-SeedHandler)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "SeedHandler1BFDD5E3",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "PlatformProviderSeedHandlerLogGroup7654787D",
+          },
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "PlatformProviderSeedHandlerframeworkonEventServiceRoleDefaultPolicy4E20C4C2": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SeedHandler1BFDD5E3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SeedHandler1BFDD5E3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SeedHandler1BFDD5E3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "PlatformProviderSeedHandlerframeworkonEventServiceRoleDefaultPolicy4E20C4C2",
+        "Roles": [
+          {
+            "Ref": "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Seed": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "PlatformProviderSeedHandlerframeworkonEvent4DF0712C",
+            "Arn",
+          ],
+        },
+        "TableName": {
+          "Ref": "OrdersA9B65338",
+        },
+        "Version": "1",
+      },
+      "Type": "Custom::PlatformSeed",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SeedHandler1BFDD5E3": {
+      "DependsOn": [
+        "SeedHandlerServiceRoleDefaultPolicy1F098B8A",
+        "SeedHandlerServiceRole5AC0A424",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "LOG_LEVEL": "info",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "seed-handler",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "orders",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "false",
+            "POWERTOOLS_LOG_LEVEL": "INFO",
+            "POWERTOOLS_SERVICE_NAME": "orders",
+          },
+        },
+        "FunctionName": "orders-seed-handler",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "SeedHandlerLogGroup3D7E58B6",
+          },
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "SeedHandlerServiceRole5AC0A424",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SeedHandlerLogGroup3D7E58B6": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/orders-seed-handler",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SeedHandlerServiceRole5AC0A424": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SeedHandlerServiceRoleDefaultPolicy1F098B8A": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SeedHandlerServiceRoleDefaultPolicy1F098B8A",
+        "Roles": [
+          {
+            "Ref": "SeedHandlerServiceRole5AC0A424",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Uploads4F6EB0FD": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "BucketName": "orders-uploads",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 7,
+              },
+              "ExpirationInDays": 30,
+              "Id": "platform-default",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "UploadsAutoDeleteObjectsCustomResource9FEBEEBB": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "UploadsPolicy148F8199",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "Uploads4F6EB0FD",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "UploadsNotifications8DBDDF22": {
+      "DependsOn": [
+        "JobsAgeAlarm719561C6",
+        "JobsDlqDepthAlarm5D9DC4B2",
+        "JobsPolicy30CCDE58",
+        "JobsDF1CC2D4",
+        "UploadsNotificationsHandlerPolicy4B83D677",
+        "UploadsPolicy148F8199",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "Uploads4F6EB0FD",
+        },
+        "Managed": true,
+        "NotificationConfiguration": {
+          "QueueConfigurations": [
+            {
+              "Events": [
+                "s3:ObjectCreated:*",
+              ],
+              "Filter": {
+                "Key": {
+                  "FilterRules": [
+                    {
+                      "Name": "prefix",
+                      "Value": "incoming/",
+                    },
+                  ],
+                },
+              },
+              "QueueArn": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+            "Arn",
+          ],
+        },
+        "SkipDestinationValidation": false,
+      },
+      "Type": "Custom::S3BucketNotifications",
+    },
+    "UploadsNotificationsHandlerPolicy4B83D677": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutBucketNotification",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "Uploads4F6EB0FD",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "UploadsNotificationsHandlerPolicy4B83D677",
+        "Roles": [
+          {
+            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "UploadsPolicy148F8199": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "Uploads4F6EB0FD",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Uploads4F6EB0FD",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "Uploads4F6EB0FD",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Uploads4F6EB0FD",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "Uploads4F6EB0FD",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "Worker11F36D0F": {
+      "DependsOn": [
+        "WorkerServiceRoleDefaultPolicyAE71B5FA",
+        "WorkerServiceRole8543584E",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "WorkerDlq2A1C0A5B",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "LOG_LEVEL": "info",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "worker",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "orders",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "false",
+            "POWERTOOLS_LOG_LEVEL": "INFO",
+            "POWERTOOLS_SERVICE_NAME": "orders",
+          },
+        },
+        "FunctionName": "orders-worker",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "WorkerLogGroup31FDBE4A",
+          },
+        },
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "WorkerServiceRole8543584E",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 60,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "WorkerDlq2A1C0A5B": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "MessageRetentionPeriod": 1209600,
+        "QueueName": "orders-worker-dlq",
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "VisibilityTimeout": 60,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "WorkerDlqPolicyE87F5E17": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "WorkerDlq2A1C0A5B",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "WorkerDlq2A1C0A5B",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "WorkerErrorsAlarmD45DB1D8": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[high] orders: worker-errors",
+        "AlarmName": "orders-worker-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Worker11F36D0F",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "WorkerLogGroup31FDBE4A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/orders-worker",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "WorkerServiceRole8543584E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "WorkerServiceRoleDefaultPolicyAE71B5FA": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "WorkerDlq2A1C0A5B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "WorkerServiceRoleDefaultPolicyAE71B5FA",
+        "Roles": [
+          {
+            "Ref": "WorkerServiceRole8543584E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "WorkerSqsEventSourceKitchenSinkJobs270EFC420A249164": {
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "JobsDF1CC2D4",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "Worker11F36D0F",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`kitchen sink synthesises for a preview 1`] = `
+{
+  "Description": "Example Platform / orders (dev, preview abc-123)",
+  "Outputs": {
+    "ApiBaseUrl": {
+      "Value": "https://orders-abc-123.dev.example.com",
+    },
+    "ApiDomainName": {
+      "Value": "orders-abc-123.dev.example.com",
+    },
+    "ApiId": {
+      "Value": {
+        "Ref": "ApiF70053CD",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ApiAccessLogsE9DF007D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/platform/apigateway/abc-123-orders-api",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ApiAliasRecordBCE933A3": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalDomainName",
+            ],
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalHostedZoneId",
+            ],
+          },
+        },
+        "HostedZoneId": "Z0000000000000000000A",
+        "Name": "orders-abc-123.dev.example.com.",
+        "Type": "A",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "ApiAuth0AuthorizerF376A18B": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizerType": "JWT",
+        "IdentitySource": [
+          "$request.header.Authorization",
+        ],
+        "JwtConfiguration": {
+          "Audience": [
+            "https://api.example.com",
+          ],
+          "Issuer": "https://example.eu.auth0.com/",
+        },
+        "Name": "Auth0Authorizer",
+      },
+      "Type": "AWS::ApiGatewayV2::Authorizer",
+    },
+    "ApiDefaultStage189A7074": {
+      "DependsOn": [
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "ApiAccessLogsE9DF007D",
+              "Arn",
+            ],
+          },
+          "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","routeKey":"$context.routeKey","path":"$context.path","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength","responseLatency":"$context.responseLatency","integrationLatency":"$context.integrationLatency","integrationStatus":"$context.integrationStatus","integrationError":"$context.integrationErrorMessage","errorMessage":"$context.error.message","userAgent":"$context.identity.userAgent","authorizerError":"$context.authorizer.error","principalId":"$context.authorizer.principalId","jwtSub":"$context.authorizer.claims.sub"}",
+        },
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": true,
+          "ThrottlingBurstLimit": 200,
+          "ThrottlingRateLimit": 100,
+        },
+        "StageName": "$default",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:pr-number": "7",
+          "platform:preview-id": "abc-123",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/orders",
+          "platform:service": "orders",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Stage",
+    },
+    "ApiDefaultStageKitchenSinkApiDomainundefined16B30140": {
+      "DependsOn": [
+        "ApiDefaultStage189A7074",
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "DomainName": {
+          "Ref": "ApiDomain2D27DFFC",
+        },
+        "Stage": "$default",
+      },
+      "Type": "AWS::ApiGatewayV2::ApiMapping",
+    },
+    "ApiDomain2D27DFFC": {
+      "Properties": {
+        "DomainName": "orders-abc-123.dev.example.com",
+        "DomainNameConfigurations": [
+          {
+            "CertificateArn": "arn:aws:acm:eu-west-1:111111111111:certificate/00000000-0000-0000-0000-000000000000",
+            "EndpointType": "REGIONAL",
+          },
+        ],
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:pr-number": "7",
+          "platform:preview-id": "abc-123",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/orders",
+          "platform:service": "orders",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::DomainName",
+    },
+    "ApiF70053CD": {
+      "Properties": {
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "authorization",
+            "content-type",
+            "x-request-id",
+            "x-correlation-id",
+          ],
+          "AllowMethods": [
+            "*",
+          ],
+          "AllowOrigins": [
+            "*",
+          ],
+          "MaxAge": 3600,
+        },
+        "Description": "orders api (dev)",
+        "Name": "abc-123-orders-api",
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:pr-number": "7",
+          "platform:preview-id": "abc-123",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/orders",
+          "platform:service": "orders",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Api",
+    },
+    "ApiGEThealthA417CA46": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "AWS_IAM",
+        "RouteKey": "GET /health",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGEThealthInthandlerhealthF6A91CD8",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGEThealthInthandlerhealthF6A91CD8": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGEThealthInthandlerhealthPermissionB5FCD408": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/health",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiGETorders65B0F255": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "ApiAuth0AuthorizerF376A18B",
+        },
+        "RouteKey": "GET /orders",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETordersInthandlerordersD7CC109F",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGETordersInthandlerordersD7CC109F": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGETordersInthandlerordersPermissionC6D052BA": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/orders",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiLatencyAlarmFC74CB69": {
+      "Properties": {
+        "AlarmDescription": "[medium] orders: api-latency",
+        "AlarmName": "abc-123-orders-api-latency",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Latency",
+        "Namespace": "AWS/ApiGateway",
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 3000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ApiPOSTorders035B9622": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "ApiAuth0AuthorizerF376A18B",
+        },
+        "RouteKey": "POST /orders",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETordersInthandlerordersD7CC109F",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiPOSTordersInthandlerordersPermissionDBFBCDD7": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Handler886CB40B",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/orders",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiServerErrorsAlarm652FC3ED": {
+      "Properties": {
+        "AlarmDescription": "[high] orders: api-5xx",
+        "AlarmName": "abc-123-orders-api-5xx",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "5xx",
+        "Namespace": "AWS/ApiGateway",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
+      "DependsOn": [
+        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+      ],
+      "Properties": {
+        "Code": {
+          "ZipFile": "import boto3  # type: ignore
+import json
+import logging
+import urllib.request
+
+s3 = boto3.client("s3")
+
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
+
+def handler(event: dict, context):
+  response_status = "SUCCESS"
+  error_message = ""
+  try:
+    props = event["ResourceProperties"]
+    notification_configuration = props["NotificationConfiguration"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    skipDestinationValidation = props.get('SkipDestinationValidation', 'false').lower() == 'true'
+    stack_id = event['StackId']
+    old = event.get("OldResourceProperties", {}).get("NotificationConfiguration", {})
+    if managed:
+      config = handle_managed(event["RequestType"], notification_configuration)
+    else:
+      config = handle_unmanaged(props["BucketName"], stack_id, event["RequestType"], notification_configuration, old)
+    s3.put_bucket_notification_configuration(Bucket=props["BucketName"], NotificationConfiguration=config, SkipDestinationValidation=skipDestinationValidation)
+  except Exception as e:
+    logging.exception("Failed to put bucket notification configuration")
+    response_status = "FAILED"
+    error_message = f"Error: {str(e)}. "
+  finally:
+    submit_response(event, context, response_status, error_message)
+
+def handle_managed(request_type, notification_configuration):
+  if request_type == 'Delete':
+    return {}
+  return notification_configuration
+
+def handle_unmanaged(bucket, stack_id, request_type, notification_configuration, old):
+  def get_id(n):
+    n['Id'] = ''
+    sorted_notifications = sort_filter_rules(n)
+    strToHash=json.dumps(sorted_notifications, sort_keys=True).replace('"Name": "prefix"', '"Name": "Prefix"').replace('"Name": "suffix"', '"Name": "Suffix"')
+    return f"{stack_id}-{hash(strToHash)}"
+  def with_id(n):
+    n['Id'] = get_id(n)
+    return n
+
+  external_notifications = {}
+  existing_notifications = s3.get_bucket_notification_configuration(Bucket=bucket)
+  for t in CONFIGURATION_TYPES:
+    if request_type == 'Update':
+        old_incoming_ids = [get_id(n) for n in old.get(t, [])]
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not get_id(n) in old_incoming_ids]      
+    elif request_type == 'Delete':
+        external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
+    elif request_type == 'Create':
+        external_notifications[t] = [n for n in existing_notifications.get(t, [])]
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  if request_type == 'Delete':
+    return external_notifications
+
+  notifications = {}
+  for t in CONFIGURATION_TYPES:
+    external = external_notifications.get(t, [])
+    incoming = [with_id(n) for n in notification_configuration.get(t, [])]
+    notifications[t] = external + incoming
+
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
+
+def submit_response(event: dict, context, response_status: str, error_message: str):
+  response_body = json.dumps(
+    {
+      "Status": response_status,
+      "Reason": f"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}",
+      "PhysicalResourceId": event.get("PhysicalResourceId") or event["LogicalResourceId"],
+      "StackId": event["StackId"],
+      "RequestId": event["RequestId"],
+      "LogicalResourceId": event["LogicalResourceId"],
+      "NoEcho": False,
+    }
+  ).encode("utf-8")
+  headers = {"content-type": "", "content-length": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event["ResponseURL"], headers=headers, data=response_body, method="PUT")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode("utf-8"))
+    print("Status code: " + response.reason)
+  except Exception as e:
+      print("send(..) failed executing request.urlopen(..): " + str(e))
+
+def sort_filter_rules(json_obj):
+  if not isinstance(json_obj, dict):
+      return json_obj
+  for key, value in json_obj.items():
+      if isinstance(value, dict):
+          json_obj[key] = sort_filter_rules(value)
+      elif isinstance(value, list):
+          json_obj[key] = [sort_filter_rules(item) for item in value]
+  if "Filter" in json_obj and "Key" in json_obj["Filter"] and "FilterRules" in json_obj["Filter"]["Key"]:
+      filter_rules = json_obj["Filter"]["Key"]["FilterRules"]
+      sorted_filter_rules = sorted(filter_rules, key=lambda x: x["Name"])
+      json_obj["Filter"]["Key"]["FilterRules"] = sorted_filter_rules
+  return json_obj",
+        },
+        "Description": "AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 300,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "Uploads4F6EB0FD",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "Dashboard9E4231ED": {
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{"widgets":[{"type":"text","width":24,"height":1,"x":0,"y":0,"properties":{"markdown":"# orders (dev)"}},{"type":"metric","width":8,"height":6,"x":0,"y":1,"properties":{"view":"timeSeries","title":"API requests","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/ApiGateway","Count","ApiId","",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "",{"stat":"SampleCount"}],["AWS/ApiGateway","5xx","ApiId","",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "",{"stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":8,"height":6,"x":8,"y":1,"properties":{"view":"timeSeries","title":"Handler","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/Lambda","Invocations","FunctionName","",
+              {
+                "Ref": "Handler886CB40B",
+              },
+              "",{"stat":"Sum"}],["AWS/Lambda","Errors","FunctionName","",
+              {
+                "Ref": "Handler886CB40B",
+              },
+              "",{"stat":"Sum","yAxis":"right"}]],"yAxis":{}}},{"type":"metric","width":8,"height":6,"x":16,"y":1,"properties":{"view":"timeSeries","title":"Queue","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","",
+              {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "QueueName",
+                ],
+              },
+              "",{"stat":"Maximum"}]],"yAxis":{}}}]}",
+            ],
+          ],
+        },
+        "DashboardName": "abc-123-orders-overview",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::CloudWatch::Dashboard",
+    },
+    "Handler886CB40B": {
+      "DependsOn": [
+        "HandlerServiceRoleDefaultPolicyCBD0CC91",
+        "HandlerServiceRoleFCDC14AE",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "BUCKET_NAME": {
+              "Ref": "Uploads4F6EB0FD",
+            },
+            "LOG_LEVEL": "debug",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "handler",
+            "PLATFORM_PREVIEW_ID": "abc-123",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "orders",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "true",
+            "POWERTOOLS_LOG_LEVEL": "DEBUG",
+            "POWERTOOLS_SERVICE_NAME": "orders",
+            "QUEUE_URL": {
+              "Ref": "JobsDF1CC2D4",
+            },
+            "TABLE_NAME": {
+              "Ref": "OrdersA9B65338",
+            },
+          },
+        },
+        "FunctionName": "abc-123-orders-handler",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "HandlerLogGroup881018CA",
+          },
+        },
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "HandlerServiceRoleFCDC14AE",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "HandlerDurationAlarm70CCF618": {
+      "Properties": {
+        "AlarmDescription": "[medium] orders: handler-duration",
+        "AlarmName": "abc-123-orders-handler-duration",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Handler886CB40B",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Duration",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 8000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HandlerErrorsAlarm4119687B": {
+      "Properties": {
+        "AlarmDescription": "[high] orders: handler-errors",
+        "AlarmName": "abc-123-orders-handler-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Handler886CB40B",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HandlerLogGroup881018CA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/abc-123-orders-handler",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "HandlerServiceRoleDefaultPolicyCBD0CC91": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Uploads4F6EB0FD",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "Uploads4F6EB0FD",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "HandlerServiceRoleDefaultPolicyCBD0CC91",
+        "Roles": [
+          {
+            "Ref": "HandlerServiceRoleFCDC14AE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "HandlerServiceRoleFCDC14AE": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HandlerThrottlesAlarm26792EC4": {
+      "Properties": {
+        "AlarmDescription": "[medium] orders: handler-throttles",
+        "AlarmName": "abc-123-orders-handler-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Handler886CB40B",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Throttles",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "JobsAgeAlarm719561C6": {
+      "Properties": {
+        "AlarmDescription": "[medium] orders: jobs-age",
+        "AlarmName": "abc-123-orders-jobs-age",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "JobsDF1CC2D4",
+                "QueueName",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "MetricName": "ApproximateAgeOfOldestMessage",
+        "Namespace": "AWS/SQS",
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 900,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "JobsDF1CC2D4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "MessageRetentionPeriod": 345600,
+        "QueueName": "abc-123-orders-jobs",
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "JobsDlqB53173A1",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 3,
+        },
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "VisibilityTimeout": 90,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "JobsDlqB53173A1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "MessageRetentionPeriod": 1209600,
+        "QueueName": "abc-123-orders-jobs-dlq",
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "JobsDlqDepthAlarm5D9DC4B2": {
+      "Properties": {
+        "AlarmDescription": "[high] orders: jobs-dlq-depth",
+        "AlarmName": "abc-123-orders-jobs-dlq-depth",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "JobsDlqB53173A1",
+                "QueueName",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "JobsDlqPolicy1719738E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDlqB53173A1",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "JobsDlqB53173A1",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "JobsPolicy30CCDE58": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": {
+                "ArnLike": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "Uploads4F6EB0FD",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "s3.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "JobsDF1CC2D4",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "OrdersA9B65338": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "gsi1pk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "gsi1pk-index",
+            "KeySchema": [
+              {
+                "AttributeName": "gsi1pk",
+                "KeyType": "HASH",
+              },
+            ],
+            "Projection": {
+              "ProjectionType": "ALL",
+            },
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE",
+          },
+        ],
+        "Replicas": [
+          {
+            "DeletionProtectionEnabled": false,
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "gsi1pk-index",
+              },
+            ],
+            "PointInTimeRecoverySpecification": {
+              "PointInTimeRecoveryEnabled": false,
+            },
+            "Region": "eu-west-1",
+            "Tags": [
+              {
+                "Key": "platform:env",
+                "Value": "dev",
+              },
+              {
+                "Key": "platform:managed-by",
+                "Value": "platform-cdk",
+              },
+              {
+                "Key": "platform:pr-number",
+                "Value": "7",
+              },
+              {
+                "Key": "platform:preview-id",
+                "Value": "abc-123",
+              },
+              {
+                "Key": "platform:project",
+                "Value": "Example Platform",
+              },
+              {
+                "Key": "platform:repository",
+                "Value": "example-org/orders",
+              },
+              {
+                "Key": "platform:service",
+                "Value": "orders",
+              },
+            ],
+          },
+        ],
+        "SSESpecification": {
+          "SSEEnabled": false,
+        },
+        "StreamSpecification": {
+          "StreamViewType": "NEW_AND_OLD_IMAGES",
+        },
+        "TableName": "abc-123-orders-orders",
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "OrdersThrottlesAlarm7519FA31": {
+      "Properties": {
+        "AlarmDescription": "[medium] orders: orders-throttles",
+        "AlarmName": "abc-123-orders-orders-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "readThrottles + writeThrottles",
+            "Id": "expr_1",
+            "Label": "Throttle events",
+            "ReturnData": true,
+          },
+          {
+            "Id": "readThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "OrdersA9B65338",
+                    },
+                  },
+                ],
+                "MetricName": "ReadThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "writeThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "OrdersA9B65338",
+                    },
+                  },
+                ],
+                "MetricName": "WriteThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "PlatformProviderSeedHandlerLogGroup7654787D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "PlatformProviderSeedHandlerframeworkonEvent4DF0712C": {
+      "DependsOn": [
+        "PlatformProviderSeedHandlerframeworkonEventServiceRoleDefaultPolicy4E20C4C2",
+        "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Description": "AWS CDK resource provider framework - onEvent (KitchenSink/PlatformProvider-SeedHandler)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "SeedHandler1BFDD5E3",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "PlatformProviderSeedHandlerLogGroup7654787D",
+          },
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "PlatformProviderSeedHandlerframeworkonEventServiceRoleDefaultPolicy4E20C4C2": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SeedHandler1BFDD5E3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SeedHandler1BFDD5E3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SeedHandler1BFDD5E3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "PlatformProviderSeedHandlerframeworkonEventServiceRoleDefaultPolicy4E20C4C2",
+        "Roles": [
+          {
+            "Ref": "PlatformProviderSeedHandlerframeworkonEventServiceRoleD6A3ADBE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Seed": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "PlatformProviderSeedHandlerframeworkonEvent4DF0712C",
+            "Arn",
+          ],
+        },
+        "TableName": {
+          "Ref": "OrdersA9B65338",
+        },
+        "Version": "1",
+      },
+      "Type": "Custom::PlatformSeed",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SeedHandler1BFDD5E3": {
+      "DependsOn": [
+        "SeedHandlerServiceRoleDefaultPolicy1F098B8A",
+        "SeedHandlerServiceRole5AC0A424",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "LOG_LEVEL": "debug",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "seed-handler",
+            "PLATFORM_PREVIEW_ID": "abc-123",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "orders",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "true",
+            "POWERTOOLS_LOG_LEVEL": "DEBUG",
+            "POWERTOOLS_SERVICE_NAME": "orders",
+          },
+        },
+        "FunctionName": "abc-123-orders-seed-handler",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "SeedHandlerLogGroup3D7E58B6",
+          },
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "SeedHandlerServiceRole5AC0A424",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 300,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SeedHandlerLogGroup3D7E58B6": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/abc-123-orders-seed-handler",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SeedHandlerServiceRole5AC0A424": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SeedHandlerServiceRoleDefaultPolicy1F098B8A": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SeedHandlerServiceRoleDefaultPolicy1F098B8A",
+        "Roles": [
+          {
+            "Ref": "SeedHandlerServiceRole5AC0A424",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Uploads4F6EB0FD": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "BucketName": "abc-123-orders-uploads",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 7,
+              },
+              "ExpirationInDays": 30,
+              "Id": "platform-default",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "UploadsAutoDeleteObjectsCustomResource9FEBEEBB": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "UploadsPolicy148F8199",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "Uploads4F6EB0FD",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "UploadsNotifications8DBDDF22": {
+      "DependsOn": [
+        "JobsAgeAlarm719561C6",
+        "JobsDlqDepthAlarm5D9DC4B2",
+        "JobsPolicy30CCDE58",
+        "JobsDF1CC2D4",
+        "UploadsNotificationsHandlerPolicy4B83D677",
+        "UploadsPolicy148F8199",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "Uploads4F6EB0FD",
+        },
+        "Managed": true,
+        "NotificationConfiguration": {
+          "QueueConfigurations": [
+            {
+              "Events": [
+                "s3:ObjectCreated:*",
+              ],
+              "Filter": {
+                "Key": {
+                  "FilterRules": [
+                    {
+                      "Name": "prefix",
+                      "Value": "incoming/",
+                    },
+                  ],
+                },
+              },
+              "QueueArn": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+            "Arn",
+          ],
+        },
+        "SkipDestinationValidation": false,
+      },
+      "Type": "Custom::S3BucketNotifications",
+    },
+    "UploadsNotificationsHandlerPolicy4B83D677": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutBucketNotification",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "Uploads4F6EB0FD",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "UploadsNotificationsHandlerPolicy4B83D677",
+        "Roles": [
+          {
+            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "UploadsPolicy148F8199": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "Uploads4F6EB0FD",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Uploads4F6EB0FD",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "Uploads4F6EB0FD",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Uploads4F6EB0FD",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "Uploads4F6EB0FD",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "Worker11F36D0F": {
+      "DependsOn": [
+        "WorkerServiceRoleDefaultPolicyAE71B5FA",
+        "WorkerServiceRole8543584E",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "DeadLetterConfig": {
+          "TargetArn": {
+            "Fn::GetAtt": [
+              "WorkerDlq2A1C0A5B",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "LOG_LEVEL": "debug",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "worker",
+            "PLATFORM_PREVIEW_ID": "abc-123",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "orders",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "true",
+            "POWERTOOLS_LOG_LEVEL": "DEBUG",
+            "POWERTOOLS_SERVICE_NAME": "orders",
+          },
+        },
+        "FunctionName": "abc-123-orders-worker",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "WorkerLogGroup31FDBE4A",
+          },
+        },
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "WorkerServiceRole8543584E",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "Timeout": 60,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "WorkerDlq2A1C0A5B": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "MessageRetentionPeriod": 1209600,
+        "QueueName": "abc-123-orders-worker-dlq",
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+        "VisibilityTimeout": 60,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "WorkerDlqPolicyE87F5E17": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "WorkerDlq2A1C0A5B",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "WorkerDlq2A1C0A5B",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "WorkerErrorsAlarmD45DB1D8": {
+      "Properties": {
+        "AlarmDescription": "[high] orders: worker-errors",
+        "AlarmName": "abc-123-orders-worker-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "Worker11F36D0F",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "WorkerLogGroup31FDBE4A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/abc-123-orders-worker",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "WorkerServiceRole8543584E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "WorkerServiceRoleDefaultPolicyAE71B5FA": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "WorkerDlq2A1C0A5B",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "JobsDF1CC2D4",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrdersA9B65338",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrdersA9B65338",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "WorkerServiceRoleDefaultPolicyAE71B5FA",
+        "Roles": [
+          {
+            "Ref": "WorkerServiceRole8543584E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "WorkerSqsEventSourceKitchenSinkJobs270EFC420A249164": {
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "JobsDF1CC2D4",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "Worker11F36D0F",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:pr-number",
+            "Value": "7",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/orders",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "orders",
+          },
+        ],
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

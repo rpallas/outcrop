@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "include": ["platform.config.ts", "infra/**/*.ts", "app/src/**/*.ts"],
+  "exclude": ["infra/tests", "app/tests"],
+  "references": [
+    {
+      "path": "../../packages/platform-cdk/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/platform-cdk-runtime/tsconfig.build.json"
+    }
+  ]
+}

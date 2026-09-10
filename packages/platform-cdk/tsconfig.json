@@ -1,10 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "tsBuildInfoFile": "dist/.tsbuildinfo"
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rootDir": "."
   },
-  "include": ["src/**/*.ts"],
-  "references": [{ "path": "../platform-cdk-runtime" }]
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }

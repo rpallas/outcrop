@@ -1,13 +1,29 @@
 {
   "files": [],
   "references": [
-    { "path": "packages/platform-cdk-runtime" },
-    { "path": "packages/platform-cdk" },
-    { "path": "packages/platform-cdk-account" },
-    { "path": "packages/platform-cdk-neon" },
-    { "path": "packages/platform-cdk-chatops" },
-    { "path": "packages/platform-cdk-cli" },
-    { "path": "examples/hello-http" },
-    { "path": "examples/account-baseline" }
+    {
+      "path": "packages/platform-cdk-runtime/tsconfig.build.json"
+    },
+    {
+      "path": "packages/platform-cdk/tsconfig.build.json"
+    },
+    {
+      "path": "packages/platform-cdk-account/tsconfig.build.json"
+    },
+    {
+      "path": "packages/platform-cdk-neon/tsconfig.build.json"
+    },
+    {
+      "path": "packages/platform-cdk-chatops/tsconfig.build.json"
+    },
+    {
+      "path": "packages/platform-cdk-cli/tsconfig.build.json"
+    },
+    {
+      "path": "examples/hello-http/tsconfig.build.json"
+    },
+    {
+      "path": "examples/account-baseline/tsconfig.build.json"
+    }
   ]
 }

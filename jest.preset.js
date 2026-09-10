@@ -17,7 +17,7 @@ function createJestConfig(rootDir, overrides = {}) {
       "^.+\\.tsx?$": [
         "ts-jest",
         {
-          tsconfig: path.join(rootDir, "tsconfig.test.json"),
+          tsconfig: path.join(rootDir, "tsconfig.json"),
           diagnostics: { ignoreCodes: [151001] },
         },
       ],
