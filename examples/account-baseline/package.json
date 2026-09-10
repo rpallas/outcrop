@@ -1,0 +1,16 @@
+{
+  "name": "@rpallas/example-account-baseline",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Reference account baseline app using @rpallas/platform-cdk-account.",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "test": "jest",
+    "synth": "cdk synth -c env=dev",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@rpallas/platform-cdk-account": "0.1.0"
+  }
+}

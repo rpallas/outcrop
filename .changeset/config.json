@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "rpallas/platform-cdk" }],
+  "commit": false,
+  "fixed": [
+    [
+      "@rpallas/platform-cdk",
+      "@rpallas/platform-cdk-account",
+      "@rpallas/platform-cdk-runtime",
+      "@rpallas/platform-cdk-cli",
+      "@rpallas/platform-cdk-neon",
+      "@rpallas/platform-cdk-chatops"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": ["@rpallas/example-hello-http", "@rpallas/example-account-baseline"]
+}

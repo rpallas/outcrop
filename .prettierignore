@@ -1,0 +1,9 @@
+**/dist
+**/cdk.out
+**/node_modules
+**/coverage
+**/__snapshots__
+**/templates/**/*.tpl
+package-lock.json
+CHANGELOG.md
+.changeset/*.md

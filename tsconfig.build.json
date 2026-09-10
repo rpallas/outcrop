@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/platform-cdk-runtime" },
+    { "path": "packages/platform-cdk" },
+    { "path": "packages/platform-cdk-account" },
+    { "path": "packages/platform-cdk-neon" },
+    { "path": "packages/platform-cdk-chatops" },
+    { "path": "packages/platform-cdk-cli" },
+    { "path": "examples/hello-http" },
+    { "path": "examples/account-baseline" }
+  ]
+}

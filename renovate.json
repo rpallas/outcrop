@@ -1,0 +1,38 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommitsDisabled"],
+  "rangeStrategy": "bump",
+  "postUpdateOptions": ["npmDedupe"],
+  "packageRules": [
+    {
+      "groupName": "aws-cdk",
+      "matchPackageNames": ["aws-cdk-lib", "aws-cdk", "constructs", "cdk-nag"]
+    },
+    {
+      "groupName": "aws-sdk-v3",
+      "matchPackageNames": ["@aws-sdk/**", "@smithy/**"]
+    },
+    {
+      "groupName": "powertools",
+      "matchPackageNames": ["@aws-lambda-powertools/**"]
+    },
+    {
+      "groupName": "lint-and-format",
+      "matchPackageNames": [
+        "eslint",
+        "@eslint/**",
+        "typescript-eslint",
+        "prettier",
+        "eslint-config-prettier"
+      ]
+    },
+    {
+      "groupName": "test",
+      "matchPackageNames": ["jest", "ts-jest", "@types/jest", "aws-sdk-client-mock"]
+    },
+    {
+      "groupName": "github-actions",
+      "matchManagers": ["github-actions"]
+    }
+  ]
+}

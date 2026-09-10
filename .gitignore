@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+cdk.out/
+*.tsbuildinfo
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+cdk.context.json
+integration-env.env
+.agents/skills/

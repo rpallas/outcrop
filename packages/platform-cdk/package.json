@@ -1,0 +1,53 @@
+{
+  "name": "@rpallas/platform-cdk",
+  "version": "0.1.0",
+  "description": "Lambda-first AWS CDK constructs with preview-stack support: PlatformApp, PlatformStack, naming, SSM contract, alerting and opinionated primitives.",
+  "license": "MIT",
+  "author": "Robbie Pallas",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rpallas/platform-cdk.git",
+    "directory": "packages/platform-cdk"
+  },
+  "keywords": [
+    "aws",
+    "cdk",
+    "constructs",
+    "lambda",
+    "serverless",
+    "preview",
+    "platform"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "zod": "^4.6.1"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.200.0",
+    "constructs": "^10.0.0"
+  },
+  "optionalDependencies": {
+    "@rpallas/platform-cdk-runtime": "0.1.0"
+  },
+  "devDependencies": {
+    "@rpallas/platform-cdk-runtime": "0.1.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

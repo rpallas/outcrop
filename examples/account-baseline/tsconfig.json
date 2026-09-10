@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "include": ["account.config.ts", "bin/**/*.ts", "lib/**/*.ts"],
+  "references": [{ "path": "../../packages/platform-cdk-account" }]
+}
