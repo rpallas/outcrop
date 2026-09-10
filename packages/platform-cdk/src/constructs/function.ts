@@ -1,12 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { Duration } from "aws-cdk-lib";
-import {
-  ComparisonOperator,
-  type IWidget,
-  type MetricOptions,
-  Stats,
-} from "aws-cdk-lib/aws-cloudwatch";
+import type { IWidget, MetricOptions } from "aws-cdk-lib/aws-cloudwatch";
 import {
   ApplicationLogLevel,
   Architecture,
@@ -26,12 +21,16 @@ import {
 import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { type IQueue } from "aws-cdk-lib/aws-sqs";
 import type { Construct } from "constructs";
-import { PlatformAlarm, type PlatformAlarmProps } from "../alerting/alarm";
+import type { PlatformAlarm, PlatformAlarmProps } from "../alerting/alarm";
 import type { DashboardContributor } from "../alerting/service-dashboard";
-import { metricWidgets } from "../alerting/service-dashboard";
 import type { AlertSeverity } from "../alerting/severity";
 import { PlatformStack } from "../core/platform-stack";
 import { kebab } from "../util/kebab";
+import {
+  createFunctionAlarms,
+  type FunctionAlarms,
+  functionDashboardWidgets,
+} from "./function-alarms";
 import { PlatformQueue } from "./queue";
 
 export type PlatformLogLevel = "debug" | "info" | "warn" | "error";
@@ -90,6 +89,47 @@ export const lambdaEntry = (pathWithoutExt: string): string => {
   );
 };
 
+const LOCK_FILES = ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb", "bun.lock"];
+
+const findUp = (start: string, predicate: (dir: string) => boolean): string | undefined => {
+  let dir = start;
+  for (;;) {
+    if (predicate(dir)) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) return undefined;
+    dir = parent;
+  }
+};
+
+const findLockFile = (start: string): string | undefined => {
+  const dir = findUp(start, (d) => LOCK_FILES.some((f) => existsSync(path.join(d, f))));
+  if (!dir) return undefined;
+  const file = LOCK_FILES.find((f) => existsSync(path.join(dir, f)));
+  return file ? path.join(dir, file) : undefined;
+};
+
+/**
+ * `NodejsFunction` requires the entry to live under the project root (the
+ * directory of the nearest lock file). Handlers shipped inside a library are
+ * resolved through `__dirname`, which points at the real package location
+ * when the package is symlinked (npm/yarn workspaces, `npm link`, pnpm) and
+ * therefore falls outside the consumer's project. In that case bundle from
+ * the nearest lock file above the entry (the library's own workspace root).
+ */
+const libraryEntryRoots = (
+  entry: string,
+): Pick<NodejsFunctionProps, "projectRoot" | "depsLockFilePath"> => {
+  const consumerLock = findLockFile(process.cwd());
+  const consumerRoot = consumerLock ? path.dirname(consumerLock) : process.cwd();
+  const resolvedEntry = path.resolve(entry);
+  const relative = path.relative(consumerRoot, resolvedEntry);
+  const underConsumerRoot = !relative.startsWith("..") && !path.isAbsolute(relative);
+  if (underConsumerRoot) return {};
+  const libraryLock = findLockFile(path.dirname(resolvedEntry));
+  if (!libraryLock) return {};
+  return { projectRoot: path.dirname(libraryLock), depsLockFilePath: libraryLock };
+};
+
 const LOG_LEVEL_MAP: Record<PlatformLogLevel, ApplicationLogLevel> = {
   debug: ApplicationLogLevel.DEBUG,
   info: ApplicationLogLevel.INFO,
@@ -116,18 +156,7 @@ export class PlatformFunction extends NodejsFunction implements DashboardContrib
   readonly shortName: string;
   readonly logLevel: PlatformLogLevel;
   readonly dlq: IQueue | undefined;
-  readonly alarms: {
-    /** Alarm when any invocation errors within the period. */
-    errors: (options?: FunctionAlarmOptions) => PlatformAlarm;
-    /** Alarm when invocations are throttled. */
-    throttles: (options?: FunctionAlarmOptions) => PlatformAlarm;
-    /** Alarm when p99 duration approaches the timeout (default 80%). */
-    duration: (
-      options?: FunctionAlarmOptions & { thresholdPercentOfTimeout?: number },
-    ) => PlatformAlarm;
-    /** Alarm when messages land in the dead letter queue. */
-    deadLetters: (options?: FunctionAlarmOptions) => PlatformAlarm;
-  };
+  readonly alarms: FunctionAlarms;
 
   constructor(scope: Construct, id: string, props: PlatformFunctionProps) {
     const stack = PlatformStack.of(scope);
@@ -161,6 +190,7 @@ export class PlatformFunction extends NodejsFunction implements DashboardContrib
       architecture: Architecture.ARM_64,
       memorySize: 1024,
       tracing: Tracing.ACTIVE,
+      ...(fnProps.entry && !fnProps.projectRoot ? libraryEntryRoots(fnProps.entry) : {}),
       ...fnProps,
       runtime,
       timeout,
@@ -229,74 +259,7 @@ export class PlatformFunction extends NodejsFunction implements DashboardContrib
       this.addEnvironment("PLATFORM_TELEMETRY_FD", "1");
     }
 
-    this.alarms = {
-      errors: (options = {}) =>
-        new PlatformAlarm(this, "ErrorsAlarm", {
-          name: options.name ?? `${shortName}-errors`,
-          severity: options.severity ?? "high",
-          metric: this.metricErrors({
-            period: Duration.minutes(5),
-            statistic: Stats.SUM,
-            ...options.metricOptions,
-          }),
-          threshold: options.threshold ?? 1,
-          evaluationPeriods: options.evaluationPeriods ?? 1,
-          comparisonOperator:
-            options.comparisonOperator ?? ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          ...stripAlarmOptions(options),
-        }),
-      throttles: (options = {}) =>
-        new PlatformAlarm(this, "ThrottlesAlarm", {
-          name: options.name ?? `${shortName}-throttles`,
-          severity: options.severity ?? "medium",
-          metric: this.metricThrottles({
-            period: Duration.minutes(5),
-            statistic: Stats.SUM,
-            ...options.metricOptions,
-          }),
-          threshold: options.threshold ?? 1,
-          evaluationPeriods: options.evaluationPeriods ?? 1,
-          comparisonOperator:
-            options.comparisonOperator ?? ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          ...stripAlarmOptions(options),
-        }),
-      duration: (options = {}) => {
-        const percent = options.thresholdPercentOfTimeout ?? 80;
-        const { thresholdPercentOfTimeout: _ignored, ...rest } = options;
-        return new PlatformAlarm(this, "DurationAlarm", {
-          name: rest.name ?? `${shortName}-duration`,
-          severity: rest.severity ?? "medium",
-          metric: this.metricDuration({
-            period: Duration.minutes(5),
-            statistic: Stats.percentile(99),
-            ...rest.metricOptions,
-          }),
-          threshold: rest.threshold ?? Math.floor((timeout.toMilliseconds() * percent) / 100),
-          evaluationPeriods: rest.evaluationPeriods ?? 3,
-          comparisonOperator: rest.comparisonOperator ?? ComparisonOperator.GREATER_THAN_THRESHOLD,
-          ...stripAlarmOptions(rest),
-        });
-      },
-      deadLetters: (options = {}) => {
-        if (!this.dlq) {
-          throw new Error(`${this.node.path}: deadLetters alarm requires deadLetterQueue`);
-        }
-        return new PlatformAlarm(this, "DeadLettersAlarm", {
-          name: options.name ?? `${shortName}-dead-letters`,
-          severity: options.severity ?? "high",
-          metric: this.dlq.metricApproximateNumberOfMessagesVisible({
-            period: Duration.minutes(5),
-            statistic: Stats.MAXIMUM,
-            ...options.metricOptions,
-          }),
-          threshold: options.threshold ?? 1,
-          evaluationPeriods: options.evaluationPeriods ?? 1,
-          comparisonOperator:
-            options.comparisonOperator ?? ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          ...stripAlarmOptions(options),
-        });
-      },
-    };
+    this.alarms = createFunctionAlarms(this, shortName, timeout, dlq);
   }
 
   /** Create the standard set of alarms (errors, throttles, duration and dead letters when a DLQ exists). */
@@ -312,49 +275,11 @@ export class PlatformFunction extends NodejsFunction implements DashboardContrib
 
   /** Widgets for `serviceDashboard`. */
   dashboardWidgets(): IWidget[] {
-    return metricWidgets([
-      {
-        title: `Function ${this.shortName}: invocations`,
-        left: [this.metricInvocations()],
-        right: [this.metricErrors(), this.metricThrottles()],
-      },
-      {
-        title: `Function ${this.shortName}: duration`,
-        left: [
-          this.metricDuration({ statistic: Stats.percentile(50) }),
-          this.metricDuration({ statistic: Stats.percentile(99) }),
-        ],
-      },
-      {
-        title: `Function ${this.shortName}: concurrency`,
-        left: [this.metric("ConcurrentExecutions", { statistic: Stats.MAXIMUM })],
-        ...(this.dlq ? { right: [this.dlq.metricApproximateNumberOfMessagesVisible()] } : {}),
-      },
-    ]);
+    return functionDashboardWidgets(this, this.shortName, this.dlq);
   }
 }
 
 const runtimeTarget = (runtime: Runtime): string => {
   const match = /^nodejs(\d+)/.exec(runtime.name);
   return match?.[1] ? `node${match[1]}` : "node24";
-};
-
-const stripAlarmOptions = (
-  options: FunctionAlarmOptions,
-): Partial<
-  Omit<
-    PlatformAlarmProps,
-    "metric" | "name" | "severity" | "threshold" | "evaluationPeriods" | "comparisonOperator"
-  >
-> => {
-  const {
-    severity: _severity,
-    name: _name,
-    metricOptions: _metricOptions,
-    threshold: _threshold,
-    evaluationPeriods: _evaluationPeriods,
-    comparisonOperator: _comparisonOperator,
-    ...rest
-  } = options;
-  return rest;
 };

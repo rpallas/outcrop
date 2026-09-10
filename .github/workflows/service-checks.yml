@@ -3,6 +3,8 @@
 # Jobs
 #   secret-scan - gitleaks over the full history (opt out with `secret-scan: false`).
 #   checks - install, optional build, lint, test, `cdk synth` and upload `cdk.out` as an artifact.
+#            `cdk synth` runs when `readonly-role-arn` is set (SSM lookups need credentials), when a
+#            `cdk.context.json` is committed, or when `synth-command` is overridden.
 #   diff   - (pull requests only, opt-in) assume a read-only role via OIDC and post `cdk diff` as a
 #            sticky PR comment. Enabled when `diff: true` and `readonly-role-arn` is set.
 #
@@ -135,6 +137,7 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Check out
         uses: actions/checkout@v4
@@ -175,6 +178,16 @@ jobs:
           BUILD_COMMAND: ${{ inputs.build-command }}
         run: eval "$BUILD_COMMAND"
 
+      # Synth-time SSM lookups (`params.lookup`, hosted zone, certificates) need credentials unless
+      # `cdk.context.json` is committed. The read-only role makes `cdk synth` work on every run.
+      - name: AWS login (read-only, for context lookups)
+        if: inputs.readonly-role-arn != ''
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ inputs.readonly-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+          session-name: platform-cdk-checks-${{ github.run_id }}
+
       # No further local actions are needed in this job; remove the helper checkout so repository
       # wide linters (prettier/eslint on `.`) do not see it.
       - name: Remove platform-cdk actions checkout
@@ -193,11 +206,16 @@ jobs:
         run: eval "$TEST_COMMAND"
 
       - name: Synth
+        if: inputs.readonly-role-arn != '' || inputs.synth-command != '' || hashFiles(format('{0}/cdk.context.json', inputs.working-directory)) != ''
         working-directory: ${{ inputs.working-directory }}
         env:
           SYNTH_COMMAND: ${{ inputs.synth-command || format('npx cdk synth -c env={0} --quiet', inputs.synth-env) }}
           CI: "true"
         run: eval "$SYNTH_COMMAND"
+
+      - name: Synth skipped
+        if: inputs.readonly-role-arn == '' && inputs.synth-command == '' && hashFiles(format('{0}/cdk.context.json', inputs.working-directory)) == ''
+        run: echo "::notice::cdk synth skipped - set readonly-role-arn (or commit cdk.context.json) so synth-time SSM lookups can run without deploy credentials."
 
       - name: Upload cdk.out
         uses: actions/upload-artifact@v4

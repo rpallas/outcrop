@@ -41,11 +41,19 @@ platform.config.ts  ->  PlatformApp  ->  PlatformStack  ->  Platform* constructs
 
 ## Documentation
 
-- `docs/guides/getting-started.md`
-- `docs/guides/account-setup.md`
-- `docs/guides/github-setup.md`
+The documentation site is published from `docs/` with VitePress (`npm run docs:dev` locally) and includes the TypeDoc API reference (`npm run docs:api`).
+
+- `docs/guides/` - getting started, account setup, GitHub setup, new service, testing, workflows
+- `docs/constructs/` - one page per construct
+- `docs/integrations/` - Neon and chatops
 - `docs/conventions/` - naming, SSM contract, preview model, tagging
+- `docs/security/` - threat model, SCP compatibility and default IAM review
 - `docs/adr/` - architecture decision records
+- `docs/roadmap.md`
+
+## Agent skills
+
+`npx @rpallas/platform-cdk-cli sync-skills` copies the bundled skills (`create-platform-service`, `add-platform-construct`, `account-baseline`) into `.agents/skills` so coding agents follow the platform conventions.
 
 ## Requirements
 

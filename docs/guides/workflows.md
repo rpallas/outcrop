@@ -14,15 +14,15 @@ tag for reproducibility. The composite actions used by the workflows are documen
 
 Set under _Settings > Secrets and variables > Actions > Variables_ (plain variables, not secrets):
 
-| Variable                      | Used by                                  | Description                                                               |
-| ----------------------------- | ---------------------------------------- | ------------------------------------------------------------------------- |
-| `AWS_REGION`                  | all                                      | Home region, e.g. `eu-west-1`.                                            |
-| `AWS_DEPLOY_ROLE_ARN_DEV`     | preview deploy/destroy, `service-deploy` | Deploy role for `dev` (an output of the account baseline).                |
-| `AWS_DEPLOY_ROLE_ARN_STAGE`   | `service-deploy`                         | Deploy role for `stage`.                                                  |
-| `AWS_DEPLOY_ROLE_ARN_PROD`    | `service-deploy`                         | Deploy role for `prod`.                                                   |
-| `AWS_READONLY_ROLE_ARN_DEV`   | `service-checks` (optional)              | Read-only role; enables `cdk diff` comments on pull requests.             |
-| `AWS_BASELINE_ROLE_ARN_<ENV>` | `account-baseline-deploy` (optional)     | Bootstrap/administration role used to deploy the account baseline itself. |
-| `SANDBOX_DEPLOY_ROLE_ARN`     | this repository only                     | Deploy role of the sandbox account used by the `examples-*` workflows.    |
+| Variable                      | Used by                                  | Description                                                                           |
+| ----------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| `AWS_REGION`                  | all                                      | Home region, e.g. `eu-west-1`.                                                        |
+| `AWS_DEPLOY_ROLE_ARN_DEV`     | preview deploy/destroy, `service-deploy` | Deploy role for `dev` (an output of the account baseline).                            |
+| `AWS_DEPLOY_ROLE_ARN_STAGE`   | `service-deploy`                         | Deploy role for `stage`.                                                              |
+| `AWS_DEPLOY_ROLE_ARN_PROD`    | `service-deploy`                         | Deploy role for `prod`.                                                               |
+| `AWS_READONLY_ROLE_ARN_DEV`   | `service-checks` (recommended)           | Read-only role; lets `cdk synth` resolve SSM lookups and enables `cdk diff` comments. |
+| `AWS_BASELINE_ROLE_ARN_<ENV>` | `account-baseline-deploy` (optional)     | Bootstrap/administration role used to deploy the account baseline itself.             |
+| `SANDBOX_DEPLOY_ROLE_ARN`     | this repository only                     | Deploy role of the sandbox account used by the `examples-*` workflows.                |
 
 `service-deploy.yml` looks up `AWS_DEPLOY_ROLE_ARN_<ENV>` (environment name upper-cased, `-` -> `_`)
 for each environment unless the `role-arns` input provides it. Every role must trust the GitHub
@@ -47,21 +47,21 @@ carry it do not get a preview environment; the sticky PR comment says so instead
 Secret scan (gitleaks), lint, test, `cdk synth` (uploads `cdk.out`) and, optionally, a `cdk diff`
 comment on pull requests using a read-only role.
 
-| Input                       | Type    | Default                                    | Description                                                      |
-| --------------------------- | ------- | ------------------------------------------ | ---------------------------------------------------------------- |
-| `working-directory`         | string  | `.`                                        | CDK app directory.                                               |
-| `install-working-directory` | string  | `""` (= working-directory)                 | Where `npm ci` runs; pass `.` in a monorepo.                     |
-| `build-command`             | string  | `""`                                       | Optional build command run after install (e.g. `npm run build`). |
-| `node-version`              | string  | `""` (= `.nvmrc`)                          | Node.js version.                                                 |
-| `lint-command`              | string  | `npm run lint --if-present`                |                                                                  |
-| `test-command`              | string  | `npm test --if-present`                    |                                                                  |
-| `synth-env`                 | string  | `dev`                                      | Environment for synth / diff.                                    |
-| `synth-command`             | string  | `npx cdk synth -c env=<synth-env> --quiet` | Override.                                                        |
-| `aws-region`                | string  | `""`                                       | Required for the diff job.                                       |
-| `readonly-role-arn`         | string  | `""`                                       | Read-only role for `cdk diff`.                                   |
-| `diff`                      | boolean | `false`                                    | Post `cdk diff` comment (needs `readonly-role-arn`, PR event).   |
-| `runs-on`                   | string  | `ubuntu-latest`                            |                                                                  |
-| `secret-scan`               | boolean | `true`                                     | Run gitleaks over the full git history.                          |
+| Input                       | Type    | Default                                    | Description                                                                                                                              |
+| --------------------------- | ------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `working-directory`         | string  | `.`                                        | CDK app directory.                                                                                                                       |
+| `install-working-directory` | string  | `""` (= working-directory)                 | Where `npm ci` runs; pass `.` in a monorepo.                                                                                             |
+| `build-command`             | string  | `""`                                       | Optional build command run after install (e.g. `npm run build`).                                                                         |
+| `node-version`              | string  | `""` (= `.nvmrc`)                          | Node.js version.                                                                                                                         |
+| `lint-command`              | string  | `npm run lint --if-present`                |                                                                                                                                          |
+| `test-command`              | string  | `npm test --if-present`                    |                                                                                                                                          |
+| `synth-env`                 | string  | `dev`                                      | Environment for synth / diff.                                                                                                            |
+| `synth-command`             | string  | `npx cdk synth -c env=<synth-env> --quiet` | Override.                                                                                                                                |
+| `aws-region`                | string  | `""`                                       | Required for the diff job.                                                                                                               |
+| `readonly-role-arn`         | string  | `""`                                       | Read-only role for synth-time lookups and `cdk diff`. Without it (and without a committed `cdk.context.json`) the synth step is skipped. |
+| `diff`                      | boolean | `false`                                    | Post `cdk diff` comment (needs `readonly-role-arn`, PR event).                                                                           |
+| `runs-on`                   | string  | `ubuntu-latest`                            |                                                                                                                                          |
+| `secret-scan`               | boolean | `true`                                     | Run gitleaks over the full git history.                                                                                                  |
 
 Permissions: `contents: read`, `id-token: write`, `pull-requests: write`.
 

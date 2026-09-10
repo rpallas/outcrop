@@ -1,3 +1,5 @@
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { Duration } from "aws-cdk-lib";
 import { Match, Template } from "aws-cdk-lib/assertions";
@@ -164,5 +166,23 @@ describe("PlatformFunction", () => {
     expect(() => lambdaEntry(path.join(__dirname, "fixtures", "missing"))).toThrow(
       /No Lambda entry found/,
     );
+  });
+
+  it("bundles library handlers that live outside the consumer project root", () => {
+    // Simulates a symlinked package (workspaces, npm link): the handler's real
+    // path is outside the directory holding the consumer's lock file.
+    const libraryRoot = mkdtempSync(path.join(tmpdir(), "platform-cdk-lib-"));
+    writeFileSync(path.join(libraryRoot, "package-lock.json"), "{}");
+    const pkg = path.join(libraryRoot, "node_modules", "example-lib");
+    mkdirSync(path.join(pkg, "dist"), { recursive: true });
+    writeFileSync(path.join(pkg, "package.json"), '{"name":"example-lib"}');
+    const entry = path.join(pkg, "dist", "handler.js");
+    writeFileSync(entry, "exports.handler = async () => ({});");
+
+    const stack = testStack();
+    expect(() => new PlatformFunction(stack, "LibHandler", { entry })).not.toThrow();
+    Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+      FunctionName: "orders-lib-handler",
+    });
   });
 });
