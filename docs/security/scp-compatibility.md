@@ -52,6 +52,7 @@ The following decisions were reviewed against the AwsSolutions cdk-nag pack and 
 | CloudTrail / access log buckets                 | `AwsSolutions-S1` access logs                              | Server-access logging on the log bucket itself would loop; CloudTrail data events cover the bucket                          |
 | Generated secrets                               | `AwsSolutions-SMG4` rotation                               | Rotation requires a service-specific Lambda; adopters wire `addRotationSchedule` for credentials that support it            |
 | Event bus                                       | `AwsSolutions-EB1` (not applicable)                        | Bus policy limits `events:PutEvents` to the organisation or explicit accounts                                               |
+| Delivery streams with a Kinesis source          | `AwsSolutions-KDF1` encryption                             | Firehose rejects SSE settings when reading from Kinesis; the source `PlatformStream` is KMS encrypted                       |
 
 Principles applied throughout:
 

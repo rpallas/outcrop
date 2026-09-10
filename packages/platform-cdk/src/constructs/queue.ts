@@ -1,9 +1,10 @@
 import { Duration } from "aws-cdk-lib";
-import { ComparisonOperator, Stats } from "aws-cdk-lib/aws-cloudwatch";
+import { ComparisonOperator, type IWidget, Stats } from "aws-cdk-lib/aws-cloudwatch";
 import type { IKey } from "aws-cdk-lib/aws-kms";
 import { type DeadLetterQueue, Queue, QueueEncryption, type QueueProps } from "aws-cdk-lib/aws-sqs";
 import type { Construct } from "constructs";
 import { PlatformAlarm } from "../alerting/alarm";
+import { type DashboardContributor, metricWidgets } from "../alerting/service-dashboard";
 import { PlatformStack } from "../core/platform-stack";
 import { kebab } from "../util/kebab";
 import type { FunctionAlarmOptions } from "./function";
@@ -27,7 +28,7 @@ export interface PlatformQueueProps extends Omit<
  * SQS queue with SSE, TLS enforced, platform naming and an optional dead
  * letter queue, plus helpers for the standard alarms.
  */
-export class PlatformQueue extends Queue {
+export class PlatformQueue extends Queue implements DashboardContributor {
   readonly shortName: string;
   readonly dlq: Queue | undefined;
   readonly alarms: {
@@ -130,5 +131,21 @@ export class PlatformQueue extends Queue {
         });
       },
     };
+  }
+
+  /** Widgets for `serviceDashboard`. */
+  dashboardWidgets(): IWidget[] {
+    return metricWidgets([
+      {
+        title: `Queue ${this.shortName}: messages`,
+        left: [this.metricNumberOfMessagesSent(), this.metricNumberOfMessagesReceived()],
+        right: [this.metricApproximateNumberOfMessagesVisible()],
+      },
+      {
+        title: `Queue ${this.shortName}: age of oldest message`,
+        left: [this.metricApproximateAgeOfOldestMessage()],
+        ...(this.dlq ? { right: [this.dlq.metricApproximateNumberOfMessagesVisible()] } : {}),
+      },
+    ]);
   }
 }

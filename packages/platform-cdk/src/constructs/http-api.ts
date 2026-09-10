@@ -27,7 +27,7 @@ import {
   HttpLambdaIntegration,
   type HttpLambdaIntegrationProps,
 } from "aws-cdk-lib/aws-apigatewayv2-integrations";
-import { ComparisonOperator, Stats } from "aws-cdk-lib/aws-cloudwatch";
+import { ComparisonOperator, type IWidget, Stats } from "aws-cdk-lib/aws-cloudwatch";
 import type { IUserPool } from "aws-cdk-lib/aws-cognito";
 import type { IFunction } from "aws-cdk-lib/aws-lambda";
 import { LogGroup } from "aws-cdk-lib/aws-logs";
@@ -35,6 +35,7 @@ import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
 import { ApiGatewayv2DomainProperties } from "aws-cdk-lib/aws-route53-targets";
 import type { Construct } from "constructs";
 import { PlatformAlarm } from "../alerting/alarm";
+import { type DashboardContributor, metricWidgets } from "../alerting/service-dashboard";
 import { PlatformStack } from "../core/platform-stack";
 import { kebab } from "../util/kebab";
 import type { FunctionAlarmOptions } from "./function";
@@ -135,7 +136,7 @@ export const PlatformHttpAuthorizers = {
  * domain from the platform naming and SSM contract, Route 53 alias, Lambda
  * route helper and standard alarms.
  */
-export class PlatformHttpApi extends HttpApi {
+export class PlatformHttpApi extends HttpApi implements DashboardContributor {
   readonly shortName: string;
   readonly customDomain: DomainName | undefined;
   /** Public base URL without trailing slash. */
@@ -322,6 +323,25 @@ export class PlatformHttpApi extends HttpApi {
   /** Full URL for a path on this API. */
   urlFor(path: string): string {
     return `${this.baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+  }
+
+  /** Widgets for `serviceDashboard`. */
+  dashboardWidgets(): IWidget[] {
+    return metricWidgets([
+      {
+        title: `HTTP API ${this.shortName}: requests`,
+        left: [this.metricCount()],
+        right: [this.metricClientError(), this.metricServerError()],
+      },
+      {
+        title: `HTTP API ${this.shortName}: latency`,
+        left: [
+          this.metricLatency({ statistic: Stats.percentile(50) }),
+          this.metricLatency({ statistic: Stats.percentile(99) }),
+        ],
+        right: [this.metricIntegrationLatency({ statistic: Stats.percentile(99) })],
+      },
+    ]);
   }
 }
 

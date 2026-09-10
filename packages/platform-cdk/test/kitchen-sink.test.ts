@@ -47,11 +47,72 @@ describe("kitchen sink", () => {
       {
         id: "AwsSolutions-IAM4",
         reason:
-          "AWSLambdaBasicExecutionRole is the standard managed policy for Lambda logging; log groups are explicit and scoped.",
+          "AWSLambdaBasicExecutionRole is the standard managed policy for Lambda logging and AmazonAPIGatewayPushToCloudWatchLogs is the only policy API Gateway accepts for its account-level logging role; log groups are explicit and scoped.",
         appliesTo: [
           "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
         ],
       },
+      {
+        id: "AwsSolutions-SF1",
+        reason:
+          "PlatformStateMachine logs ALL events in previews and ERROR elsewhere to keep vended log costs proportionate; `logLevel: LogLevel.ALL` opts in.",
+      },
+      {
+        id: "AwsSolutions-SMG4",
+        reason:
+          "Rotation needs a consumer-specific rotation function; PlatformSecret keeps the standard `addRotationSchedule` for services that implement one.",
+      },
+      {
+        id: "AwsSolutions-COG8",
+        reason:
+          "The Plus feature plan (threat protection) is billed per monthly active user; PlatformUserPool defaults to Essentials and `advancedSecurity: true` opts in.",
+      },
+      {
+        id: "AwsSolutions-COG4",
+        reason:
+          "REST API methods use IAM authorization here; Cognito authorizers are one of several supported strategies, not a platform requirement.",
+      },
+    ]);
+    // Dead letter queues attached to EventBridge rule and Scheduler targets are
+    // not recognised by the SQS3 check (it only follows SQS redrive policies and Lambda DLQs).
+    NagSuppressions.addResourceSuppressionsByPath(
+      stack,
+      ["/KitchenSink/OnOrderEventsDlq/Resource", "/KitchenSink/Nightly/Dlq/Resource"],
+      [
+        {
+          id: "AwsSolutions-SQS3",
+          reason: "The queue is the dead letter queue of an EventBridge rule or Scheduler target.",
+        },
+      ],
+    );
+    // Firehose rejects server-side encryption settings when the source is a
+    // Kinesis stream; records are encrypted by the (KMS encrypted) source stream.
+    NagSuppressions.addResourceSuppressionsByPath(stack, "/KitchenSink/ClicksArchive/Resource", [
+      {
+        id: "AwsSolutions-KDF1",
+        reason:
+          "Delivery streams with a Kinesis source cannot enable SSE; the source PlatformStream is KMS encrypted.",
+      },
+    ]);
+    // WebSocket APIs can only authorize the $connect route (IAM here); the
+    // remaining routes are reachable only over an authenticated connection.
+    NagSuppressions.addResourceSuppressionsByPath(
+      stack,
+      [
+        "/KitchenSink/Realtime/$disconnect-Route/Resource",
+        "/KitchenSink/Realtime/$default-Route/Resource",
+        "/KitchenSink/Realtime/subscribe-Route/Resource",
+      ],
+      [
+        {
+          id: "AwsSolutions-APIG4",
+          reason:
+            "WebSocket authorization is enforced on $connect; other routes cannot carry an authorizer.",
+        },
+      ],
+    );
+    NagSuppressions.addStackSuppressions(stack, [
       {
         id: "AwsSolutions-IAM5",
         reason:

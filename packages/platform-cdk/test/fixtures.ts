@@ -1,3 +1,5 @@
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import {
   definePlatformConfig,
@@ -31,6 +33,16 @@ export interface TestAppOptions {
 
 /** Entry file used by function tests. */
 export const HANDLER_ENTRY = path.join(__dirname, "fixtures", "handler.ts");
+
+/** Entry directory used by Python function tests. */
+export const PYTHON_ENTRY = path.join(__dirname, "fixtures", "python");
+
+/** Create a throwaway static site directory with an index page. */
+export const tmpSiteDir = (): string => {
+  const dir = mkdtempSync(path.join(tmpdir(), "platform-cdk-site-"));
+  writeFileSync(path.join(dir, "index.html"), "<!doctype html><title>example</title>");
+  return dir;
+};
 
 export const testApp = (options: TestAppOptions = {}): PlatformApp => {
   // Skip esbuild bundling in unit tests; templates still contain the asset references.

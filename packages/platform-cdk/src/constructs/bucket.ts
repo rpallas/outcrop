@@ -1,4 +1,5 @@
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
+import { type IWidget, Metric, Stats } from "aws-cdk-lib/aws-cloudwatch";
 import type { IKey } from "aws-cdk-lib/aws-kms";
 import type { IFunction } from "aws-cdk-lib/aws-lambda";
 import {
@@ -21,6 +22,7 @@ import {
 import type { ITopic } from "aws-cdk-lib/aws-sns";
 import type { IQueue } from "aws-cdk-lib/aws-sqs";
 import type { Construct } from "constructs";
+import { type DashboardContributor, metricWidgets } from "../alerting/service-dashboard";
 import { PlatformStack } from "../core/platform-stack";
 import { kebab } from "../util/kebab";
 
@@ -51,7 +53,7 @@ export interface PlatformBucketProps extends Omit<
  * bucket-owner enforced ownership, platform naming and removal policy, and
  * auto-deletion of objects in preview stacks.
  */
-export class PlatformBucket extends Bucket {
+export class PlatformBucket extends Bucket implements DashboardContributor {
   readonly shortName: string;
 
   constructor(scope: Construct, id: string, props: PlatformBucketProps = {}) {
@@ -145,5 +147,27 @@ export class PlatformBucket extends Bucket {
   onObjectRemovedInvoke(fn: IFunction, ...filters: NotificationKeyFilter[]): this {
     this.addEventNotification(EventType.OBJECT_REMOVED, new LambdaDestination(fn), ...filters);
     return this;
+  }
+
+  /** Daily storage metric (`BucketSizeBytes` or `NumberOfObjects`). */
+  storageMetric(metricName: "BucketSizeBytes" | "NumberOfObjects"): Metric {
+    return new Metric({
+      namespace: "AWS/S3",
+      metricName,
+      dimensionsMap: {
+        BucketName: this.bucketName,
+        StorageType: metricName === "NumberOfObjects" ? "AllStorageTypes" : "StandardStorage",
+      },
+      statistic: Stats.AVERAGE,
+      period: Duration.days(1),
+    });
+  }
+
+  /** Widgets for `serviceDashboard`. */
+  dashboardWidgets(): IWidget[] {
+    return metricWidgets([
+      { title: `Bucket ${this.shortName}: size`, left: [this.storageMetric("BucketSizeBytes")] },
+      { title: `Bucket ${this.shortName}: objects`, left: [this.storageMetric("NumberOfObjects")] },
+    ]);
   }
 }

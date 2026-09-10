@@ -1,7 +1,12 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { Duration } from "aws-cdk-lib";
-import { ComparisonOperator, type MetricOptions, Stats } from "aws-cdk-lib/aws-cloudwatch";
+import {
+  ComparisonOperator,
+  type IWidget,
+  type MetricOptions,
+  Stats,
+} from "aws-cdk-lib/aws-cloudwatch";
 import {
   ApplicationLogLevel,
   Architecture,
@@ -22,6 +27,8 @@ import { LogGroup } from "aws-cdk-lib/aws-logs";
 import { type IQueue } from "aws-cdk-lib/aws-sqs";
 import type { Construct } from "constructs";
 import { PlatformAlarm, type PlatformAlarmProps } from "../alerting/alarm";
+import type { DashboardContributor } from "../alerting/service-dashboard";
+import { metricWidgets } from "../alerting/service-dashboard";
 import type { AlertSeverity } from "../alerting/severity";
 import { PlatformStack } from "../core/platform-stack";
 import { kebab } from "../util/kebab";
@@ -105,7 +112,7 @@ const resolveTelemetryLayerPath = (): string | undefined => {
  * group with platform retention, source maps, platform environment variables
  * and helpers for the standard alarms.
  */
-export class PlatformFunction extends NodejsFunction {
+export class PlatformFunction extends NodejsFunction implements DashboardContributor {
   readonly shortName: string;
   readonly logLevel: PlatformLogLevel;
   readonly dlq: IQueue | undefined;
@@ -301,6 +308,29 @@ export class PlatformFunction extends NodejsFunction {
     ];
     if (this.dlq) alarms.push(this.alarms.deadLetters(options));
     return alarms;
+  }
+
+  /** Widgets for `serviceDashboard`. */
+  dashboardWidgets(): IWidget[] {
+    return metricWidgets([
+      {
+        title: `Function ${this.shortName}: invocations`,
+        left: [this.metricInvocations()],
+        right: [this.metricErrors(), this.metricThrottles()],
+      },
+      {
+        title: `Function ${this.shortName}: duration`,
+        left: [
+          this.metricDuration({ statistic: Stats.percentile(50) }),
+          this.metricDuration({ statistic: Stats.percentile(99) }),
+        ],
+      },
+      {
+        title: `Function ${this.shortName}: concurrency`,
+        left: [this.metric("ConcurrentExecutions", { statistic: Stats.MAXIMUM })],
+        ...(this.dlq ? { right: [this.dlq.metricApproximateNumberOfMessagesVisible()] } : {}),
+      },
+    ]);
   }
 }
 

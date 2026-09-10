@@ -1,5 +1,10 @@
 import { Duration } from "aws-cdk-lib";
-import { ComparisonOperator, MathExpression, Stats } from "aws-cdk-lib/aws-cloudwatch";
+import {
+  ComparisonOperator,
+  type IWidget,
+  MathExpression,
+  Stats,
+} from "aws-cdk-lib/aws-cloudwatch";
 import {
   type Attribute,
   Billing,
@@ -14,6 +19,7 @@ import {
 import type { IKey } from "aws-cdk-lib/aws-kms";
 import type { Construct } from "constructs";
 import { PlatformAlarm } from "../alerting/alarm";
+import { type DashboardContributor, metricWidgets } from "../alerting/service-dashboard";
 import { PlatformStack } from "../core/platform-stack";
 import { kebab } from "../util/kebab";
 import type { FunctionAlarmOptions } from "./function";
@@ -36,7 +42,7 @@ export interface PlatformTableProps extends Omit<
  * DynamoDB table: on-demand billing, point-in-time recovery outside previews,
  * platform removal policy and naming, GSI helper and throttle alarms.
  */
-export class PlatformTable extends TableV2 {
+export class PlatformTable extends TableV2 implements DashboardContributor {
   readonly shortName: string;
   readonly alarms: {
     /** Alarm on throttled requests across all operations. */
@@ -142,5 +148,26 @@ export class PlatformTable extends TableV2 {
       indexName,
     });
     return indexName;
+  }
+
+  /** Widgets for `serviceDashboard`. */
+  dashboardWidgets(): IWidget[] {
+    return metricWidgets([
+      {
+        title: `Table ${this.shortName}: capacity`,
+        left: [this.metricConsumedReadCapacityUnits(), this.metricConsumedWriteCapacityUnits()],
+      },
+      {
+        title: `Table ${this.shortName}: throttles`,
+        left: [
+          this.metric("ReadThrottleEvents", { statistic: Stats.SUM }),
+          this.metric("WriteThrottleEvents", { statistic: Stats.SUM }),
+        ],
+      },
+      {
+        title: `Table ${this.shortName}: errors`,
+        left: [this.metricUserErrors(), this.metricConditionalCheckFailedRequests()],
+      },
+    ]);
   }
 }

@@ -42,6 +42,7 @@ const ALLOWED_HOSTS = [
   /(^|\.)example\.(com|org|net)$/,
   /(^|\.)amazonaws\.com$/,
   /(^|\.)amazonses\.com$/,
+  /(^|\.)aws\.dev$/,
   /(^|\.)amazon\.com$/,
   /(^|\.)aws\.amazon\.com$/,
   /(^|\.)github\.com$/,
