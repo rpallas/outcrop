@@ -1,0 +1,245 @@
+# Reusable workflow: pull request / push checks for a platform-cdk service.
+#
+# Jobs
+#   checks - install, optional build, lint, test, `cdk synth` and upload `cdk.out` as an artifact.
+#   diff   - (pull requests only, opt-in) assume a read-only role via OIDC and post `cdk diff` as a
+#            sticky PR comment. Enabled when `diff: true` and `readonly-role-arn` is set.
+#
+# Inputs
+#   working-directory          CDK app directory (default `.`).
+#   install-working-directory  Directory where `npm ci` runs (default: working-directory). In a
+#                              monorepo pass the repository root (`.`).
+#   build-command              Optional command run from install-working-directory after install,
+#                              e.g. `npm run build`.
+#   node-version               Node.js version; empty uses `.nvmrc`.
+#   lint-command / test-command
+#   synth-env                  Environment for `cdk synth` (default `dev`).
+#   synth-command              Override; default `npx cdk synth -c env=<synth-env> --quiet`.
+#   aws-region, readonly-role-arn, diff
+#   runs-on                    Runner label (default `ubuntu-latest`).
+#
+# Caller permissions required: contents: read, id-token: write, pull-requests: write.
+#
+# Example caller (service repository):
+#   jobs:
+#     checks:
+#       uses: rpallas/platform-cdk/.github/workflows/service-checks.yml@v1
+#       with:
+#         diff: true
+#         aws-region: ${{ vars.AWS_REGION }}
+#         readonly-role-arn: ${{ vars.AWS_READONLY_ROLE_ARN_DEV }}
+#       permissions:
+#         contents: read
+#         id-token: write
+#         pull-requests: write
+#
+# Implementation note: the composite actions live next to this workflow. Because `uses: ./...`
+# resolves against the *caller's* checkout, every job checks out the repository/commit this
+# workflow runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.platform-cdk` and
+# references the actions from there, so workflows and actions are always the same version.
+name: Service checks
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the CDK app.
+        type: string
+        required: false
+        default: .
+      install-working-directory:
+        description: Directory where `npm ci` runs (defaults to working-directory).
+        type: string
+        required: false
+        default: ""
+      build-command:
+        description: Optional build command run from install-working-directory after install.
+        type: string
+        required: false
+        default: ""
+      node-version:
+        description: Node.js version (empty = `.nvmrc`).
+        type: string
+        required: false
+        default: ""
+      lint-command:
+        description: Lint command run from working-directory.
+        type: string
+        required: false
+        default: npm run lint --if-present
+      test-command:
+        description: Test command run from working-directory.
+        type: string
+        required: false
+        default: npm test --if-present
+      synth-env:
+        description: Environment passed to `cdk synth`.
+        type: string
+        required: false
+        default: dev
+      synth-command:
+        description: Synth command override (default `npx cdk synth -c env=<synth-env> --quiet`).
+        type: string
+        required: false
+        default: ""
+      aws-region:
+        description: AWS region (required for the diff job).
+        type: string
+        required: false
+        default: ""
+      readonly-role-arn:
+        description: Read-only IAM role ARN assumed via OIDC for `cdk diff`.
+        type: string
+        required: false
+        default: ""
+      diff:
+        description: Post a `cdk diff` comment on pull requests.
+        type: boolean
+        required: false
+        default: false
+      runs-on:
+        description: Runner label.
+        type: string
+        required: false
+        default: ubuntu-latest
+    secrets: {}
+
+jobs:
+  checks:
+    name: Lint, test, synth
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      # No further local actions are needed in this job; remove the helper checkout so repository
+      # wide linters (prettier/eslint on `.`) do not see it.
+      - name: Remove platform-cdk actions checkout
+        run: rm -rf .platform-cdk
+
+      - name: Lint
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          LINT_COMMAND: ${{ inputs.lint-command }}
+        run: eval "$LINT_COMMAND"
+
+      - name: Test
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          TEST_COMMAND: ${{ inputs.test-command }}
+        run: eval "$TEST_COMMAND"
+
+      - name: Synth
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          SYNTH_COMMAND: ${{ inputs.synth-command || format('npx cdk synth -c env={0} --quiet', inputs.synth-env) }}
+          CI: "true"
+        run: eval "$SYNTH_COMMAND"
+
+      - name: Upload cdk.out
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdk-out
+          path: ${{ inputs.working-directory }}/cdk.out
+          if-no-files-found: ignore
+          retention-days: 7
+
+  diff:
+    name: cdk diff
+    if: ${{ inputs.diff && inputs.readonly-role-arn != '' && github.event_name == 'pull_request' }}
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      - name: AWS login (read-only)
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ inputs.readonly-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: cdk diff comment
+        uses: ./.platform-cdk/.github/actions/cdk-diff-comment
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          env: ${{ inputs.synth-env }}

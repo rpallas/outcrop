@@ -1,0 +1,47 @@
+name: AWS OIDC login
+description: >-
+  Assumes an AWS IAM role using the GitHub Actions OIDC token (no long-lived access keys) via
+  aws-actions/configure-aws-credentials and exposes the resulting AWS account id. The calling job
+  must grant `permissions: id-token: write`.
+
+inputs:
+  role-arn:
+    description: ARN of the IAM role to assume (must trust the GitHub OIDC provider).
+    required: true
+  aws-region:
+    description: AWS region to configure (e.g. `eu-west-1`).
+    required: true
+  session-name:
+    description: Role session name shown in CloudTrail.
+    required: false
+    default: platform-cdk-${{ github.run_id }}
+  duration-seconds:
+    description: Session duration in seconds (must not exceed the role's maximum session duration).
+    required: false
+    default: "3600"
+
+outputs:
+  account-id:
+    description: The AWS account id of the assumed role (masked in logs).
+    value: ${{ steps.identity.outputs.account-id }}
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.role-arn }}
+        aws-region: ${{ inputs.aws-region }}
+        role-session-name: ${{ inputs.session-name }}
+        role-duration-seconds: ${{ inputs.duration-seconds }}
+
+    - name: Resolve caller identity
+      id: identity
+      shell: bash
+      run: |
+        set -euo pipefail
+        account_id="$(aws sts get-caller-identity --query Account --output text)"
+        echo "::add-mask::$account_id"
+        echo "account-id=$account_id" >> "$GITHUB_OUTPUT"
+        echo "Assumed role in account $account_id"

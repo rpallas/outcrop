@@ -1,0 +1,2483 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`HelloHttpStack matches the dev snapshot 1`] = `
+{
+  "Description": "Example Platform / hello-http (dev)",
+  "Outputs": {
+    "ApiBaseUrl": {
+      "Value": "https://hello-http.dev.example.com",
+    },
+    "ApiDomainName": {
+      "Value": "hello-http.dev.example.com",
+    },
+    "ApiId": {
+      "Value": {
+        "Ref": "ApiF70053CD",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/platform/env/dev/alerts/topic-arn/high",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/platform/env/dev/alerts/topic-arn/medium",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ApiAccessLogsE9DF007D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/platform/apigateway/hello-http-api",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ApiAliasRecordBCE933A3": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalDomainName",
+            ],
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalHostedZoneId",
+            ],
+          },
+        },
+        "HostedZoneId": "Z0000000000000000000A",
+        "Name": "hello-http.dev.example.com.",
+        "Type": "A",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "ApiDELETEitemsidE93A2730": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "DELETE /items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsidInthttphandleritemsidF2A2910C",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiDELETEitemsidInthttphandleritemsidPermission52A0474E": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items/{id}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiDefaultStage189A7074": {
+      "DependsOn": [
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "ApiAccessLogsE9DF007D",
+              "Arn",
+            ],
+          },
+          "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","routeKey":"$context.routeKey","path":"$context.path","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength","responseLatency":"$context.responseLatency","integrationLatency":"$context.integrationLatency","integrationStatus":"$context.integrationStatus","integrationError":"$context.integrationErrorMessage","errorMessage":"$context.error.message","userAgent":"$context.identity.userAgent","authorizerError":"$context.authorizer.error","principalId":"$context.authorizer.principalId","jwtSub":"$context.authorizer.claims.sub"}",
+        },
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": true,
+          "ThrottlingBurstLimit": 200,
+          "ThrottlingRateLimit": 100,
+        },
+        "StageName": "$default",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/hello-http",
+          "platform:service": "hello-http",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Stage",
+    },
+    "ApiDefaultStageServiceApiDomainundefined3ED9DB07": {
+      "DependsOn": [
+        "ApiDefaultStage189A7074",
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "DomainName": {
+          "Ref": "ApiDomain2D27DFFC",
+        },
+        "Stage": "$default",
+      },
+      "Type": "AWS::ApiGatewayV2::ApiMapping",
+    },
+    "ApiDomain2D27DFFC": {
+      "Properties": {
+        "DomainName": "hello-http.dev.example.com",
+        "DomainNameConfigurations": [
+          {
+            "CertificateArn": "arn:aws:acm:eu-west-1:111111111111:certificate/00000000-0000-0000-0000-000000000000",
+            "EndpointType": "REGIONAL",
+          },
+        ],
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/hello-http",
+          "platform:service": "hello-http",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::DomainName",
+    },
+    "ApiF70053CD": {
+      "Properties": {
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "authorization",
+            "content-type",
+            "x-request-id",
+            "x-correlation-id",
+          ],
+          "AllowMethods": [
+            "*",
+          ],
+          "AllowOrigins": [
+            "*",
+          ],
+          "MaxAge": 3600,
+        },
+        "Description": "hello-http api (dev)",
+        "Name": "hello-http-api",
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/hello-http",
+          "platform:service": "hello-http",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Api",
+    },
+    "ApiGEThealthA417CA46": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /health",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGEThealthInthttphandlerhealthEB45852E",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGEThealthInthttphandlerhealthEB45852E": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGEThealthInthttphandlerhealthPermission815E993F": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/health",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiGETitems28A279F0": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /items",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsInthttphandleritemsA3F650C8",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGETitemsInthttphandleritemsA3F650C8": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGETitemsInthttphandleritemsPermissionC90C2CA8": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiGETitemsid0354A0F7": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsidInthttphandleritemsidF2A2910C",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGETitemsidInthttphandleritemsidF2A2910C": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGETitemsidInthttphandleritemsidPermission6857F81C": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items/{id}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiLatencyAlarmFC74CB69": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] hello-http: api-latency",
+        "AlarmName": "hello-http-api-latency",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Latency",
+        "Namespace": "AWS/ApiGateway",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 3000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ApiPOSTitems1297276D": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "POST /items",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsInthttphandleritemsA3F650C8",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiPOSTitemsInthttphandleritemsPermission79829546": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiServerErrorsAlarm652FC3ED": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[high] hello-http: api-5xx",
+        "AlarmName": "hello-http-api-5xx",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "5xx",
+        "Namespace": "AWS/ApiGateway",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HttpHandler0349C013": {
+      "DependsOn": [
+        "HttpHandlerServiceRoleDefaultPolicyFA8173F3",
+        "HttpHandlerServiceRole2524E11C",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "LOG_LEVEL": "info",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "http-handler",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "hello-http",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "false",
+            "POWERTOOLS_LOG_LEVEL": "INFO",
+            "POWERTOOLS_SERVICE_NAME": "hello-http",
+            "TABLE_NAME": {
+              "Ref": "TableCD117FA1",
+            },
+          },
+        },
+        "FunctionName": "hello-http-http-handler",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "HttpHandlerLogGroup905BCB69",
+          },
+        },
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "HttpHandlerServiceRole2524E11C",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "HttpHandlerDurationAlarm68FF57B3": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] hello-http: http-handler-duration",
+        "AlarmName": "hello-http-http-handler-duration",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "HttpHandler0349C013",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Duration",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 8000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HttpHandlerErrorsAlarm3537E902": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[high] hello-http: http-handler-errors",
+        "AlarmName": "hello-http-http-handler-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "HttpHandler0349C013",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnhighC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HttpHandlerLogGroup905BCB69": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/hello-http-http-handler",
+        "RetentionInDays": 90,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "HttpHandlerServiceRole2524E11C": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HttpHandlerServiceRoleDefaultPolicyFA8173F3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "TableCD117FA1",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "TableCD117FA1",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "TableCD117FA1",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "TableCD117FA1",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "HttpHandlerServiceRoleDefaultPolicyFA8173F3",
+        "Roles": [
+          {
+            "Ref": "HttpHandlerServiceRole2524E11C",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "HttpHandlerThrottlesAlarm572F4052": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] hello-http: http-handler-throttles",
+        "AlarmName": "hello-http-http-handler-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "HttpHandler0349C013",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Throttles",
+        "Namespace": "AWS/Lambda",
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "TableCD117FA1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "gsi1pk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "gsi1sk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "gsi1pk-gsi1sk-index",
+            "KeySchema": [
+              {
+                "AttributeName": "gsi1pk",
+                "KeyType": "HASH",
+              },
+              {
+                "AttributeName": "gsi1sk",
+                "KeyType": "RANGE",
+              },
+            ],
+            "Projection": {
+              "ProjectionType": "ALL",
+            },
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE",
+          },
+        ],
+        "Replicas": [
+          {
+            "DeletionProtectionEnabled": false,
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "gsi1pk-gsi1sk-index",
+              },
+            ],
+            "PointInTimeRecoverySpecification": {
+              "PointInTimeRecoveryEnabled": true,
+            },
+            "Region": "eu-west-1",
+            "Tags": [
+              {
+                "Key": "platform:env",
+                "Value": "dev",
+              },
+              {
+                "Key": "platform:managed-by",
+                "Value": "platform-cdk",
+              },
+              {
+                "Key": "platform:project",
+                "Value": "Example Platform",
+              },
+              {
+                "Key": "platform:repository",
+                "Value": "example-org/hello-http",
+              },
+              {
+                "Key": "platform:service",
+                "Value": "hello-http",
+              },
+            ],
+          },
+        ],
+        "SSESpecification": {
+          "SSEEnabled": false,
+        },
+        "TableName": "hello-http-table",
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "TableThrottlesAlarm781D6284": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "AlarmDescription": "[medium] hello-http: table-throttles",
+        "AlarmName": "hello-http-table-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "readThrottles + writeThrottles",
+            "Id": "expr_1",
+            "Label": "Throttle events",
+            "ReturnData": true,
+          },
+          {
+            "Id": "readThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "TableCD117FA1",
+                    },
+                  },
+                ],
+                "MetricName": "ReadThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "writeThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "TableCD117FA1",
+                    },
+                  },
+                ],
+                "MetricName": "WriteThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "OKActions": [
+          {
+            "Ref": "SsmParameterValueplatformenvdevalertstopicarnmediumC96584B6F00A464EAD1953AFF4B05118Parameter",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`HelloHttpStack matches the preview snapshot 1`] = `
+{
+  "Description": "Example Platform / hello-http (dev, preview abc-123)",
+  "Outputs": {
+    "ApiBaseUrl": {
+      "Value": "https://hello-http-abc-123.dev.example.com",
+    },
+    "ApiDomainName": {
+      "Value": "hello-http-abc-123.dev.example.com",
+    },
+    "ApiId": {
+      "Value": {
+        "Ref": "ApiF70053CD",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ApiAccessLogsE9DF007D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/platform/apigateway/abc-123-hello-http-api",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ApiAliasRecordBCE933A3": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalDomainName",
+            ],
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "ApiDomain2D27DFFC",
+              "RegionalHostedZoneId",
+            ],
+          },
+        },
+        "HostedZoneId": "Z0000000000000000000A",
+        "Name": "hello-http-abc-123.dev.example.com.",
+        "Type": "A",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "ApiDELETEitemsidE93A2730": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "DELETE /items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsidInthttphandleritemsidF2A2910C",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiDELETEitemsidInthttphandleritemsidPermission52A0474E": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items/{id}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiDefaultStage189A7074": {
+      "DependsOn": [
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "ApiAccessLogsE9DF007D",
+              "Arn",
+            ],
+          },
+          "Format": "{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","routeKey":"$context.routeKey","path":"$context.path","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength","responseLatency":"$context.responseLatency","integrationLatency":"$context.integrationLatency","integrationStatus":"$context.integrationStatus","integrationError":"$context.integrationErrorMessage","errorMessage":"$context.error.message","userAgent":"$context.identity.userAgent","authorizerError":"$context.authorizer.error","principalId":"$context.authorizer.principalId","jwtSub":"$context.authorizer.claims.sub"}",
+        },
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": true,
+          "ThrottlingBurstLimit": 200,
+          "ThrottlingRateLimit": 100,
+        },
+        "StageName": "$default",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:preview-id": "abc-123",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/hello-http",
+          "platform:service": "hello-http",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Stage",
+    },
+    "ApiDefaultStageServiceApiDomainundefined3ED9DB07": {
+      "DependsOn": [
+        "ApiDefaultStage189A7074",
+        "ApiDomain2D27DFFC",
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "DomainName": {
+          "Ref": "ApiDomain2D27DFFC",
+        },
+        "Stage": "$default",
+      },
+      "Type": "AWS::ApiGatewayV2::ApiMapping",
+    },
+    "ApiDomain2D27DFFC": {
+      "Properties": {
+        "DomainName": "hello-http-abc-123.dev.example.com",
+        "DomainNameConfigurations": [
+          {
+            "CertificateArn": "arn:aws:acm:eu-west-1:111111111111:certificate/00000000-0000-0000-0000-000000000000",
+            "EndpointType": "REGIONAL",
+          },
+        ],
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:preview-id": "abc-123",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/hello-http",
+          "platform:service": "hello-http",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::DomainName",
+    },
+    "ApiF70053CD": {
+      "Properties": {
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "authorization",
+            "content-type",
+            "x-request-id",
+            "x-correlation-id",
+          ],
+          "AllowMethods": [
+            "*",
+          ],
+          "AllowOrigins": [
+            "*",
+          ],
+          "MaxAge": 3600,
+        },
+        "Description": "hello-http api (dev)",
+        "Name": "abc-123-hello-http-api",
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "platform-cdk",
+          "platform:preview-id": "abc-123",
+          "platform:project": "Example Platform",
+          "platform:repository": "example-org/hello-http",
+          "platform:service": "hello-http",
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Api",
+    },
+    "ApiGEThealthA417CA46": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /health",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGEThealthInthttphandlerhealthEB45852E",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGEThealthInthttphandlerhealthEB45852E": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGEThealthInthttphandlerhealthPermission815E993F": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/health",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiGETitems28A279F0": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /items",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsInthttphandleritemsA3F650C8",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGETitemsInthttphandleritemsA3F650C8": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGETitemsInthttphandleritemsPermissionC90C2CA8": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiGETitemsid0354A0F7": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsidInthttphandleritemsidF2A2910C",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiGETitemsidInthttphandleritemsidF2A2910C": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "PayloadFormatVersion": "2.0",
+      },
+      "Type": "AWS::ApiGatewayV2::Integration",
+    },
+    "ApiGETitemsidInthttphandleritemsidPermission6857F81C": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items/{id}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiLatencyAlarmFC74CB69": {
+      "Properties": {
+        "AlarmDescription": "[medium] hello-http: api-latency",
+        "AlarmName": "abc-123-hello-http-api-latency",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Latency",
+        "Namespace": "AWS/ApiGateway",
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 3000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ApiPOSTitems1297276D": {
+      "Properties": {
+        "ApiId": {
+          "Ref": "ApiF70053CD",
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "POST /items",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "ApiGETitemsInthttphandleritemsA3F650C8",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::ApiGatewayV2::Route",
+    },
+    "ApiPOSTitemsInthttphandleritemsPermission79829546": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "HttpHandler0349C013",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:eu-west-1:111111111111:",
+              {
+                "Ref": "ApiF70053CD",
+              },
+              "/*/*/items",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ApiServerErrorsAlarm652FC3ED": {
+      "Properties": {
+        "AlarmDescription": "[high] hello-http: api-5xx",
+        "AlarmName": "abc-123-hello-http-api-5xx",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "ApiF70053CD",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "5xx",
+        "Namespace": "AWS/ApiGateway",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HttpHandler0349C013": {
+      "DependsOn": [
+        "HttpHandlerServiceRoleDefaultPolicyFA8173F3",
+        "HttpHandlerServiceRole2524E11C",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "LOG_LEVEL": "debug",
+            "NODE_OPTIONS": "--enable-source-maps",
+            "PLATFORM_ENV": "dev",
+            "PLATFORM_FUNCTION": "http-handler",
+            "PLATFORM_PREVIEW_ID": "abc-123",
+            "PLATFORM_PROJECT": "Example Platform",
+            "PLATFORM_SERVICE": "hello-http",
+            "PLATFORM_SSM_ROOT": "/platform",
+            "POWERTOOLS_LOGGER_LOG_EVENT": "true",
+            "POWERTOOLS_LOG_LEVEL": "DEBUG",
+            "POWERTOOLS_SERVICE_NAME": "hello-http",
+            "TABLE_NAME": {
+              "Ref": "TableCD117FA1",
+            },
+          },
+        },
+        "FunctionName": "abc-123-hello-http-http-handler",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogFormat": "Text",
+          "LogGroup": {
+            "Ref": "HttpHandlerLogGroup905BCB69",
+          },
+        },
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "HttpHandlerServiceRole2524E11C",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "HttpHandlerDurationAlarm68FF57B3": {
+      "Properties": {
+        "AlarmDescription": "[medium] hello-http: http-handler-duration",
+        "AlarmName": "abc-123-hello-http-http-handler-duration",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "HttpHandler0349C013",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "Duration",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 8000,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HttpHandlerErrorsAlarm3537E902": {
+      "Properties": {
+        "AlarmDescription": "[high] hello-http: http-handler-errors",
+        "AlarmName": "abc-123-hello-http-http-handler-errors",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "HttpHandler0349C013",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "HttpHandlerLogGroup905BCB69": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/abc-123-hello-http-http-handler",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "HttpHandlerServiceRole2524E11C": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HttpHandlerServiceRoleDefaultPolicyFA8173F3": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "TableCD117FA1",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "TableCD117FA1",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "TableCD117FA1",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "TableCD117FA1",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "HttpHandlerServiceRoleDefaultPolicyFA8173F3",
+        "Roles": [
+          {
+            "Ref": "HttpHandlerServiceRole2524E11C",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "HttpHandlerThrottlesAlarm572F4052": {
+      "Properties": {
+        "AlarmDescription": "[medium] hello-http: http-handler-throttles",
+        "AlarmName": "abc-123-hello-http-http-handler-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "HttpHandler0349C013",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "Throttles",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "TableCD117FA1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "sk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "gsi1pk",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "gsi1sk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "gsi1pk-gsi1sk-index",
+            "KeySchema": [
+              {
+                "AttributeName": "gsi1pk",
+                "KeyType": "HASH",
+              },
+              {
+                "AttributeName": "gsi1sk",
+                "KeyType": "RANGE",
+              },
+            ],
+            "Projection": {
+              "ProjectionType": "ALL",
+            },
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "sk",
+            "KeyType": "RANGE",
+          },
+        ],
+        "Replicas": [
+          {
+            "DeletionProtectionEnabled": false,
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "gsi1pk-gsi1sk-index",
+              },
+            ],
+            "PointInTimeRecoverySpecification": {
+              "PointInTimeRecoveryEnabled": false,
+            },
+            "Region": "eu-west-1",
+            "Tags": [
+              {
+                "Key": "platform:env",
+                "Value": "dev",
+              },
+              {
+                "Key": "platform:managed-by",
+                "Value": "platform-cdk",
+              },
+              {
+                "Key": "platform:preview-id",
+                "Value": "abc-123",
+              },
+              {
+                "Key": "platform:project",
+                "Value": "Example Platform",
+              },
+              {
+                "Key": "platform:repository",
+                "Value": "example-org/hello-http",
+              },
+              {
+                "Key": "platform:service",
+                "Value": "hello-http",
+              },
+            ],
+          },
+        ],
+        "SSESpecification": {
+          "SSEEnabled": false,
+        },
+        "TableName": "abc-123-hello-http-table",
+        "TimeToLiveSpecification": {
+          "AttributeName": "ttl",
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "TableThrottlesAlarm781D6284": {
+      "Properties": {
+        "AlarmDescription": "[medium] hello-http: table-throttles",
+        "AlarmName": "abc-123-hello-http-table-throttles",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "readThrottles + writeThrottles",
+            "Id": "expr_1",
+            "Label": "Throttle events",
+            "ReturnData": true,
+          },
+          {
+            "Id": "readThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "TableCD117FA1",
+                    },
+                  },
+                ],
+                "MetricName": "ReadThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "writeThrottles",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Ref": "TableCD117FA1",
+                    },
+                  },
+                ],
+                "MetricName": "WriteThrottleEvents",
+                "Namespace": "AWS/DynamoDB",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "platform-cdk",
+          },
+          {
+            "Key": "platform:preview-id",
+            "Value": "abc-123",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "Example Platform",
+          },
+          {
+            "Key": "platform:repository",
+            "Value": "example-org/hello-http",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "hello-http",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

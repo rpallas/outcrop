@@ -1,0 +1,34 @@
+# Dogfooding: destroy the examples/hello-http preview when a pull request is closed.
+#
+# Skipped entirely when the repository variable SANDBOX_DEPLOY_ROLE_ARN is not set.
+name: Examples preview destroy
+
+on:
+  pull_request:
+    types: [closed]
+    paths:
+      - examples/hello-http/**
+      - packages/**
+      - .github/**
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  destroy:
+    name: hello-http preview destroy
+    if: ${{ vars.SANDBOX_DEPLOY_ROLE_ARN != '' }}
+    uses: ./.github/workflows/service-preview-destroy.yml
+    with:
+      working-directory: examples/hello-http
+      install-working-directory: .
+      build-command: npm run build
+      aws-region: ${{ vars.AWS_REGION }}
+      role-arn: ${{ vars.SANDBOX_DEPLOY_ROLE_ARN }}
+      cli-command: node ../../packages/platform-cdk-cli/bin/platform-cdk.js
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write

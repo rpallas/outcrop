@@ -1,0 +1,141 @@
+name: CDK destroy
+description: >-
+  Destroys the stacks of a platform-cdk app (`cdk destroy --force`) with the standard `env` /
+  preview context. Lists the stacks with `cdk list` first and skips gracefully when none of them
+  exist in CloudFormation. Requires AWS credentials to be configured beforehand.
+
+inputs:
+  working-directory:
+    description: Directory containing the CDK app (`cdk.json`).
+    required: false
+    default: .
+  env:
+    description: Platform environment passed as `-c env=<env>`.
+    required: true
+  preview:
+    description: Destroy a preview environment (`true` adds `-c preview=true -c previewId=...`).
+    required: false
+    default: "false"
+  preview-id:
+    description: Preview id (required when `preview` is `true`).
+    required: false
+    default: ""
+  stacks:
+    description: Stacks to destroy - `--all` (default) or a comma/space separated list of names / wildcards.
+    required: false
+    default: --all
+  extra-context:
+    description: Additional CDK context as newline separated `key=value` pairs.
+    required: false
+    default: ""
+  cdk-command:
+    description: Command used to invoke the CDK CLI.
+    required: false
+    default: npx cdk
+
+outputs:
+  destroyed:
+    description: "`true` when at least one stack was destroyed, `false` when there was nothing to destroy."
+    value: ${{ steps.destroy.outputs.destroyed }}
+  stack-names:
+    description: Comma separated names of the stacks that were destroyed.
+    value: ${{ steps.destroy.outputs.stack-names }}
+
+runs:
+  using: composite
+  steps:
+    - name: cdk destroy
+      id: destroy
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        CDK_COMMAND: ${{ inputs.cdk-command }}
+        ENV_NAME: ${{ inputs.env }}
+        PREVIEW: ${{ inputs.preview }}
+        PREVIEW_ID: ${{ inputs.preview-id }}
+        STACKS: ${{ inputs.stacks }}
+        EXTRA_CONTEXT: ${{ inputs.extra-context }}
+        CI: "true"
+      run: |
+        set -euo pipefail
+        if [ -z "$ENV_NAME" ]; then
+          echo "::error::input 'env' is required"
+          exit 1
+        fi
+        if [ "$PREVIEW" = "true" ] && [ -z "$PREVIEW_ID" ]; then
+          echo "::error::input 'preview-id' is required when preview=true"
+          exit 1
+        fi
+
+        read -r -a cdk <<< "$CDK_COMMAND"
+        context=(-c "env=$ENV_NAME")
+        if [ "$PREVIEW" = "true" ]; then
+          context+=(-c preview=true -c "previewId=$PREVIEW_ID")
+        fi
+        while IFS= read -r line; do
+          line="$(printf '%s' "$line" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+          if [ -z "$line" ] || [ "${line#\#}" != "$line" ]; then
+            continue
+          fi
+          case "$line" in
+            *=*) context+=(-c "$line") ;;
+            *)
+              echo "::error::extra-context line '$line' is not a key=value pair"
+              exit 1
+              ;;
+          esac
+        done <<< "$EXTRA_CONTEXT"
+
+        selectors=()
+        if [ -n "$STACKS" ] && [ "$STACKS" != "--all" ]; then
+          read -r -a selectors <<< "$(printf '%s' "$STACKS" | tr ',' ' ')"
+        fi
+
+        # 1. Which stacks does the app define for this context?
+        echo "Listing stacks: ${cdk[*]} list ${context[*]} ${selectors[*]:-}"
+        mapfile -t candidates < <("${cdk[@]}" list "${context[@]}" ${selectors[@]+"${selectors[@]}"} 2>/dev/null | sed '/^[[:space:]]*$/d')
+        if [ "${#candidates[@]}" -eq 0 ]; then
+          echo "nothing to destroy (cdk list returned no stacks)"
+          echo "destroyed=false" >> "$GITHUB_OUTPUT"
+          echo "stack-names=" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        # 2. Which of them actually exist in CloudFormation?
+        existing=()
+        for stack in "${candidates[@]}"; do
+          if status="$(aws cloudformation describe-stacks --stack-name "$stack" \
+              --query 'Stacks[0].StackStatus' --output text 2>/dev/null)"; then
+            echo "  $stack: $status"
+            existing+=("$stack")
+          else
+            echo "  $stack: does not exist"
+          fi
+        done
+        if [ "${#existing[@]}" -eq 0 ]; then
+          echo "nothing to destroy"
+          echo "destroyed=false" >> "$GITHUB_OUTPUT"
+          echo "stack-names=" >> "$GITHUB_OUTPUT"
+          {
+            echo "### cdk destroy (\`$ENV_NAME\`)"
+            echo ""
+            echo "Nothing to destroy - none of the stacks exist."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+        fi
+
+        # 3. Destroy the existing ones.
+        echo "Running: ${cdk[*]} destroy --force ${context[*]} ${existing[*]}"
+        "${cdk[@]}" destroy --force "${context[@]}" "${existing[@]}"
+
+        names="$(IFS=,; echo "${existing[*]}")"
+        echo "destroyed=true" >> "$GITHUB_OUTPUT"
+        echo "stack-names=$names" >> "$GITHUB_OUTPUT"
+        {
+          echo "### cdk destroy (\`$ENV_NAME\`)"
+          echo ""
+          if [ "$PREVIEW" = "true" ]; then
+            echo "- Preview id: \`$PREVIEW_ID\`"
+          fi
+          echo "- Destroyed: \`${names//,/\`, \`}\`"
+        } >> "$GITHUB_STEP_SUMMARY"

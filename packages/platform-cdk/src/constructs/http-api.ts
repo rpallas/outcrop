@@ -8,6 +8,7 @@ import {
   HttpApi,
   type HttpApiProps,
   HttpMethod,
+  HttpNoneAuthorizer,
   type HttpRoute,
   type IHttpRouteAuthorizer,
   type IHttpApi,
@@ -125,6 +126,8 @@ export const PlatformHttpAuthorizers = {
     }),
   /** AWS IAM (SigV4) authorization. */
   iam: (): HttpIamAuthorizer => new HttpIamAuthorizer(),
+  /** Explicitly public route when the API has a default authorizer. */
+  none: (): HttpNoneAuthorizer => new HttpNoneAuthorizer(),
 };
 
 /**

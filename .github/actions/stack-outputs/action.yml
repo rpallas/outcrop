@@ -1,0 +1,198 @@
+name: Stack outputs
+description: >-
+  Collects CloudFormation stack outputs - from the `cdk deploy --outputs-file` JSON, from the
+  platform-cdk CLI (`stack-outputs` command) or from `aws cloudformation describe-stacks` - and
+  exports each as `<prefix><OutputKey>` to `$GITHUB_ENV` and `$GITHUB_OUTPUT`. Keys are sanitised
+  to `[A-Za-z0-9_]`. A combined `outputs-json` output is always produced.
+
+inputs:
+  outputs-file:
+    description: Path of the outputs JSON written by `cdk deploy --outputs-file` (as produced by the `cdk-deploy` action).
+    required: false
+    default: ""
+  stack-names:
+    description: Comma separated stack names to read outputs from when no outputs file is given (uses the AWS CLI / platform-cdk CLI).
+    required: false
+    default: ""
+  prefix:
+    description: Prefix prepended to every exported key, e.g. `PREVIEW_`.
+    required: false
+    default: ""
+  export-env:
+    description: Write the outputs to `$GITHUB_ENV` so later steps see them as environment variables.
+    required: false
+    default: "true"
+  export-output:
+    description: Write the outputs to `$GITHUB_OUTPUT` (available as `steps.<id>.outputs.<PREFIX><Key>`).
+    required: false
+    default: "true"
+  cli-version:
+    description: >-
+      Version of `@rpallas/platform-cdk-cli` to run via `npx --yes`. When either `cli-version` or
+      `cli-command` is set the CLI `stack-outputs` command is preferred for fetching outputs; leave
+      both empty to use jq / the AWS CLI only.
+    required: false
+    default: ""
+  cli-command:
+    description: Explicit command used to invoke the CLI, e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`.
+    required: false
+    default: ""
+  working-directory:
+    description: Directory the CLI command is executed from.
+    required: false
+    default: .
+
+outputs:
+  outputs-json:
+    description: Single-line JSON object of all (prefixed, sanitised) outputs, e.g. `{"PREVIEW_ApiBaseUrl":"https://..."}`.
+    value: ${{ steps.export.outputs.outputs-json }}
+  count:
+    description: Number of exported outputs.
+    value: ${{ steps.export.outputs.count }}
+
+runs:
+  using: composite
+  steps:
+    - name: Collect outputs
+      id: collect
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        OUTPUTS_FILE: ${{ inputs.outputs-file }}
+        STACK_NAMES: ${{ inputs.stack-names }}
+        CLI_VERSION: ${{ inputs.cli-version }}
+        CLI_COMMAND: ${{ inputs.cli-command }}
+      run: |
+        set -euo pipefail
+        raw="$RUNNER_TEMP/stack-outputs.raw.json"
+        rm -f "$raw"
+
+        # Flatten `{ "Stack": { "Key": "value" } }` (cdk outputs file / CLI format) to `{ "Key": "value" }`.
+        # A flat object is passed through unchanged. Later stacks win on duplicate keys.
+        flatten='if (length == 0) then {} elif ([.[] | type] | all(. == "object")) then ([to_entries[].value | to_entries[]] | from_entries) else . end'
+
+        stacks=()
+        if [ -n "$STACK_NAMES" ]; then
+          read -r -a stacks <<< "$(printf '%s' "$STACK_NAMES" | tr ',' ' ')"
+        elif [ -n "$OUTPUTS_FILE" ] && [ -f "$OUTPUTS_FILE" ]; then
+          read -r -a stacks <<< "$(jq -r 'keys | join(" ")' "$OUTPUTS_FILE")"
+        fi
+
+        # 1. platform-cdk CLI, when requested. The CLI reads the cdk outputs file when we have one
+        #    and otherwise describes the stacks; `--json` writes `{ "Stack": { "Key": "value" } }`.
+        if [ -n "$CLI_COMMAND" ] || [ -n "$CLI_VERSION" ]; then
+          if [ -z "$OUTPUTS_FILE" ] && [ "${#stacks[@]}" -eq 0 ]; then
+            echo "::warning::CLI requested but neither an outputs file nor stack names are available; falling back to jq/aws"
+          else
+            if [ -n "$CLI_COMMAND" ]; then
+              read -r -a cli <<< "$CLI_COMMAND"
+            else
+              cli=(npx --yes "@rpallas/platform-cdk-cli@${CLI_VERSION}")
+            fi
+            args=(stack-outputs)
+            if [ -n "$OUTPUTS_FILE" ] && [ -f "$OUTPUTS_FILE" ]; then
+              args+=(--outputs-file "$OUTPUTS_FILE")
+            else
+              for stack in "${stacks[@]}"; do
+                args+=(--stack "$stack")
+              done
+            fi
+            args+=(--json "$raw")
+            echo "Trying CLI: ${cli[*]} ${args[*]}"
+            if "${cli[@]}" "${args[@]}" && [ -s "$raw" ] && jq -e 'type == "object"' "$raw" > /dev/null 2>&1; then
+              echo "source=cli" >> "$GITHUB_OUTPUT"
+            else
+              echo "::notice::platform-cdk CLI unavailable or returned no JSON; falling back to jq/aws"
+              rm -f "$raw"
+            fi
+          fi
+        fi
+
+        # 2. cdk outputs file.
+        if [ ! -f "$raw" ] && [ -n "$OUTPUTS_FILE" ]; then
+          if [ -f "$OUTPUTS_FILE" ]; then
+            cp "$OUTPUTS_FILE" "$raw"
+            echo "source=outputs-file" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::outputs file '$OUTPUTS_FILE' not found"
+          fi
+        fi
+
+        # 3. CloudFormation API.
+        if [ ! -f "$raw" ] && [ "${#stacks[@]}" -gt 0 ]; then
+          echo "{}" > "$raw"
+          for stack in "${stacks[@]}"; do
+            echo "Describing stack $stack"
+            outputs="$(aws cloudformation describe-stacks --stack-name "$stack" \
+              --query 'Stacks[0].Outputs' --output json)"
+            jq --arg stack "$stack" --argjson outputs "${outputs:-null}" \
+              '. + { ($stack): (($outputs // []) | map({ (.OutputKey): .OutputValue }) | add // {}) }' \
+              "$raw" > "$raw.tmp"
+            mv "$raw.tmp" "$raw"
+          done
+          echo "source=aws" >> "$GITHUB_OUTPUT"
+        fi
+
+        if [ ! -f "$raw" ]; then
+          echo "::error::Provide either 'outputs-file' or 'stack-names'"
+          exit 1
+        fi
+
+        flat="$RUNNER_TEMP/stack-outputs.flat.json"
+        jq "$flatten" "$raw" > "$flat"
+        echo "flat-file=$flat" >> "$GITHUB_OUTPUT"
+        echo "Collected $(jq 'length' "$flat") output(s)"
+
+    - name: Export outputs
+      id: export
+      shell: bash
+      env:
+        FLAT_FILE: ${{ steps.collect.outputs.flat-file }}
+        PREFIX: ${{ inputs.prefix }}
+        EXPORT_ENV: ${{ inputs.export-env }}
+        EXPORT_OUTPUT: ${{ inputs.export-output }}
+      run: |
+        set -euo pipefail
+        final="$RUNNER_TEMP/stack-outputs.json"
+        # Apply prefix and sanitise keys to [A-Za-z0-9_].
+        jq --arg prefix "$PREFIX" \
+          'with_entries(.key = (($prefix + .key) | gsub("[^A-Za-z0-9_]"; "_")) | .value = (.value | tostring))' \
+          "$FLAT_FILE" > "$final"
+
+        count="$(jq 'length' "$final")"
+        {
+          echo "### Stack outputs"
+          echo ""
+          if [ "$count" -eq 0 ]; then
+            echo "No outputs."
+          else
+            echo "| Key | Value |"
+            echo "| --- | --- |"
+          fi
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        while IFS= read -r key; do
+          value="$(jq -r --arg k "$key" '.[$k]' "$final")"
+          delimiter="EOF_$(date +%s%N)_$RANDOM"
+          if [ "$EXPORT_ENV" = "true" ]; then
+            {
+              echo "$key<<$delimiter"
+              echo "$value"
+              echo "$delimiter"
+            } >> "$GITHUB_ENV"
+          fi
+          if [ "$EXPORT_OUTPUT" = "true" ]; then
+            {
+              echo "$key<<$delimiter"
+              echo "$value"
+              echo "$delimiter"
+            } >> "$GITHUB_OUTPUT"
+          fi
+          echo "| \`$key\` | \`${value//$'\n'/ }\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "  $key"
+        done < <(jq -r 'keys[]' "$final")
+
+        {
+          echo "outputs-json=$(jq -c . "$final")"
+          echo "count=$count"
+        } >> "$GITHUB_OUTPUT"

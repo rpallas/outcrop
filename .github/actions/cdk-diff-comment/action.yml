@@ -1,0 +1,181 @@
+name: CDK diff comment
+description: >-
+  Runs `cdk diff --no-color` against the deployed stacks and posts the result as a single sticky
+  pull request comment (marker `<!-- platform-cdk-diff -->`) inside a collapsible block. The job
+  does not fail when the diff reports differences. Requires read-only AWS credentials (see
+  `aws-oidc-login`) and `permissions: pull-requests: write`.
+
+inputs:
+  working-directory:
+    description: Directory containing the CDK app (`cdk.json`).
+    required: false
+    default: .
+  env:
+    description: Platform environment passed as `-c env=<env>`.
+    required: true
+  stacks:
+    description: Stacks to diff - `--all` (default) or a comma/space separated list of names / wildcards.
+    required: false
+    default: --all
+  extra-context:
+    description: Additional CDK context as newline separated `key=value` pairs.
+    required: false
+    default: ""
+  cdk-command:
+    description: Command used to invoke the CDK CLI.
+    required: false
+    default: npx cdk
+  max-chars:
+    description: Maximum number of diff characters included in the comment (the rest is truncated with a note).
+    required: false
+    default: "60000"
+  pr-number:
+    description: Pull request number. Defaults to the current pull request; the comment is skipped when there is none.
+    required: false
+    default: ${{ github.event.pull_request.number }}
+  github-token:
+    description: Token used to read and write issue comments.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  exit-code:
+    description: Exit code of `cdk diff` (non-zero typically means differences were found).
+    value: ${{ steps.diff.outputs.exit-code }}
+  diff-file:
+    description: Path of the captured diff output.
+    value: ${{ steps.diff.outputs.diff-file }}
+  comment-id:
+    description: Id of the created or updated comment (empty when skipped).
+    value: ${{ steps.comment.outputs.comment-id }}
+
+runs:
+  using: composite
+  steps:
+    - name: cdk diff
+      id: diff
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        CDK_COMMAND: ${{ inputs.cdk-command }}
+        ENV_NAME: ${{ inputs.env }}
+        STACKS: ${{ inputs.stacks }}
+        EXTRA_CONTEXT: ${{ inputs.extra-context }}
+        CI: "true"
+      run: |
+        set -euo pipefail
+        if [ -z "$ENV_NAME" ]; then
+          echo "::error::input 'env' is required"
+          exit 1
+        fi
+        read -r -a cdk <<< "$CDK_COMMAND"
+        args=(diff --no-color -c "env=$ENV_NAME")
+        while IFS= read -r line; do
+          line="$(printf '%s' "$line" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+          if [ -z "$line" ] || [ "${line#\#}" != "$line" ]; then
+            continue
+          fi
+          case "$line" in
+            *=*) args+=(-c "$line") ;;
+            *)
+              echo "::error::extra-context line '$line' is not a key=value pair"
+              exit 1
+              ;;
+          esac
+        done <<< "$EXTRA_CONTEXT"
+        if [ -z "$STACKS" ] || [ "$STACKS" = "--all" ]; then
+          args+=(--all)
+        else
+          read -r -a stacks <<< "$(printf '%s' "$STACKS" | tr ',' ' ')"
+          args+=("${stacks[@]}")
+        fi
+
+        diff_file="$RUNNER_TEMP/cdk-diff.txt"
+        echo "Running: ${cdk[*]} ${args[*]}"
+        # `cdk diff` exits non-zero when differences exist (always with --fail, and in older CLI
+        # versions by default). The diff is informational, so we intentionally never let that fail
+        # the job; the exit code is captured and reported in the comment instead.
+        code=0
+        "${cdk[@]}" "${args[@]}" > "$diff_file" 2>&1 || code=$?
+        cat "$diff_file"
+        echo "cdk diff exited with $code"
+        {
+          echo "exit-code=$code"
+          echo "diff-file=$diff_file"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Create or update diff comment
+      id: comment
+      uses: actions/github-script@v7
+      env:
+        DIFF_FILE: ${{ steps.diff.outputs.diff-file }}
+        EXIT_CODE: ${{ steps.diff.outputs.exit-code }}
+        ENV_NAME: ${{ inputs.env }}
+        STACKS: ${{ inputs.stacks }}
+        MAX_CHARS: ${{ inputs.max-chars }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require("node:fs");
+          const marker = "<!-- platform-cdk-diff -->";
+          const env = process.env;
+          const prNumber = Number.parseInt(env.PR_NUMBER ?? "", 10);
+          if (!Number.isFinite(prNumber)) {
+            core.info("No pull request number available; skipping diff comment.");
+            core.setOutput("comment-id", "");
+            return;
+          }
+
+          const maxChars = Number.parseInt(env.MAX_CHARS ?? "60000", 10) || 60000;
+          let diff = fs.readFileSync(env.DIFF_FILE, "utf8").trimEnd();
+          let truncatedNote = "";
+          if (diff.length > maxChars) {
+            const omitted = diff.length - maxChars;
+            diff = diff.slice(0, maxChars);
+            truncatedNote = `\n\n_Output truncated: ${omitted} characters omitted. See the workflow run for the full diff._`;
+          }
+          // Guard against the diff itself closing the code fence.
+          diff = diff.replace(/```/g, "` ` `");
+
+          const exitCode = env.EXIT_CODE ?? "0";
+          const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          const summary = `cdk diff for \`${env.ENV_NAME}\` (${env.STACKS || "--all"}) - exit code ${exitCode}`;
+          const body = [
+            marker,
+            "### CDK diff",
+            "",
+            `Environment: \`${env.ENV_NAME}\` - [workflow run](${runUrl}) - ${new Date().toISOString()}`,
+            "",
+            "<details>",
+            `<summary>${summary}</summary>`,
+            "",
+            "```",
+            diff || "(no output)",
+            "```",
+            truncatedNote,
+            "</details>",
+          ].join("\n");
+
+          const { owner, repo } = context.repo;
+          const comments = await github.paginate(github.rest.issues.listComments, {
+            owner,
+            repo,
+            issue_number: prNumber,
+            per_page: 100,
+          });
+          const existing = comments.find((comment) => comment.body?.includes(marker));
+          if (existing) {
+            await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            core.info(`Updated diff comment ${existing.id}.`);
+            core.setOutput("comment-id", String(existing.id));
+          } else {
+            const { data } = await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body,
+            });
+            core.info(`Created diff comment ${data.id}.`);
+            core.setOutput("comment-id", String(data.id));
+          }

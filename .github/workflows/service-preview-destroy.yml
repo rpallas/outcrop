@@ -1,0 +1,195 @@
+# Reusable workflow: destroy the preview environment of a closed pull request.
+#
+# Trigger it from the caller on `pull_request: types: [closed]`.
+#
+# Behaviour
+#   - Same concurrency group as service-preview-deploy (`preview-<repo>-<pr>`) but without
+#     cancel-in-progress, so a destroy waits for an in-flight deploy instead of racing it.
+#   - Derives the preview id exactly like the deploy workflow, assumes the deploy role via OIDC,
+#     runs `cdk destroy --force` for the preview stacks (skipping gracefully when none exist) and
+#     updates the sticky preview comment to `destroyed`.
+#
+# Inputs: see service-preview-deploy.yml (minus integration tests / output prefix).
+#   install-working-directory / build-command exist for monorepos: `cdk list`/`cdk destroy` need
+#   the app to be built.
+#
+# Caller permissions required: contents: read, id-token: write, pull-requests: write.
+#
+# Example caller (service repository):
+#   on:
+#     pull_request:
+#       types: [closed]
+#   jobs:
+#     destroy:
+#       uses: rpallas/platform-cdk/.github/workflows/service-preview-destroy.yml@v1
+#       with:
+#         aws-region: ${{ vars.AWS_REGION }}
+#         role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
+#       permissions:
+#         contents: read
+#         id-token: write
+#         pull-requests: write
+name: Service preview destroy
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the CDK app.
+        type: string
+        required: false
+        default: .
+      install-working-directory:
+        description: Directory where `npm ci` runs (defaults to working-directory).
+        type: string
+        required: false
+        default: ""
+      build-command:
+        description: Optional build command run from install-working-directory after install.
+        type: string
+        required: false
+        default: ""
+      node-version:
+        description: Node.js version (empty = `.nvmrc`).
+        type: string
+        required: false
+        default: ""
+      aws-region:
+        description: AWS region.
+        type: string
+        required: true
+      role-arn:
+        description: IAM role ARN assumed via OIDC.
+        type: string
+        required: true
+      target-env:
+        description: Platform environment that hosts preview stacks.
+        type: string
+        required: false
+        default: dev
+      strategy:
+        description: Preview id strategy (`ticket-then-pr`, `pr`, `branch-slug`).
+        type: string
+        required: false
+        default: ticket-then-pr
+      stacks:
+        description: Stacks to destroy (`--all` or a comma separated list / wildcards).
+        type: string
+        required: false
+        default: --all
+      extra-context:
+        description: Newline separated `key=value` CDK context pairs.
+        type: string
+        required: false
+        default: ""
+      runs-on:
+        description: Runner label.
+        type: string
+        required: false
+        default: ubuntu-latest
+      cli-version:
+        description: Version of `@rpallas/platform-cdk-cli` run via `npx --yes`.
+        type: string
+        required: false
+        default: latest
+      cli-command:
+        description: Explicit CLI command (e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`).
+        type: string
+        required: false
+        default: ""
+    outputs:
+      preview-id:
+        description: The preview id.
+        value: ${{ jobs.destroy.outputs.preview-id }}
+      destroyed:
+        description: "`true` when stacks were destroyed, `false` when there was nothing to destroy."
+        value: ${{ jobs.destroy.outputs.destroyed }}
+    secrets: {}
+
+jobs:
+  destroy:
+    name: Destroy preview
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 60
+    concurrency:
+      group: preview-${{ github.repository }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    outputs:
+      preview-id: ${{ steps.preview-id.outputs.preview-id }}
+      destroyed: ${{ steps.destroy.outputs.destroyed }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      - name: Preview id
+        id: preview-id
+        uses: ./.platform-cdk/.github/actions/preview-id
+        with:
+          strategy: ${{ inputs.strategy }}
+          cli-version: ${{ inputs.cli-version }}
+          cli-command: ${{ inputs.cli-command }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: AWS login
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ inputs.role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: cdk destroy (preview)
+        id: destroy
+        uses: ./.platform-cdk/.github/actions/cdk-destroy
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          env: ${{ inputs.target-env }}
+          preview: "true"
+          preview-id: ${{ steps.preview-id.outputs.preview-id }}
+          stacks: ${{ inputs.stacks }}
+          extra-context: ${{ inputs.extra-context }}
+
+      - name: Comment (destroyed)
+        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        with:
+          status: destroyed
+          preview-id: ${{ steps.preview-id.outputs.preview-id }}
+          stack-names: ${{ steps.destroy.outputs.stack-names }}

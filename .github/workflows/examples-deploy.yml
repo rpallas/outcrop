@@ -1,0 +1,34 @@
+# Dogfooding: deploy examples/hello-http to the sandbox `dev` environment on every push to main.
+#
+# Skipped entirely when the repository variable SANDBOX_DEPLOY_ROLE_ARN is not set. The role is
+# passed explicitly through `role-arns` (so no AWS_DEPLOY_ROLE_ARN_DEV variable is required).
+name: Examples deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - examples/hello-http/**
+      - packages/**
+      - .github/**
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: hello-http deploy
+    if: ${{ vars.SANDBOX_DEPLOY_ROLE_ARN != '' }}
+    uses: ./.github/workflows/service-deploy.yml
+    with:
+      environments: dev
+      role-arns: dev=${{ vars.SANDBOX_DEPLOY_ROLE_ARN }}
+      working-directory: examples/hello-http
+      install-working-directory: .
+      build-command: npm run build
+      aws-region: ${{ vars.AWS_REGION }}
+      cli-command: node ../../packages/platform-cdk-cli/bin/platform-cdk.js
+    permissions:
+      contents: read
+      id-token: write

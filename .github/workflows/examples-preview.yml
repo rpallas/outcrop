@@ -1,0 +1,42 @@
+# Dogfooding: deploy a preview of examples/hello-http for pull requests in this repository, using
+# the local reusable workflow and the locally built CLI.
+#
+# The whole workflow is skipped when the repository variable SANDBOX_DEPLOY_ROLE_ARN is not set
+# (forks / clones without a sandbox account). `if:` on a `uses:` job can read `vars`.
+#
+# Monorepo specifics passed to the reusable workflow:
+#   install-working-directory: .            -> `npm ci` at the repository root (workspaces)
+#   build-command: npm run build            -> build packages + example before `cdk`
+#   cli-command: node ../../packages/...    -> use the freshly built CLI instead of the published one
+name: Examples preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - examples/hello-http/**
+      - packages/**
+      - .github/**
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  preview:
+    name: hello-http preview
+    if: ${{ vars.SANDBOX_DEPLOY_ROLE_ARN != '' }}
+    uses: ./.github/workflows/service-preview-deploy.yml
+    with:
+      working-directory: examples/hello-http
+      install-working-directory: .
+      build-command: npm run build
+      aws-region: ${{ vars.AWS_REGION }}
+      role-arn: ${{ vars.SANDBOX_DEPLOY_ROLE_ARN }}
+      cli-command: node ../../packages/platform-cdk-cli/bin/platform-cdk.js
+      integration-test-command: npm run test:integration
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write

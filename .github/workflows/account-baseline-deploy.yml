@@ -1,0 +1,412 @@
+# Reusable workflow: deploy an account baseline (`@rpallas/platform-cdk-account` app) to one or
+# more environments / accounts, in order.
+#
+# Trigger it from the caller on `push: branches: [main]` (or `workflow_dispatch`).
+#
+# Behaviour
+#   Same shape as service-deploy.yml: a `plan` job splits the ordered `environments` list and
+#   three explicit jobs `deploy-1` -> `deploy-2` -> `deploy-3` run
+#   `cdk deploy --all -c env=<env>` sequentially, each bound to the GitHub Environment of the same
+#   name so protection rules / required reviewers gate the deployment.
+#
+#   Limitation: at most THREE environments per call (reusable workflows cannot create jobs
+#   dynamically). Call the workflow twice for more.
+#
+#   Role resolution per environment (first match wins):
+#     1. `role-arns` input - newline separated `env=arn` pairs. The baseline usually creates the
+#        regular deploy role, so this is normally a bootstrap / administration role.
+#     2. Repository variable `AWS_BASELINE_ROLE_ARN_<ENV>` (upper-cased, `-` -> `_`).
+#
+# Inputs
+#   environments               Ordered comma separated list (default `dev`, max 3).
+#   role-arns                  Newline separated `env=arn` pairs.
+#   working-directory          Baseline CDK app directory (default `.`).
+#   install-working-directory  Directory where `npm ci` runs (default: working-directory).
+#   build-command              Optional build command run after install.
+#   node-version               Node.js version; empty uses `.nvmrc`.
+#   aws-region                 Required.
+#   stacks                     Stacks to deploy (default `--all`).
+#   runs-on                    Runner label.
+#
+# Caller permissions required: contents: read, id-token: write.
+#
+# Example caller:
+#   jobs:
+#     baseline:
+#       uses: rpallas/platform-cdk/.github/workflows/account-baseline-deploy.yml@v1
+#       with:
+#         environments: dev,prod
+#         aws-region: ${{ vars.AWS_REGION }}
+#         role-arns: |
+#           dev=${{ vars.AWS_BASELINE_ROLE_ARN_DEV }}
+#           prod=${{ vars.AWS_BASELINE_ROLE_ARN_PROD }}
+#       permissions:
+#         contents: read
+#         id-token: write
+#
+# Implementation note: composite actions are checked out from the repository/commit this workflow
+# runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.platform-cdk`.
+name: Account baseline deploy
+
+on:
+  workflow_call:
+    inputs:
+      environments:
+        description: Ordered comma separated list of environments (max 3).
+        type: string
+        required: false
+        default: dev
+      role-arns:
+        description: Newline separated `env=arn` pairs overriding the `AWS_BASELINE_ROLE_ARN_<ENV>` variables.
+        type: string
+        required: false
+        default: ""
+      working-directory:
+        description: Directory containing the baseline CDK app.
+        type: string
+        required: false
+        default: .
+      install-working-directory:
+        description: Directory where `npm ci` runs (defaults to working-directory).
+        type: string
+        required: false
+        default: ""
+      build-command:
+        description: Optional build command run from install-working-directory after install.
+        type: string
+        required: false
+        default: ""
+      node-version:
+        description: Node.js version (empty = `.nvmrc`).
+        type: string
+        required: false
+        default: ""
+      aws-region:
+        description: AWS region.
+        type: string
+        required: true
+      stacks:
+        description: Stacks to deploy (`--all` or a comma separated list / wildcards).
+        type: string
+        required: false
+        default: --all
+      runs-on:
+        description: Runner label.
+        type: string
+        required: false
+        default: ubuntu-latest
+    secrets: {}
+
+jobs:
+  plan:
+    name: Plan environments
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      env1: ${{ steps.plan.outputs.env1 }}
+      env2: ${{ steps.plan.outputs.env2 }}
+      env3: ${{ steps.plan.outputs.env3 }}
+      has1: ${{ steps.plan.outputs.has1 }}
+      has2: ${{ steps.plan.outputs.has2 }}
+      has3: ${{ steps.plan.outputs.has3 }}
+      var1: ${{ steps.plan.outputs.var1 }}
+      var2: ${{ steps.plan.outputs.var2 }}
+      var3: ${{ steps.plan.outputs.var3 }}
+      role1: ${{ steps.plan.outputs.role1 }}
+      role2: ${{ steps.plan.outputs.role2 }}
+      role3: ${{ steps.plan.outputs.role3 }}
+    steps:
+      - name: Split environment list
+        id: plan
+        env:
+          ENVIRONMENTS: ${{ inputs.environments }}
+          ROLE_ARNS: ${{ inputs.role-arns }}
+        run: |
+          set -euo pipefail
+          read -r -a envs <<< "$(printf '%s' "$ENVIRONMENTS" | tr ',' ' ')"
+          if [ "${#envs[@]}" -eq 0 ]; then
+            echo "::error::input 'environments' must contain at least one environment"
+            exit 1
+          fi
+          if [ "${#envs[@]}" -gt 3 ]; then
+            echo "::error::at most 3 environments are supported per call (got ${#envs[@]}: ${envs[*]})"
+            exit 1
+          fi
+          lookup_role() {
+            local wanted="$1" line key
+            while IFS= read -r line; do
+              line="$(printf '%s' "$line" | tr -d '[:space:]')"
+              key="${line%%=*}"
+              if [ -n "$line" ] && [ "$key" = "$wanted" ]; then
+                printf '%s' "${line#*=}"
+                return 0
+              fi
+            done <<< "$ROLE_ARNS"
+            return 0
+          }
+          {
+            echo "### Deployment plan"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+          for i in 1 2 3; do
+            name="${envs[i-1]:-}"
+            if [ -n "$name" ]; then
+              if ! [[ "$name" =~ ^[A-Za-z0-9_-]+$ ]]; then
+                echo "::error::invalid environment name '$name'"
+                exit 1
+              fi
+              var="AWS_BASELINE_ROLE_ARN_$(printf '%s' "$name" | tr '[:lower:]-' '[:upper:]_')"
+              role="$(lookup_role "$name")"
+              {
+                echo "env$i=$name"
+                echo "has$i=true"
+                echo "var$i=$var"
+                echo "role$i=$role"
+              } >> "$GITHUB_OUTPUT"
+              if [ -n "$role" ]; then
+                echo "$i. $name (role from role-arns input)" >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "$i. $name (role from variable $var)" >> "$GITHUB_STEP_SUMMARY"
+              fi
+            else
+              {
+                echo "env$i="
+                echo "has$i=false"
+                echo "var$i="
+                echo "role$i="
+              } >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+  deploy-1:
+    name: Deploy baseline ${{ needs.plan.outputs.env1 }}
+    needs: plan
+    if: needs.plan.outputs.has1 == 'true'
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 90
+    environment: ${{ needs.plan.outputs.env1 }}
+    concurrency:
+      group: baseline-${{ github.repository }}-${{ inputs.working-directory }}-${{ needs.plan.outputs.env1 }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      DEPLOY_ENV: ${{ needs.plan.outputs.env1 }}
+      ROLE_ARN: ${{ needs.plan.outputs.role1 || vars[needs.plan.outputs.var1] }}
+      ROLE_VAR: ${{ needs.plan.outputs.var1 }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Resolve deploy role
+        run: |
+          if [ -z "$ROLE_ARN" ]; then
+            echo "::error::No role for environment '$DEPLOY_ENV'. Pass it via the 'role-arns' input ($DEPLOY_ENV=arn:...) or define the repository variable $ROLE_VAR."
+            exit 1
+          fi
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      - name: AWS login
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ env.ROLE_ARN }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: cdk deploy
+        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          env: ${{ env.DEPLOY_ENV }}
+          stacks: ${{ inputs.stacks }}
+
+  deploy-2:
+    name: Deploy baseline ${{ needs.plan.outputs.env2 }}
+    needs: [plan, deploy-1]
+    if: needs.plan.outputs.has2 == 'true'
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 90
+    environment: ${{ needs.plan.outputs.env2 }}
+    concurrency:
+      group: baseline-${{ github.repository }}-${{ inputs.working-directory }}-${{ needs.plan.outputs.env2 }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      DEPLOY_ENV: ${{ needs.plan.outputs.env2 }}
+      ROLE_ARN: ${{ needs.plan.outputs.role2 || vars[needs.plan.outputs.var2] }}
+      ROLE_VAR: ${{ needs.plan.outputs.var2 }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Resolve deploy role
+        run: |
+          if [ -z "$ROLE_ARN" ]; then
+            echo "::error::No role for environment '$DEPLOY_ENV'. Pass it via the 'role-arns' input ($DEPLOY_ENV=arn:...) or define the repository variable $ROLE_VAR."
+            exit 1
+          fi
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      - name: AWS login
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ env.ROLE_ARN }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: cdk deploy
+        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          env: ${{ env.DEPLOY_ENV }}
+          stacks: ${{ inputs.stacks }}
+
+  deploy-3:
+    name: Deploy baseline ${{ needs.plan.outputs.env3 }}
+    needs: [plan, deploy-2]
+    if: needs.plan.outputs.has3 == 'true'
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 90
+    environment: ${{ needs.plan.outputs.env3 }}
+    concurrency:
+      group: baseline-${{ github.repository }}-${{ inputs.working-directory }}-${{ needs.plan.outputs.env3 }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      DEPLOY_ENV: ${{ needs.plan.outputs.env3 }}
+      ROLE_ARN: ${{ needs.plan.outputs.role3 || vars[needs.plan.outputs.var3] }}
+      ROLE_VAR: ${{ needs.plan.outputs.var3 }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Resolve deploy role
+        run: |
+          if [ -z "$ROLE_ARN" ]; then
+            echo "::error::No role for environment '$DEPLOY_ENV'. Pass it via the 'role-arns' input ($DEPLOY_ENV=arn:...) or define the repository variable $ROLE_VAR."
+            exit 1
+          fi
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      - name: AWS login
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ env.ROLE_ARN }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: cdk deploy
+        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          env: ${{ env.DEPLOY_ENV }}
+          stacks: ${{ inputs.stacks }}

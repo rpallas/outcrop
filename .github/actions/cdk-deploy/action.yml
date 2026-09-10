@@ -1,0 +1,197 @@
+name: CDK deploy
+description: >-
+  Runs `cdk deploy` for a platform-cdk app with the standard context (`env`, and `preview` /
+  `previewId` / `prNumber` for preview stacks), writes the CloudFormation outputs to a JSON file,
+  uploads it as an artifact and exposes the deployed stack names. Requires AWS credentials to be
+  configured beforehand (see the `aws-oidc-login` action).
+
+inputs:
+  working-directory:
+    description: Directory containing the CDK app (`cdk.json`).
+    required: false
+    default: .
+  env:
+    description: Platform environment passed as `-c env=<env>` (e.g. `dev`, `stage`, `prod`).
+    required: true
+  preview:
+    description: Deploy a preview environment (`true` adds `-c preview=true -c previewId=... -c prNumber=...`).
+    required: false
+    default: "false"
+  preview-id:
+    description: Preview id (required when `preview` is `true`). Stack names are prefixed `<preview-id>-` by the app.
+    required: false
+    default: ""
+  pr-number:
+    description: Pull request number passed as `-c prNumber=<n>` for preview deployments.
+    required: false
+    default: ${{ github.event.pull_request.number }}
+  stacks:
+    description: >-
+      Stacks to deploy: `--all` (default) or a comma/space separated list of stack names or
+      wildcards (e.g. `*-api`). For previews remember stack names carry the `<preview-id>-` prefix.
+    required: false
+    default: --all
+  extra-context:
+    description: Additional CDK context as newline separated `key=value` pairs (each becomes `-c key=value`).
+    required: false
+    default: ""
+  extra-args:
+    description: Additional arguments appended to the `cdk deploy` command (space separated).
+    required: false
+    default: ""
+  require-approval:
+    description: Value for `--require-approval` (`never`, `any-change`, `broadening`).
+    required: false
+    default: never
+  outputs-file:
+    description: Path (relative to the working directory) of the JSON file `cdk deploy --outputs-file` writes.
+    required: false
+    default: cdk-outputs.json
+  cdk-command:
+    description: Command used to invoke the CDK CLI.
+    required: false
+    default: npx cdk
+
+outputs:
+  outputs-file:
+    description: Absolute path of the CloudFormation outputs JSON file written by `cdk deploy`.
+    value: ${{ steps.prepare.outputs.outputs-path }}
+  stack-names:
+    description: Comma separated names of the deployed stacks (parsed from the outputs file).
+    value: ${{ steps.stacks.outputs.stack-names }}
+  artifact-name:
+    description: Name of the uploaded outputs artifact (`cdk-outputs-<env>[-<preview-id>]`).
+    value: ${{ steps.prepare.outputs.artifact-name }}
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare
+      id: prepare
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        ENV_NAME: ${{ inputs.env }}
+        PREVIEW: ${{ inputs.preview }}
+        PREVIEW_ID: ${{ inputs.preview-id }}
+        OUTPUTS_FILE: ${{ inputs.outputs-file }}
+      run: |
+        set -euo pipefail
+        if [ -z "$ENV_NAME" ]; then
+          echo "::error::input 'env' is required"
+          exit 1
+        fi
+        if [ "$PREVIEW" = "true" ] && [ -z "$PREVIEW_ID" ]; then
+          echo "::error::input 'preview-id' is required when preview=true"
+          exit 1
+        fi
+        case "$OUTPUTS_FILE" in
+          /*) outputs_path="$OUTPUTS_FILE" ;;
+          *) outputs_path="$(pwd)/$OUTPUTS_FILE" ;;
+        esac
+        artifact_name="cdk-outputs-$ENV_NAME"
+        if [ "$PREVIEW" = "true" ]; then
+          artifact_name="$artifact_name-$PREVIEW_ID"
+        fi
+        rm -f "$outputs_path"
+        {
+          echo "outputs-path=$outputs_path"
+          echo "artifact-name=$artifact_name"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: cdk deploy
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        CDK_COMMAND: ${{ inputs.cdk-command }}
+        ENV_NAME: ${{ inputs.env }}
+        PREVIEW: ${{ inputs.preview }}
+        PREVIEW_ID: ${{ inputs.preview-id }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        STACKS: ${{ inputs.stacks }}
+        EXTRA_CONTEXT: ${{ inputs.extra-context }}
+        EXTRA_ARGS: ${{ inputs.extra-args }}
+        REQUIRE_APPROVAL: ${{ inputs.require-approval }}
+        OUTPUTS_PATH: ${{ steps.prepare.outputs.outputs-path }}
+        # Never prompt; CI has no TTY.
+        CI: "true"
+      run: |
+        set -euo pipefail
+        read -r -a cdk <<< "$CDK_COMMAND"
+        args=(
+          deploy
+          --require-approval "$REQUIRE_APPROVAL"
+          --outputs-file "$OUTPUTS_PATH"
+          --progress events
+          --concurrency 4
+          -c "env=$ENV_NAME"
+        )
+        if [ "$PREVIEW" = "true" ]; then
+          args+=(-c preview=true -c "previewId=$PREVIEW_ID")
+          if [ -n "$PR_NUMBER" ]; then
+            args+=(-c "prNumber=$PR_NUMBER")
+          fi
+        fi
+        while IFS= read -r line; do
+          line="$(printf '%s' "$line" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+          if [ -z "$line" ] || [ "${line#\#}" != "$line" ]; then
+            continue
+          fi
+          case "$line" in
+            *=*) args+=(-c "$line") ;;
+            *)
+              echo "::error::extra-context line '$line' is not a key=value pair"
+              exit 1
+              ;;
+          esac
+        done <<< "$EXTRA_CONTEXT"
+        if [ -n "$EXTRA_ARGS" ]; then
+          read -r -a extra <<< "$EXTRA_ARGS"
+          args+=("${extra[@]}")
+        fi
+        if [ -z "$STACKS" ] || [ "$STACKS" = "--all" ]; then
+          args+=(--all)
+        else
+          read -r -a stacks <<< "$(printf '%s' "$STACKS" | tr ',' ' ')"
+          args+=("${stacks[@]}")
+        fi
+        echo "Running: ${cdk[*]} ${args[*]}"
+        "${cdk[@]}" "${args[@]}"
+
+    - name: Collect stack names
+      id: stacks
+      shell: bash
+      env:
+        OUTPUTS_PATH: ${{ steps.prepare.outputs.outputs-path }}
+        ENV_NAME: ${{ inputs.env }}
+        PREVIEW: ${{ inputs.preview }}
+        PREVIEW_ID: ${{ inputs.preview-id }}
+      run: |
+        set -euo pipefail
+        stack_names=""
+        if [ -f "$OUTPUTS_PATH" ]; then
+          stack_names="$(jq -r 'keys | join(",")' "$OUTPUTS_PATH")"
+        else
+          echo "::warning::cdk did not write an outputs file at $OUTPUTS_PATH (no stacks deployed?)"
+        fi
+        echo "stack-names=$stack_names" >> "$GITHUB_OUTPUT"
+        {
+          echo "### cdk deploy (\`$ENV_NAME\`)"
+          echo ""
+          if [ "$PREVIEW" = "true" ]; then
+            echo "- Preview id: \`$PREVIEW_ID\`"
+          fi
+          if [ -n "$stack_names" ]; then
+            echo "- Stacks: \`${stack_names//,/\`, \`}\`"
+          else
+            echo "- Stacks: none reported"
+          fi
+        } >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Upload outputs artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.prepare.outputs.artifact-name }}
+        path: ${{ steps.prepare.outputs.outputs-path }}
+        if-no-files-found: ignore
+        retention-days: 14

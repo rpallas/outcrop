@@ -1,0 +1,163 @@
+name: Preview id
+description: >-
+  Derives the preview environment id for a pull request. Uses the `platform-cdk preview-id` CLI
+  when available and falls back to an equivalent pure-bash implementation otherwise. The id is a
+  DNS/CloudFormation friendly slug: lowercase, `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`, at most 20 chars.
+
+inputs:
+  branch:
+    description: Branch name to derive the id from. Defaults to the PR head branch (or the pushed ref).
+    required: false
+    default: ${{ github.head_ref || github.ref_name }}
+  pr-number:
+    description: Pull request number used by the `pr` strategy / fallback.
+    required: false
+    default: ${{ github.event.pull_request.number }}
+  strategy:
+    description: >-
+      `ticket-then-pr` (default): use the ticket reference in the branch name (e.g. `ABC-123` ->
+      `abc-123`), else `pr-<number>`. `pr`: always `pr-<number>`. `branch-slug`: slugified branch.
+    required: false
+    default: ticket-then-pr
+  cli-version:
+    description: Version of `@rpallas/platform-cdk-cli` to run via `npx --yes` (ignored when `cli-command` is set).
+    required: false
+    default: latest
+  cli-command:
+    description: >-
+      Explicit command used to invoke the CLI instead of npx, e.g.
+      `node packages/platform-cdk-cli/bin/platform-cdk.js` for a locally built checkout.
+    required: false
+    default: ""
+  working-directory:
+    description: Directory the CLI command is executed from (relative CLI paths resolve against it).
+    required: false
+    default: .
+
+outputs:
+  preview-id:
+    description: The derived preview id (e.g. `abc-123` or `pr-42`).
+    value: ${{ steps.derive.outputs.preview-id }}
+  stack-prefix:
+    description: Stack name prefix applied by the CDK app to preview stacks (`<preview-id>-`).
+    value: ${{ steps.derive.outputs.stack-prefix }}
+  source:
+    description: Where the id came from - `cli` or `bash`.
+    value: ${{ steps.derive.outputs.source }}
+
+runs:
+  using: composite
+  steps:
+    - name: Derive preview id
+      id: derive
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        BRANCH: ${{ inputs.branch }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        STRATEGY: ${{ inputs.strategy }}
+        CLI_VERSION: ${{ inputs.cli-version }}
+        CLI_COMMAND: ${{ inputs.cli-command }}
+      run: |
+        set -euo pipefail
+
+        is_valid() {
+          [[ "$1" =~ ^[a-z][a-z0-9]*(-[a-z0-9]+)*$ ]] && [ "${#1}" -le 20 ]
+        }
+
+        # --- 1. Try the CLI -------------------------------------------------------------------
+        cli_id=""
+        if [ -n "$CLI_COMMAND" ]; then
+          read -r -a cli <<< "$CLI_COMMAND"
+        else
+          cli=(npx --yes "@rpallas/platform-cdk-cli@${CLI_VERSION:-latest}")
+        fi
+        args=(preview-id --branch "$BRANCH" --strategy "$STRATEGY")
+        if [ -n "$PR_NUMBER" ]; then
+          args+=(--pr "$PR_NUMBER")
+        fi
+        echo "Trying CLI: ${cli[*]} ${args[*]}"
+        if out="$("${cli[@]}" "${args[@]}" 2>"$RUNNER_TEMP/preview-id-cli.log")"; then
+          cli_id="$(printf '%s\n' "$out" | sed '/^[[:space:]]*$/d' | tail -n 1 | tr -d '[:space:]')"
+        else
+          echo "::notice::platform-cdk CLI unavailable or failed, using bash fallback"
+          sed 's/^/  cli: /' "$RUNNER_TEMP/preview-id-cli.log" || true
+        fi
+
+        source="cli"
+        id="$cli_id"
+        if [ -z "$id" ] || ! is_valid "$id"; then
+          # --- 2. Bash fallback with identical rules --------------------------------------------
+          source="bash"
+          lower="$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]')"
+
+          # Ticket: first `letters[-_]digits` token (2-10 letters, 1-6 digits) that is not glued to
+          # other alphanumerics, normalised to `letters-digits`.
+          ticket=""
+          match="$(printf '%s\n' "$lower" \
+            | grep -oE '(^|[^a-z0-9])[a-z]{2,10}[-_][0-9]{1,6}([^a-z0-9]|$)' \
+            | head -n 1 || true)"
+          if [ -n "$match" ]; then
+            ticket="$(printf '%s' "$match" | sed -E 's/^[^a-z0-9]+//; s/[^a-z0-9]+$//; s/_/-/')"
+          fi
+
+          # Branch slug (same rules as the CLI): strip refs/heads/, non-alphanumerics -> '-', trim
+          # hyphens, drop leading non-letters, cut to 20 chars, trim trailing hyphens, else "branch".
+          slug=""
+          if [ "$STRATEGY" = "branch-slug" ]; then
+            slug="$(printf '%s' "$lower" \
+              | sed -E 's#^refs/heads/##; s/[^a-z0-9]+/-/g; s/^-+//; s/-+$//; s/^[^a-z]+//')"
+            slug="${slug:0:20}"
+            slug="$(printf '%s' "$slug" | sed -E 's/-+$//')"
+            if [ -z "$slug" ]; then
+              slug="branch"
+            fi
+          fi
+
+          case "$STRATEGY" in
+            ticket-then-pr)
+              if [ -n "$ticket" ]; then
+                id="$ticket"
+              elif [ -n "$PR_NUMBER" ]; then
+                id="pr-$PR_NUMBER"
+              else
+                echo "::error::No ticket reference in branch '$BRANCH' and no pull request number available"
+                exit 1
+              fi
+              ;;
+            pr)
+              if [ -z "$PR_NUMBER" ]; then
+                echo "::error::strategy=pr requires a pull request number"
+                exit 1
+              fi
+              id="pr-$PR_NUMBER"
+              ;;
+            branch-slug)
+              id="$slug"
+              ;;
+            *)
+              echo "::error::Unknown strategy '$STRATEGY' (expected ticket-then-pr, pr or branch-slug)"
+              exit 1
+              ;;
+          esac
+        fi
+
+        if ! is_valid "$id"; then
+          echo "::error::Derived preview id '$id' is invalid (must match ^[a-z][a-z0-9]*(-[a-z0-9]+)*$ and be <= 20 chars)"
+          exit 1
+        fi
+
+        echo "Preview id: $id (source: $source)"
+        {
+          echo "preview-id=$id"
+          echo "stack-prefix=$id-"
+          echo "source=$source"
+        } >> "$GITHUB_OUTPUT"
+        {
+          echo "### Preview id"
+          echo ""
+          echo "- Preview id: \`$id\`"
+          echo "- Stack prefix: \`$id-\`"
+          echo "- Branch: \`$BRANCH\`"
+          echo "- Derived by: $source"
+        } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,323 @@
+# Reusable workflow: deploy a per-pull-request preview environment of a platform-cdk service.
+#
+# Trigger it from the caller on `pull_request: types: [opened, synchronize, reopened]`.
+#
+# Behaviour
+#   - Concurrency group `preview-<repo>-<pr>` with cancel-in-progress, so only the latest push of a
+#     pull request deploys.
+#   - When the pull request carries the `skip-label` (default `skip-preview`) nothing is deployed
+#     and a `skipped` sticky comment is posted instead.
+#   - Otherwise: derive the preview id (ticket in branch name, else `pr-<n>`), assume the deploy
+#     role via OIDC, `cdk deploy --all -c env=<target-env> -c preview=true -c previewId=<id>
+#     -c prNumber=<n>`, export the stack outputs as `<output-prefix><Key>` environment variables,
+#     pick the base URL (first output key ending in `BaseUrl`), run the optional integration tests
+#     (with the outputs, `PREVIEW_ID` and `PREVIEW_BASE_URL` in the environment) and post/update
+#     the sticky preview comment. On failure a `failed` comment is posted.
+#
+# Inputs
+#   working-directory          CDK app directory (default `.`).
+#   install-working-directory  Directory where `npm ci` runs (default: working-directory). In a
+#                              monorepo pass the repository root (`.`).
+#   build-command              Optional command run from install-working-directory after install
+#                              (e.g. `npm run build`).
+#   node-version               Node.js version; empty uses `.nvmrc`.
+#   aws-region, role-arn       Required. Deploy role assumed via OIDC.
+#   target-env                 Platform environment hosting previews (default `dev`).
+#   strategy                   Preview id strategy: ticket-then-pr | pr | branch-slug.
+#   skip-label                 PR label that skips the preview (default `skip-preview`).
+#   integration-test-command   Optional command run from working-directory after deploy.
+#   stacks, extra-context      Passed to `cdk deploy`.
+#   cli-version / cli-command  How to run `@rpallas/platform-cdk-cli` (consumers: cli-version;
+#                              this repository: cli-command pointing at the local build).
+#   output-prefix              Prefix for exported stack outputs (default `PREVIEW_`).
+#   runs-on                    Runner label.
+#
+# Outputs: preview-id, base-url, stack-names.
+#
+# Caller permissions required: contents: read, id-token: write, pull-requests: write.
+#
+# Example caller (service repository):
+#   jobs:
+#     preview:
+#       uses: rpallas/platform-cdk/.github/workflows/service-preview-deploy.yml@v1
+#       with:
+#         aws-region: ${{ vars.AWS_REGION }}
+#         role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
+#         integration-test-command: npm run test:integration
+#       permissions:
+#         contents: read
+#         id-token: write
+#         pull-requests: write
+#
+# Implementation note: composite actions are checked out from the repository/commit this workflow
+# runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.platform-cdk`, because
+# `uses: ./...` resolves against the caller's checkout.
+name: Service preview deploy
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the CDK app.
+        type: string
+        required: false
+        default: .
+      install-working-directory:
+        description: Directory where `npm ci` runs (defaults to working-directory).
+        type: string
+        required: false
+        default: ""
+      build-command:
+        description: Optional build command run from install-working-directory after install.
+        type: string
+        required: false
+        default: ""
+      node-version:
+        description: Node.js version (empty = `.nvmrc`).
+        type: string
+        required: false
+        default: ""
+      aws-region:
+        description: AWS region.
+        type: string
+        required: true
+      role-arn:
+        description: IAM role ARN assumed via OIDC for the deployment.
+        type: string
+        required: true
+      target-env:
+        description: Platform environment that hosts preview stacks.
+        type: string
+        required: false
+        default: dev
+      strategy:
+        description: Preview id strategy (`ticket-then-pr`, `pr`, `branch-slug`).
+        type: string
+        required: false
+        default: ticket-then-pr
+      skip-label:
+        description: Pull request label that skips the preview deployment.
+        type: string
+        required: false
+        default: skip-preview
+      integration-test-command:
+        description: Optional integration test command run from working-directory after deploy.
+        type: string
+        required: false
+        default: ""
+      stacks:
+        description: Stacks to deploy (`--all` or a comma separated list / wildcards).
+        type: string
+        required: false
+        default: --all
+      extra-context:
+        description: Newline separated `key=value` CDK context pairs.
+        type: string
+        required: false
+        default: ""
+      runs-on:
+        description: Runner label.
+        type: string
+        required: false
+        default: ubuntu-latest
+      cli-version:
+        description: Version of `@rpallas/platform-cdk-cli` run via `npx --yes`.
+        type: string
+        required: false
+        default: latest
+      cli-command:
+        description: Explicit CLI command (e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`).
+        type: string
+        required: false
+        default: ""
+      output-prefix:
+        description: Prefix for exported stack outputs.
+        type: string
+        required: false
+        default: PREVIEW_
+    outputs:
+      preview-id:
+        description: The preview id.
+        value: ${{ jobs.preview.outputs.preview-id }}
+      base-url:
+        description: Base URL of the preview (first stack output ending in `BaseUrl`).
+        value: ${{ jobs.preview.outputs.base-url }}
+      stack-names:
+        description: Comma separated deployed stack names.
+        value: ${{ jobs.preview.outputs.stack-names }}
+    secrets: {}
+
+jobs:
+  skipped:
+    name: Preview skipped
+    if: contains(github.event.pull_request.labels.*.name, inputs.skip-label)
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Comment (skipped)
+        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        with:
+          status: skipped
+          extra-markdown: Remove the `${{ inputs.skip-label }}` label and push again to deploy a preview.
+
+  preview:
+    name: Deploy preview
+    if: ${{ !contains(github.event.pull_request.labels.*.name, inputs.skip-label) }}
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 60
+    concurrency:
+      group: preview-${{ github.repository }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    outputs:
+      preview-id: ${{ steps.preview-id.outputs.preview-id }}
+      base-url: ${{ steps.base-url.outputs.base-url }}
+      stack-names: ${{ steps.deploy.outputs.stack-names }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Locate platform-cdk actions
+        id: platform-cdk
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
+          ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
+          if [ -z "$repository" ] || [ -z "$ref" ]; then
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
+            repository="rpallas/platform-cdk"
+            ref="v1"
+          fi
+          echo "repository=$repository" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out platform-cdk actions
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.platform-cdk.outputs.repository }}
+          ref: ${{ steps.platform-cdk.outputs.ref }}
+          path: .platform-cdk
+          sparse-checkout: .github/actions
+
+      - name: Setup Node.js and install
+        uses: ./.platform-cdk/.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+
+      - name: Build
+        if: inputs.build-command != ''
+        working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
+        env:
+          BUILD_COMMAND: ${{ inputs.build-command }}
+        run: eval "$BUILD_COMMAND"
+
+      - name: Preview id
+        id: preview-id
+        uses: ./.platform-cdk/.github/actions/preview-id
+        with:
+          strategy: ${{ inputs.strategy }}
+          cli-version: ${{ inputs.cli-version }}
+          cli-command: ${{ inputs.cli-command }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: AWS login
+        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        with:
+          role-arn: ${{ inputs.role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: cdk deploy (preview)
+        id: deploy
+        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        with:
+          working-directory: ${{ inputs.working-directory }}
+          env: ${{ inputs.target-env }}
+          preview: "true"
+          preview-id: ${{ steps.preview-id.outputs.preview-id }}
+          stacks: ${{ inputs.stacks }}
+          extra-context: ${{ inputs.extra-context }}
+
+      - name: Export stack outputs
+        id: outputs
+        uses: ./.platform-cdk/.github/actions/stack-outputs
+        with:
+          outputs-file: ${{ steps.deploy.outputs.outputs-file }}
+          prefix: ${{ inputs.output-prefix }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: Determine base URL
+        id: base-url
+        env:
+          OUTPUTS_JSON: ${{ steps.outputs.outputs.outputs-json }}
+          PREVIEW_ID: ${{ steps.preview-id.outputs.preview-id }}
+        run: |
+          outputs_json="$OUTPUTS_JSON"
+          if [ -z "$outputs_json" ]; then
+            outputs_json="{}"
+          fi
+          base_url="$(jq -r 'to_entries | map(select(.key | test("BaseUrl$"; "i"))) | (.[0].value // "")' <<< "$outputs_json")"
+          echo "base-url=$base_url" >> "$GITHUB_OUTPUT"
+          {
+            echo "PREVIEW_ID=$PREVIEW_ID"
+            echo "PREVIEW_BASE_URL=$base_url"
+          } >> "$GITHUB_ENV"
+          if [ -n "$base_url" ]; then
+            echo "Preview base URL: $base_url"
+          else
+            echo "::notice::No stack output ending in 'BaseUrl' found; base URL is empty"
+          fi
+
+      - name: Integration tests
+        if: inputs.integration-test-command != ''
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          INTEGRATION_TEST_COMMAND: ${{ inputs.integration-test-command }}
+          CI: "true"
+        run: eval "$INTEGRATION_TEST_COMMAND"
+
+      - name: Comment (deployed)
+        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        with:
+          status: deployed
+          preview-id: ${{ steps.preview-id.outputs.preview-id }}
+          stack-names: ${{ steps.deploy.outputs.stack-names }}
+          base-url: ${{ steps.base-url.outputs.base-url }}
+
+      - name: Comment (failed)
+        if: failure()
+        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        with:
+          status: failed
+          preview-id: ${{ steps.preview-id.outputs.preview-id }}
+          stack-names: ${{ steps.deploy.outputs.stack-names }}

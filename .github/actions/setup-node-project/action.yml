@@ -1,0 +1,109 @@
+name: Setup Node project
+description: >-
+  Installs Node.js (from .nvmrc or an explicit version) with the npm cache enabled and runs a
+  reproducible `npm ci`. npm lifecycle scripts are disabled by default (`--ignore-scripts`) so a
+  malicious transitive dependency cannot execute code during install.
+
+inputs:
+  node-version:
+    description: >-
+      Node.js version to install. When empty, the version is read from `<working-directory>/.nvmrc`
+      or `./.nvmrc` (in that order), falling back to `24`.
+    required: false
+    default: ""
+  working-directory:
+    description: Directory containing the package.json / package-lock.json to install.
+    required: false
+    default: .
+  install:
+    description: Run `npm ci` after setting up Node.js (`true` / `false`).
+    required: false
+    default: "true"
+  allow-install-scripts:
+    description: >-
+      Allow npm lifecycle scripts (preinstall/postinstall/prepare) to run during install. When
+      `false` (default) the install is performed with `npm ci --ignore-scripts`.
+    required: false
+    default: "false"
+  registry-url:
+    description: >-
+      Optional npm registry URL passed to actions/setup-node. When set, setup-node writes an .npmrc
+      that reads the token from the `NODE_AUTH_TOKEN` environment variable.
+    required: false
+    default: ""
+
+outputs:
+  node-version:
+    description: The Node.js version that was installed, as reported by `node --version`.
+    value: ${{ steps.installed.outputs.node-version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve Node.js version
+      id: resolve
+      shell: bash
+      env:
+        INPUT_NODE_VERSION: ${{ inputs.node-version }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+      run: |
+        set -euo pipefail
+        version="$INPUT_NODE_VERSION"
+        if [ -z "$version" ]; then
+          for candidate in "${WORKING_DIRECTORY%/}/.nvmrc" ".nvmrc"; do
+            if [ -f "$candidate" ]; then
+              version="$(tr -d '[:space:]' < "$candidate")"
+              echo "Using Node.js version from $candidate: $version"
+              break
+            fi
+          done
+        fi
+        if [ -z "$version" ]; then
+          version="24"
+          echo "No node-version input or .nvmrc found; defaulting to Node.js $version"
+        fi
+        echo "node-version=$version" >> "$GITHUB_OUTPUT"
+
+        # Key the npm cache on every lockfile below the working directory (monorepo friendly).
+        if [ "$WORKING_DIRECTORY" = "." ] || [ -z "$WORKING_DIRECTORY" ]; then
+          echo "lockfile-glob=**/package-lock.json" >> "$GITHUB_OUTPUT"
+        else
+          echo "lockfile-glob=${WORKING_DIRECTORY%/}/**/package-lock.json" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ steps.resolve.outputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ steps.resolve.outputs.lockfile-glob }}
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Install dependencies
+      if: inputs.install == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        ALLOW_INSTALL_SCRIPTS: ${{ inputs.allow-install-scripts }}
+      run: |
+        set -euo pipefail
+        if [ ! -f package-lock.json ]; then
+          echo "::error::package-lock.json not found in $(pwd); npm ci requires a lockfile"
+          exit 1
+        fi
+        # Guard: lifecycle scripts only run when the caller explicitly opts in.
+        if [ "$ALLOW_INSTALL_SCRIPTS" = "true" ]; then
+          echo "::warning::npm lifecycle scripts are enabled for this install (allow-install-scripts=true)"
+          npm ci
+        else
+          npm ci --ignore-scripts
+        fi
+
+    - name: Report installed Node.js version
+      id: installed
+      shell: bash
+      run: |
+        set -euo pipefail
+        installed="$(node --version)"
+        echo "Installed Node.js $installed"
+        echo "node-version=$installed" >> "$GITHUB_OUTPUT"

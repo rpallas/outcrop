@@ -160,6 +160,8 @@ const scan = (file: string, contents: string): Violation[] => {
       // Skip things that are clearly file names or package specifiers.
       if (/\.(ts|js|mjs|cjs|json|md|yml|yaml|test|config|d|spec|snap|tpl)$/i.test(host)) continue;
       if (/^(www\.)?(index|package|tsconfig|jest|eslint)\./i.test(host)) continue;
+      // Skip code member access such as `cdk.App` or `process.env` (real hosts are lowercase).
+      if (/[A-Z]/.test(host)) continue;
       if (!isAllowedHost(host)) {
         violations.push({ file, line: lineNumber, value: host, reason: "non-placeholder domain" });
       }
