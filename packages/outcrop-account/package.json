@@ -1,6 +1,6 @@
 {
   "name": "@rpallas/outcrop-account",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Account and organisation baseline constructs for outcrop: GitHub OIDC deploy roles, DNS and certificates, alerting, event bus, KMS, shared parameters and secrets, budgets, security services, networking and StackSet wrappers.",
   "license": "MIT",
   "author": "Robbie Pallas",
@@ -34,7 +34,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rpallas/outcrop": "0.1.0",
+    "@rpallas/outcrop": "1.0.0",
     "zod": "^4.6.1"
   },
   "peerDependencies": {
