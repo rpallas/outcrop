@@ -1,6 +1,6 @@
 {
   "name": "@rpallas/outcrop-runtime",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Lambda runtime helpers for outcrop services: structured logging, config and secrets resolution, EventBridge envelopes and handler middleware.",
   "license": "MIT",
   "author": "Robbie Pallas",

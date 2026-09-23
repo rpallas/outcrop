@@ -1,6 +1,6 @@
 {
   "name": "@rpallas/outcrop-cli",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Scaffolding and CI helper CLI for outcrop: create services and account baselines, compute preview ids, export stack outputs and sync agent skills.",
   "license": "MIT",
   "author": "Robbie Pallas",

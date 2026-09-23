@@ -13,11 +13,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rpallas/outcrop-runtime": "0.1.0",
+    "@rpallas/outcrop-runtime": "1.0.0",
     "@aws-sdk/client-dynamodb": "^3.1130.0",
     "@aws-sdk/lib-dynamodb": "^3.1130.0"
   },
   "devDependencies": {
-    "@rpallas/outcrop": "0.1.0"
+    "@rpallas/outcrop": "1.0.0"
   }
 }
