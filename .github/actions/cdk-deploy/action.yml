@@ -1,6 +1,6 @@
 name: CDK deploy
 description: >-
-  Runs `cdk deploy` for a platform-cdk app with the standard context (`env`, and `preview` /
+  Runs `cdk deploy` for a outcrop app with the standard context (`env`, and `preview` /
   `previewId` / `prNumber` for preview stacks), writes the CloudFormation outputs to a JSON file,
   uploads it as an artifact and exposes the deployed stack names. Requires AWS credentials to be
   configured beforehand (see the `aws-oidc-login` action).

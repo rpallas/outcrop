@@ -2,7 +2,7 @@
   "name": "@rpallas/example-account-baseline",
   "version": "0.0.0",
   "private": true,
-  "description": "Reference account baseline app using @rpallas/platform-cdk-account.",
+  "description": "Reference account baseline app using @rpallas/outcrop-account.",
   "license": "MIT",
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
@@ -11,6 +11,6 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@rpallas/platform-cdk-account": "0.1.0"
+    "@rpallas/outcrop-account": "0.1.0"
   }
 }

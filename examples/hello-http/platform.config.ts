@@ -1,10 +1,10 @@
-import { definePlatformConfig } from "@rpallas/platform-cdk";
+import { definePlatformConfig } from "@rpallas/outcrop";
 
 /**
  * Platform configuration for the hello-http service.
  *
  * - `environments` lists every AWS environment the service deploys to. The
- *   account baseline (@rpallas/platform-cdk-account) must be applied there.
+ *   account baseline (@rpallas/outcrop-account) must be applied there.
  * - `preview.targetEnvironment` hosts pull request preview stacks.
  * - Set `account` per environment to enable synth-time lookups (hosted zone,
  *   certificates) without relying on CDK_DEFAULT_ACCOUNT.

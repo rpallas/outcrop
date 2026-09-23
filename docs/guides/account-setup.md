@@ -1,10 +1,10 @@
 # Account setup
 
-The account baseline is a CDK app that uses `@rpallas/platform-cdk-account`. It provisions what
+The account baseline is a CDK app that uses `@rpallas/outcrop-account`. It provisions what
 services expect to find in an account and publishes it to the SSM contract. Scaffold one with:
 
 ```bash
-npx @rpallas/platform-cdk-cli create account my-platform --owner my-org --domain example.com
+npx @rpallas/outcrop-cli create account my-platform --owner my-org --domain example.com
 cd my-platform
 ```
 
@@ -97,4 +97,4 @@ aws secretsmanager put-secret-value --secret-id platform-dev-neon-api-key --secr
 ## Organisation-wide rollout
 
 Wrap the baseline in `PlatformStackSet` to deploy it to every account in an OU from a delegated
-administrator account. See the `platform-cdk-account` README.
+administrator account. See the `outcrop-account` README.

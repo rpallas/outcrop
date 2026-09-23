@@ -1,15 +1,15 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "rpallas/platform-cdk" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "rpallas/outcrop" }],
   "commit": false,
   "fixed": [
     [
-      "@rpallas/platform-cdk",
-      "@rpallas/platform-cdk-account",
-      "@rpallas/platform-cdk-runtime",
-      "@rpallas/platform-cdk-cli",
-      "@rpallas/platform-cdk-neon",
-      "@rpallas/platform-cdk-chatops"
+      "@rpallas/outcrop",
+      "@rpallas/outcrop-account",
+      "@rpallas/outcrop-runtime",
+      "@rpallas/outcrop-cli",
+      "@rpallas/outcrop-neon",
+      "@rpallas/outcrop-chatops"
     ]
   ],
   "linked": [],

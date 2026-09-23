@@ -12,7 +12,7 @@ AWS credentials must already be configured (use `aws-oidc-login`).
 
 ```yaml
 - id: deploy
-  uses: rpallas/platform-cdk/.github/actions/cdk-deploy@v1
+  uses: rpallas/outcrop/.github/actions/cdk-deploy@v1
   with:
     env: dev
     preview: "true"

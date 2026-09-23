@@ -10,18 +10,18 @@ permissions:
   id-token: write
   contents: read
 steps:
-  - uses: rpallas/platform-cdk/.github/actions/aws-oidc-login@v1
+  - uses: rpallas/outcrop/.github/actions/aws-oidc-login@v1
     with:
       role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
       aws-region: ${{ vars.AWS_REGION }}
 ```
 
-| Input              | Default                             | Description             |
-| ------------------ | ----------------------------------- | ----------------------- |
-| `role-arn`         | required                            | IAM role ARN to assume. |
-| `aws-region`       | required                            | AWS region.             |
-| `session-name`     | `platform-cdk-${{ github.run_id }}` | Role session name.      |
-| `duration-seconds` | `3600`                              | Session duration.       |
+| Input              | Default                        | Description             |
+| ------------------ | ------------------------------ | ----------------------- |
+| `role-arn`         | required                       | IAM role ARN to assume. |
+| `aws-region`       | required                       | AWS region.             |
+| `session-name`     | `outcrop-${{ github.run_id }}` | Role session name.      |
+| `duration-seconds` | `3600`                         | Session duration.       |
 
 | Output       | Description                              |
 | ------------ | ---------------------------------------- |

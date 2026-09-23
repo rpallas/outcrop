@@ -1,0 +1,4456 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`AccountBaselineStack matches the snapshot 1`] = `
+{
+  "Description": "example-platform account baseline (dev)",
+  "Outputs": {
+    "BaselineAlertingCriticalAlertTopicArn1BF8D2F7": {
+      "Export": {
+        "Name": "PlatformAccount-dev-CriticalAlertTopicArn",
+      },
+      "Value": {
+        "Ref": "BaselineAlertingCriticalTopic9F8D82E1",
+      },
+    },
+    "BaselineDnsNameServersE83436C2": {
+      "Description": "NS records to create for dev.example.com",
+      "Export": {
+        "Name": "PlatformAccount-dev-NameServers",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "CdkJsonStringifyFnGetAttBaselineDnsZone168E52CDNameServers75DC40E9",
+          "Value",
+        ],
+      },
+    },
+    "BaselineEncryptionPlatformKeyArn8B386C72": {
+      "Export": {
+        "Name": "PlatformAccount-dev-PlatformKeyArn",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "BaselineEncryptionKey6B41E5DE",
+          "Arn",
+        ],
+      },
+    },
+    "BaselineEnvironment0F22AB77": {
+      "Export": {
+        "Name": "PlatformAccount-dev-Environment",
+      },
+      "Value": "dev",
+    },
+    "BaselineEventBusEventBusName11C17A5F": {
+      "Export": {
+        "Name": "PlatformAccount-dev-EventBusName",
+      },
+      "Value": {
+        "Ref": "BaselineEventBus3CCBC411",
+      },
+    },
+    "BaselineGitHubOidcDeployRoleArnExampleOrgHelloHttp2EF5BEF9": {
+      "Description": "AWS_DEPLOY_ROLE_ARN for example-org/hello-http",
+      "Export": {
+        "Name": "PlatformAccount-dev-DeployRoleArnExampleOrgHelloHttp",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "BaselineGitHubOidcExampleOrgHelloHttpDeployRoleD2385AA8",
+          "Arn",
+        ],
+      },
+    },
+    "BaselineGitHubOidcDeployRoleArnExampleOrgOrdersF57BE569": {
+      "Description": "AWS_DEPLOY_ROLE_ARN for example-org/orders",
+      "Export": {
+        "Name": "PlatformAccount-dev-DeployRoleArnExampleOrgOrders",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "BaselineGitHubOidcExampleOrgOrdersDeployRole03CCEFD7",
+          "Arn",
+        ],
+      },
+    },
+    "BaselineGitHubOidcReadOnlyRoleArnExampleOrgHelloHttp7AE36E3A": {
+      "Description": "AWS_READONLY_ROLE_ARN for example-org/hello-http",
+      "Export": {
+        "Name": "PlatformAccount-dev-ReadOnlyRoleArnExampleOrgHelloHttp",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "BaselineGitHubOidcExampleOrgHelloHttpReadOnlyRole2E7CCBBC",
+          "Arn",
+        ],
+      },
+    },
+    "BaselineGitHubOidcReadOnlyRoleArnExampleOrgOrdersCACE0C2B": {
+      "Description": "AWS_READONLY_ROLE_ARN for example-org/orders",
+      "Export": {
+        "Name": "PlatformAccount-dev-ReadOnlyRoleArnExampleOrgOrders",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "BaselineGitHubOidcExampleOrgOrdersReadOnlyRole030E086E",
+          "Arn",
+        ],
+      },
+    },
+    "BaselineNetworkVpcId9D395100": {
+      "Export": {
+        "Name": "PlatformAccount-dev-VpcId",
+      },
+      "Value": {
+        "Ref": "BaselineNetworkVpc03811D27",
+      },
+    },
+    "BaselineSsmRootPrefix07EF1DA9": {
+      "Export": {
+        "Name": "PlatformAccount-dev-SsmRootPrefix",
+      },
+      "Value": "/platform",
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+      "DependsOn": [
+        "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 120,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57": {
+      "DependsOn": [
+        "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineAccountIdParamD4277251": {
+      "Properties": {
+        "Name": "/platform/account/id",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "111111111111",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineAccountNameParam5B78F9AE": {
+      "Properties": {
+        "Name": "/platform/account/name",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "example-platform-dev",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineAccountSettingsAccessAnalyzer6C8C8374": {
+      "Properties": {
+        "AnalyzerName": "example-platform-dev-external-access",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "Type": "ACCOUNT",
+      },
+      "Type": "AWS::AccessAnalyzer::Analyzer",
+    },
+    "BaselineAccountSettingsAlias3B1411D2": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "BaselineAccountSettingsAliasCustomResourcePolicyEE30D36B",
+      ],
+      "Properties": {
+        "Create": "{"service":"IAM","action":"createAccountAlias","parameters":{"AccountAlias":"example-platform-dev"},"physicalResourceId":{"id":"example-platform-dev"}}",
+        "Delete": "{"service":"IAM","action":"deleteAccountAlias","parameters":{"AccountAlias":"example-platform-dev"}}",
+        "InstallLatestAwsSdk": false,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": "{"service":"IAM","action":"createAccountAlias","parameters":{"AccountAlias":"example-platform-dev"},"physicalResourceId":{"id":"example-platform-dev"}}",
+      },
+      "Type": "Custom::IamAccountAlias",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineAccountSettingsAliasCustomResourcePolicyEE30D36B": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iam:CreateAccountAlias",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "iam:DeleteAccountAlias",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineAccountSettingsAliasCustomResourcePolicyEE30D36B",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineAccountSettingsEbsEncryptionByDefaultADB091BA": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "BaselineAccountSettingsEbsEncryptionByDefaultCustomResourcePolicy1BAF9B63",
+      ],
+      "Properties": {
+        "Create": "{"service":"EC2","action":"enableEbsEncryptionByDefault","physicalResourceId":{"id":"111111111111-eu-west-1-ebs-encryption"}}",
+        "InstallLatestAwsSdk": false,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": "{"service":"EC2","action":"enableEbsEncryptionByDefault","physicalResourceId":{"id":"111111111111-eu-west-1-ebs-encryption"}}",
+      },
+      "Type": "Custom::EbsEncryptionByDefault",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineAccountSettingsEbsEncryptionByDefaultCustomResourcePolicy1BAF9B63": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ec2:EnableEbsEncryptionByDefault",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineAccountSettingsEbsEncryptionByDefaultCustomResourcePolicy1BAF9B63",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineAccountSettingsPasswordPolicy24ED507C": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "BaselineAccountSettingsPasswordPolicyCustomResourcePolicyF94543F2",
+      ],
+      "Properties": {
+        "Create": "{"service":"IAM","action":"updateAccountPasswordPolicy","parameters":{"MinimumPasswordLength":14,"RequireSymbols":true,"RequireNumbers":true,"RequireUppercaseCharacters":true,"RequireLowercaseCharacters":true,"AllowUsersToChangePassword":true,"MaxPasswordAge":90,"PasswordReusePrevention":24,"HardExpiry":false},"physicalResourceId":{"id":"111111111111-password-policy"}}",
+        "InstallLatestAwsSdk": false,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": "{"service":"IAM","action":"updateAccountPasswordPolicy","parameters":{"MinimumPasswordLength":14,"RequireSymbols":true,"RequireNumbers":true,"RequireUppercaseCharacters":true,"RequireLowercaseCharacters":true,"AllowUsersToChangePassword":true,"MaxPasswordAge":90,"PasswordReusePrevention":24,"HardExpiry":false},"physicalResourceId":{"id":"111111111111-password-policy"}}",
+      },
+      "Type": "Custom::IamPasswordPolicy",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineAccountSettingsPasswordPolicyCustomResourcePolicyF94543F2": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "iam:UpdateAccountPasswordPolicy",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineAccountSettingsPasswordPolicyCustomResourcePolicyF94543F2",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineAccountSettingsS3BlockPublicAccess011E6F66": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "BaselineAccountSettingsS3BlockPublicAccessCustomResourcePolicy16EBBB23",
+      ],
+      "Properties": {
+        "Create": "{"service":"S3Control","action":"putPublicAccessBlock","parameters":{"AccountId":"111111111111","PublicAccessBlockConfiguration":{"BlockPublicAcls":true,"IgnorePublicAcls":true,"BlockPublicPolicy":true,"RestrictPublicBuckets":true}},"physicalResourceId":{"id":"111111111111-s3-public-access-block"}}",
+        "InstallLatestAwsSdk": false,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": "{"service":"S3Control","action":"putPublicAccessBlock","parameters":{"AccountId":"111111111111","PublicAccessBlockConfiguration":{"BlockPublicAcls":true,"IgnorePublicAcls":true,"BlockPublicPolicy":true,"RestrictPublicBuckets":true}},"physicalResourceId":{"id":"111111111111-s3-public-access-block"}}",
+      },
+      "Type": "Custom::S3AccountPublicAccessBlock",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineAccountSettingsS3BlockPublicAccessCustomResourcePolicy16EBBB23": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutPublicAccessBlock",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineAccountSettingsS3BlockPublicAccessCustomResourcePolicy16EBBB23",
+        "Roles": [
+          {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineAlertingCriticalTopic9F8D82E1": {
+      "Properties": {
+        "DisplayName": "example-platform dev critical alerts",
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "critical",
+          },
+        ],
+        "TopicName": "platform-dev-alerts-critical",
+      },
+      "Type": "AWS::SNS::Topic",
+    },
+    "BaselineAlertingCriticalTopicPolicyA2BF2A0D": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Ref": "BaselineAlertingCriticalTopic9F8D82E1",
+              },
+              "Sid": "AllowPublishThroughSSLOnly",
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "111111111111",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "cloudwatch.amazonaws.com",
+                  "events.amazonaws.com",
+                  "budgets.amazonaws.com",
+                ],
+              },
+              "Resource": {
+                "Ref": "BaselineAlertingCriticalTopic9F8D82E1",
+              },
+              "Sid": "AllowAwsServicesToPublish",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Topics": [
+          {
+            "Ref": "BaselineAlertingCriticalTopic9F8D82E1",
+          },
+        ],
+      },
+      "Type": "AWS::SNS::TopicPolicy",
+    },
+    "BaselineAlertingCriticalTopicalertsexamplecom5650B85B": {
+      "Properties": {
+        "Endpoint": "alerts@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "BaselineAlertingCriticalTopic9F8D82E1",
+        },
+      },
+      "Type": "AWS::SNS::Subscription",
+    },
+    "BaselineAlertingHighTopicD8408073": {
+      "Properties": {
+        "DisplayName": "example-platform dev high alerts",
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "high",
+          },
+        ],
+        "TopicName": "platform-dev-alerts-high",
+      },
+      "Type": "AWS::SNS::Topic",
+    },
+    "BaselineAlertingHighTopicPolicy66ADA4BB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Ref": "BaselineAlertingHighTopicD8408073",
+              },
+              "Sid": "AllowPublishThroughSSLOnly",
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "111111111111",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "cloudwatch.amazonaws.com",
+                  "events.amazonaws.com",
+                  "budgets.amazonaws.com",
+                ],
+              },
+              "Resource": {
+                "Ref": "BaselineAlertingHighTopicD8408073",
+              },
+              "Sid": "AllowAwsServicesToPublish",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Topics": [
+          {
+            "Ref": "BaselineAlertingHighTopicD8408073",
+          },
+        ],
+      },
+      "Type": "AWS::SNS::TopicPolicy",
+    },
+    "BaselineAlertingHighTopicalertsexamplecom40F01E3B": {
+      "Properties": {
+        "Endpoint": "alerts@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "BaselineAlertingHighTopicD8408073",
+        },
+      },
+      "Type": "AWS::SNS::Subscription",
+    },
+    "BaselineAlertingLowTopic82E06C07": {
+      "Properties": {
+        "DisplayName": "example-platform dev low alerts",
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "low",
+          },
+        ],
+        "TopicName": "platform-dev-alerts-low",
+      },
+      "Type": "AWS::SNS::Topic",
+    },
+    "BaselineAlertingLowTopicPolicy8FDCC9A7": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Ref": "BaselineAlertingLowTopic82E06C07",
+              },
+              "Sid": "AllowPublishThroughSSLOnly",
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "111111111111",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "cloudwatch.amazonaws.com",
+                  "events.amazonaws.com",
+                  "budgets.amazonaws.com",
+                ],
+              },
+              "Resource": {
+                "Ref": "BaselineAlertingLowTopic82E06C07",
+              },
+              "Sid": "AllowAwsServicesToPublish",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Topics": [
+          {
+            "Ref": "BaselineAlertingLowTopic82E06C07",
+          },
+        ],
+      },
+      "Type": "AWS::SNS::TopicPolicy",
+    },
+    "BaselineAlertingLowTopicalertsexamplecom93461EF4": {
+      "Properties": {
+        "Endpoint": "alerts@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "BaselineAlertingLowTopic82E06C07",
+        },
+      },
+      "Type": "AWS::SNS::Subscription",
+    },
+    "BaselineAlertingMediumTopic292BA993": {
+      "Properties": {
+        "DisplayName": "example-platform dev medium alerts",
+        "KmsMasterKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+          {
+            "Key": "platform:severity",
+            "Value": "medium",
+          },
+        ],
+        "TopicName": "platform-dev-alerts-medium",
+      },
+      "Type": "AWS::SNS::Topic",
+    },
+    "BaselineAlertingMediumTopicPolicy9B95A2AC": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": {
+                "Ref": "BaselineAlertingMediumTopic292BA993",
+              },
+              "Sid": "AllowPublishThroughSSLOnly",
+            },
+            {
+              "Action": "sns:Publish",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "111111111111",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "cloudwatch.amazonaws.com",
+                  "events.amazonaws.com",
+                  "budgets.amazonaws.com",
+                ],
+              },
+              "Resource": {
+                "Ref": "BaselineAlertingMediumTopic292BA993",
+              },
+              "Sid": "AllowAwsServicesToPublish",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Topics": [
+          {
+            "Ref": "BaselineAlertingMediumTopic292BA993",
+          },
+        ],
+      },
+      "Type": "AWS::SNS::TopicPolicy",
+    },
+    "BaselineAlertingMediumTopicalertsexamplecom393DC65F": {
+      "Properties": {
+        "Endpoint": "alerts@example.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "BaselineAlertingMediumTopic292BA993",
+        },
+      },
+      "Type": "AWS::SNS::Subscription",
+    },
+    "BaselineAlertingcriticalTopicArnParamEA8A02A7": {
+      "Properties": {
+        "Name": "/platform/env/dev/alerts/topic-arn/critical",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineAlertingCriticalTopic9F8D82E1",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineAlertinghighTopicArnParamE829B963": {
+      "Properties": {
+        "Name": "/platform/env/dev/alerts/topic-arn/high",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineAlertingHighTopicD8408073",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineAlertinglowTopicArnParam95C915EC": {
+      "Properties": {
+        "Name": "/platform/env/dev/alerts/topic-arn/low",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineAlertingLowTopic82E06C07",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineAlertingmediumTopicArnParamE4AE60DE": {
+      "Properties": {
+        "Name": "/platform/env/dev/alerts/topic-arn/medium",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineAlertingMediumTopic292BA993",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineBudgetsMonthlyEF88B3C6": {
+      "Properties": {
+        "Budget": {
+          "BudgetLimit": {
+            "Amount": 100,
+            "Unit": "USD",
+          },
+          "BudgetName": "example-platform-dev-monthly",
+          "BudgetType": "COST",
+          "TimeUnit": "MONTHLY",
+        },
+        "NotificationsWithSubscribers": [
+          {
+            "Notification": {
+              "ComparisonOperator": "GREATER_THAN",
+              "NotificationType": "ACTUAL",
+              "Threshold": 80,
+              "ThresholdType": "PERCENTAGE",
+            },
+            "Subscribers": [
+              {
+                "Address": {
+                  "Ref": "BaselineAlertingHighTopicD8408073",
+                },
+                "SubscriptionType": "SNS",
+              },
+              {
+                "Address": "alerts@example.com",
+                "SubscriptionType": "EMAIL",
+              },
+            ],
+          },
+          {
+            "Notification": {
+              "ComparisonOperator": "GREATER_THAN",
+              "NotificationType": "ACTUAL",
+              "Threshold": 100,
+              "ThresholdType": "PERCENTAGE",
+            },
+            "Subscribers": [
+              {
+                "Address": {
+                  "Ref": "BaselineAlertingHighTopicD8408073",
+                },
+                "SubscriptionType": "SNS",
+              },
+              {
+                "Address": "alerts@example.com",
+                "SubscriptionType": "EMAIL",
+              },
+            ],
+          },
+          {
+            "Notification": {
+              "ComparisonOperator": "GREATER_THAN",
+              "NotificationType": "FORECASTED",
+              "Threshold": 100,
+              "ThresholdType": "PERCENTAGE",
+            },
+            "Subscribers": [
+              {
+                "Address": {
+                  "Ref": "BaselineAlertingHighTopicD8408073",
+                },
+                "SubscriptionType": "SNS",
+              },
+              {
+                "Address": "alerts@example.com",
+                "SubscriptionType": "EMAIL",
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::Budgets::Budget",
+    },
+    "BaselineDnsDomainParamFB4209E6": {
+      "Properties": {
+        "Name": "/platform/env/dev/domain",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "dev.example.com",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineDnsRegionalCertParam6E6850D2": {
+      "Properties": {
+        "Name": "/platform/env/dev/certs/regional-arn",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineDnsRegionalCertificate6E4F9E8A",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineDnsRegionalCertificate6E4F9E8A": {
+      "Properties": {
+        "DomainName": "dev.example.com",
+        "DomainValidationOptions": [
+          {
+            "DomainName": "dev.example.com",
+            "HostedZoneId": {
+              "Ref": "BaselineDnsZone168E52CD",
+            },
+          },
+        ],
+        "SubjectAlternativeNames": [
+          "*.dev.example.com",
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Dns/RegionalCertificate",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "ValidationMethod": "DNS",
+      },
+      "Type": "AWS::CertificateManager::Certificate",
+    },
+    "BaselineDnsZone168E52CD": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "HostedZoneConfig": {
+          "Comment": "example-platform dev",
+        },
+        "HostedZoneTags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "Name": "dev.example.com.",
+      },
+      "Type": "AWS::Route53::HostedZone",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineDnsZoneIdParam98807465": {
+      "Properties": {
+        "Name": "/platform/env/dev/dns/zone-id",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineDnsZone168E52CD",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineDnsZoneNameParamF62BEC8A": {
+      "Properties": {
+        "Name": "/platform/env/dev/dns/zone-name",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "dev.example.com",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineEncryptionKey6B41E5DE": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "example-platform platform key (dev)",
+        "EnableKeyRotation": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::111111111111:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::111111111111:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+              "Sid": "AllowAccountAdministration",
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey",
+                "kms:CreateGrant",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "111111111111",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "logs.amazonaws.com",
+                  "sns.amazonaws.com",
+                  "sqs.amazonaws.com",
+                  "s3.amazonaws.com",
+                  "secretsmanager.amazonaws.com",
+                  "ssm.amazonaws.com",
+                  "events.amazonaws.com",
+                  "lambda.amazonaws.com",
+                  "dynamodb.amazonaws.com",
+                  "states.amazonaws.com",
+                  "scheduler.amazonaws.com",
+                ],
+              },
+              "Resource": "*",
+              "Sid": "AllowPlatformServices",
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey",
+              ],
+              "Condition": {
+                "ArnLike": {
+                  "kms:EncryptionContext:aws:logs:arn": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":logs:eu-west-1:111111111111:log-group/*",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "logs.eu-west-1.amazonaws.com",
+              },
+              "Resource": "*",
+              "Sid": "AllowCloudWatchLogs",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": "secretsmanager.eu-west-1.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::111111111111:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:CreateGrant",
+                "kms:DescribeKey",
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "kms:ViaService": "secretsmanager.eu-west-1.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::111111111111:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "KeySpec": "SYMMETRIC_DEFAULT",
+        "KeyUsage": "ENCRYPT_DECRYPT",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineEncryptionKeyAliasB4CB054C": {
+      "Properties": {
+        "AliasName": "alias/platform-dev-key",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::KMS::Alias",
+    },
+    "BaselineEncryptionKeyArnParam08CEC5D6": {
+      "Properties": {
+        "Name": "/platform/account/kms/key-arn",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineEncryptionKeyIdParam3E540254": {
+      "Properties": {
+        "Name": "/platform/account/kms/key-id",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineEncryptionKey6B41E5DE",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineEnvNameParam6AA3B9BC": {
+      "Properties": {
+        "Name": "/platform/env/dev/name",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "dev",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineEventBus3CCBC411": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "example-platform dev platform events",
+        "Name": "platform-dev-events",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::Events::EventBus",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineEventBusArchiveB94BCCB1": {
+      "Properties": {
+        "ArchiveName": "platform-dev-events-archive",
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "All events on ",
+              {
+                "Ref": "BaselineEventBus3CCBC411",
+              },
+            ],
+          ],
+        },
+        "EventPattern": {
+          "account": [
+            "111111111111",
+          ],
+        },
+        "KmsKeyIdentifier": "",
+        "RetentionDays": 30,
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "BaselineEventBus3CCBC411",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Events::Archive",
+    },
+    "BaselineEventBusBusArnParam0629A9E3": {
+      "Properties": {
+        "Name": "/platform/env/dev/events/bus-arn",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineEventBus3CCBC411",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineEventBusBusNameParam7D5634EB": {
+      "Properties": {
+        "Name": "/platform/env/dev/events/bus-name",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineEventBus3CCBC411",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineEventBusOrganizationPolicy55D35D76": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "BaselineEventBus3CCBC411",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Condition": {
+            "StringEquals": {
+              "aws:PrincipalOrgID": "o-example",
+            },
+          },
+          "Effect": "Allow",
+          "Principal": "*",
+          "Resource": {
+            "Fn::GetAtt": [
+              "BaselineEventBus3CCBC411",
+              "Arn",
+            ],
+          },
+          "Sid": "AllowOrganizationPutEvents",
+        },
+        "StatementId": "example-platform-dev-organization",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "BaselineGitHubOidcExampleOrgHelloHttpDeployRoleArnParamC1FB7A25": {
+      "Properties": {
+        "Name": "/platform/account/deploy/role-arn/hello-http",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineGitHubOidcExampleOrgHelloHttpDeployRoleD2385AA8",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineGitHubOidcExampleOrgHelloHttpDeployRoleD2385AA8": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": [
+                    "repo:example-org/hello-http:environment:dev",
+                    "repo:example-org/hello-http:ref:refs/heads/main",
+                    "repo:example-org/hello-http:pull_request",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": {
+                  "Ref": "BaselineGitHubOidcProviderAF5063A8",
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "GitHub Actions deploy role for example-org/hello-http (dev)",
+        "MaxSessionDuration": 3600,
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-deploy-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-file-publishing-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-image-publishing-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-lookup-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                  ],
+                  "Sid": "AssumeCdkBootstrapRoles",
+                },
+                {
+                  "Action": [
+                    "cloudformation:DescribeStacks",
+                    "cloudformation:DescribeStackEvents",
+                    "cloudformation:GetTemplate",
+                    "cloudformation:ListStacks",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Sid": "DescribeStacks",
+                },
+                {
+                  "Action": "ssm:GetParameter",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":ssm:eu-west-1:111111111111:parameter/cdk-bootstrap/hnb659fds/version",
+                      ],
+                    ],
+                  },
+                  "Sid": "ReadBootstrapVersion",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "deploy",
+          },
+        ],
+        "RoleName": "platform-dev-deploy-example-org-hello-http",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineGitHubOidcExampleOrgHelloHttpReadOnlyRole2E7CCBBC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": [
+                    "repo:example-org/hello-http:pull_request",
+                    "repo:example-org/hello-http:environment:dev",
+                    "repo:example-org/hello-http:ref:refs/heads/main",
+                    "repo:example-org/hello-http:pull_request",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": {
+                  "Ref": "BaselineGitHubOidcProviderAF5063A8",
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "GitHub Actions read-only role (cdk diff) for example-org/hello-http (dev)",
+        "MaxSessionDuration": 3600,
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::111111111111:role/cdk-hnb659fds-lookup-role-111111111111-eu-west-1",
+                      ],
+                    ],
+                  },
+                  "Sid": "AssumeCdkLookupRole",
+                },
+                {
+                  "Action": [
+                    "cloudformation:DescribeStacks",
+                    "cloudformation:DescribeStackEvents",
+                    "cloudformation:GetTemplate",
+                    "cloudformation:ListStacks",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Sid": "DescribeStacks",
+                },
+                {
+                  "Action": "ssm:GetParameter",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":ssm:eu-west-1:111111111111:parameter/cdk-bootstrap/hnb659fds/version",
+                      ],
+                    ],
+                  },
+                  "Sid": "ReadBootstrapVersion",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "readonly",
+          },
+        ],
+        "RoleName": "platform-dev-readonly-example-org-hello-http",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineGitHubOidcExampleOrgHelloHttpReadOnlyRoleArnParamE10573C2": {
+      "Properties": {
+        "Name": "/platform/account/deploy/readonly-role-arn/hello-http",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineGitHubOidcExampleOrgHelloHttpReadOnlyRole2E7CCBBC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineGitHubOidcExampleOrgOrdersDeployRole03CCEFD7": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": [
+                    "repo:example-org/orders:environment:dev",
+                    "repo:example-org/orders:pull_request",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": {
+                  "Ref": "BaselineGitHubOidcProviderAF5063A8",
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "GitHub Actions deploy role for example-org/orders (dev)",
+        "MaxSessionDuration": 3600,
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-deploy-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-file-publishing-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-image-publishing-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::111111111111:role/cdk-hnb659fds-lookup-role-111111111111-eu-west-1",
+                        ],
+                      ],
+                    },
+                  ],
+                  "Sid": "AssumeCdkBootstrapRoles",
+                },
+                {
+                  "Action": [
+                    "cloudformation:DescribeStacks",
+                    "cloudformation:DescribeStackEvents",
+                    "cloudformation:GetTemplate",
+                    "cloudformation:ListStacks",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Sid": "DescribeStacks",
+                },
+                {
+                  "Action": "ssm:GetParameter",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":ssm:eu-west-1:111111111111:parameter/cdk-bootstrap/hnb659fds/version",
+                      ],
+                    ],
+                  },
+                  "Sid": "ReadBootstrapVersion",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "deploy",
+          },
+        ],
+        "RoleName": "platform-dev-deploy-example-org-orders",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineGitHubOidcExampleOrgOrdersDeployRoleArnParam78299FC8": {
+      "Properties": {
+        "Name": "/platform/account/deploy/role-arn/orders",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineGitHubOidcExampleOrgOrdersDeployRole03CCEFD7",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineGitHubOidcExampleOrgOrdersReadOnlyRole030E086E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                },
+                "StringLike": {
+                  "token.actions.githubusercontent.com:sub": [
+                    "repo:example-org/orders:pull_request",
+                    "repo:example-org/orders:environment:dev",
+                    "repo:example-org/orders:pull_request",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": {
+                  "Ref": "BaselineGitHubOidcProviderAF5063A8",
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Description": "GitHub Actions read-only role (cdk diff) for example-org/orders (dev)",
+        "MaxSessionDuration": 3600,
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "sts:AssumeRole",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":iam::111111111111:role/cdk-hnb659fds-lookup-role-111111111111-eu-west-1",
+                      ],
+                    ],
+                  },
+                  "Sid": "AssumeCdkLookupRole",
+                },
+                {
+                  "Action": [
+                    "cloudformation:DescribeStacks",
+                    "cloudformation:DescribeStackEvents",
+                    "cloudformation:GetTemplate",
+                    "cloudformation:ListStacks",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Sid": "DescribeStacks",
+                },
+                {
+                  "Action": "ssm:GetParameter",
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":ssm:eu-west-1:111111111111:parameter/cdk-bootstrap/hnb659fds/version",
+                      ],
+                    ],
+                  },
+                  "Sid": "ReadBootstrapVersion",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "readonly",
+          },
+        ],
+        "RoleName": "platform-dev-readonly-example-org-orders",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineGitHubOidcExampleOrgOrdersReadOnlyRoleArnParam666E1973": {
+      "Properties": {
+        "Name": "/platform/account/deploy/readonly-role-arn/orders",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineGitHubOidcExampleOrgOrdersReadOnlyRole030E086E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineGitHubOidcProviderAF5063A8": {
+      "Properties": {
+        "ClientIdList": [
+          "sts.amazonaws.com",
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "Url": "https://token.actions.githubusercontent.com",
+      },
+      "Type": "AWS::IAM::OIDCProvider",
+    },
+    "BaselineGitHubOidcProviderArnParam51A46D9A": {
+      "Properties": {
+        "Name": "/platform/account/deploy/oidc-provider-arn",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineGitHubOidcProviderAF5063A8",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineLogRetentionHandlerD0965929": {
+      "DependsOn": [
+        "BaselineLogRetentionHandlerServiceRoleDefaultPolicyAE197A1B",
+        "BaselineLogRetentionHandlerServiceRole8D305A8F",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "ZipFile": "
+const { CloudWatchLogsClient, DescribeLogGroupsCommand, PutRetentionPolicyCommand } = require("@aws-sdk/client-cloudwatch-logs");
+const client = new CloudWatchLogsClient({});
+const retention = Number(process.env.RETENTION_DAYS);
+const excluded = (process.env.EXCLUDE_PREFIXES || "").split(",").filter(Boolean);
+exports.handler = async (event) => {
+  const single = event?.detail?.requestParameters?.logGroupName;
+  let updated = 0;
+  let nextToken;
+  do {
+    const page = await client.send(new DescribeLogGroupsCommand(single ? { logGroupNamePrefix: single } : { nextToken }));
+    for (const group of page.logGroups || []) {
+      if (group.retentionInDays || excluded.some((p) => group.logGroupName.startsWith(p))) continue;
+      await client.send(new PutRetentionPolicyCommand({ logGroupName: group.logGroupName, retentionInDays: retention }));
+      updated += 1;
+    }
+    nextToken = single ? undefined : page.nextToken;
+  } while (nextToken);
+  console.log(JSON.stringify({ message: "log retention applied", updated, retention }));
+  return { updated };
+};
+",
+        },
+        "Description": "Applies the platform default retention to log groups without one",
+        "Environment": {
+          "Variables": {
+            "EXCLUDE_PREFIXES": "",
+            "RETENTION_DAYS": "90",
+          },
+        },
+        "FunctionName": "platform-dev-log-retention",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogGroup": {
+            "Ref": "BaselineLogRetentionHandlerLogGroupE9E2B8D5",
+          },
+        },
+        "MemorySize": 256,
+        "Role": {
+          "Fn::GetAtt": [
+            "BaselineLogRetentionHandlerServiceRole8D305A8F",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "Timeout": 300,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "BaselineLogRetentionHandlerLogGroupE9E2B8D5": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/platform-dev-log-retention",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineLogRetentionHandlerServiceRole8D305A8F": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineLogRetentionHandlerServiceRoleDefaultPolicyAE197A1B": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:DescribeLogGroups",
+                "logs:PutRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:eu-west-1:111111111111:log-group/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineLogRetentionHandlerServiceRoleDefaultPolicyAE197A1B",
+        "Roles": [
+          {
+            "Ref": "BaselineLogRetentionHandlerServiceRole8D305A8F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineLogRetentionOnCreateLogGroup502D687C": {
+      "Properties": {
+        "Description": "Apply retention as soon as a log group is created",
+        "EventPattern": {
+          "detail": {
+            "eventName": [
+              "CreateLogGroup",
+            ],
+            "eventSource": [
+              "logs.amazonaws.com",
+            ],
+          },
+          "detail-type": [
+            "AWS API Call via CloudTrail",
+          ],
+          "source": [
+            "aws.logs",
+          ],
+        },
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "BaselineLogRetentionHandlerD0965929",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "BaselineLogRetentionOnCreateLogGroupAllowEventRuleAccountBaselineLogRetentionHandler65B6A2D9DB6C3E4E": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "BaselineLogRetentionHandlerD0965929",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "BaselineLogRetentionOnCreateLogGroup502D687C",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "BaselineLogRetentionRetentionParam268564DA": {
+      "Properties": {
+        "Name": "/platform/account/log-retention-days",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "90",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineLogRetentionSweep360B0DE8": {
+      "Properties": {
+        "Description": "Periodic sweep for log groups without retention",
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "BaselineLogRetentionHandlerD0965929",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "BaselineLogRetentionSweepAllowEventRuleAccountBaselineLogRetentionHandler65B6A2D9547B0DD2": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "BaselineLogRetentionHandlerD0965929",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "BaselineLogRetentionSweep360B0DE8",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "BaselineNetworkAvailabilityZonesParamCA1490E4": {
+      "Properties": {
+        "Name": "/platform/account/vpc/availability-zones",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "StringList",
+        "Value": "dummy1a,dummy1b",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineNetworkEndpointSecurityGroup3F3379F7": {
+      "Properties": {
+        "GroupDescription": "VPC interface endpoints",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86,
+          },
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::GetAtt": [
+                "BaselineNetworkVpc03811D27",
+                "CidrBlock",
+              ],
+            },
+            "Description": "HTTPS from the VPC",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "BaselineNetworkFlowLogsC57684C4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/platform-dev-vpc-flow-logs",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineNetworkLambdaSecurityGroupE65D7E38": {
+      "Properties": {
+        "GroupDescription": "Shared security group for platform Lambda functions",
+        "GroupName": "platform-dev-lambda",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "BaselineNetworkLambdaSecurityGroupParam7291C2E4": {
+      "Properties": {
+        "Name": "/platform/account/vpc/lambda-security-group-id",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineNetworkLambdaSecurityGroupE65D7E38",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineNetworkPrivateSubnetsParam14746441": {
+      "Properties": {
+        "Name": "/platform/account/vpc/private-subnet-ids",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "StringList",
+        "Value": {
+          "Fn::Join": [
+            ",",
+            [
+              {
+                "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+              },
+              {
+                "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+              },
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineNetworkVpc03811D27": {
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "BaselineNetworkVpcCidrParam6860CF76": {
+      "Properties": {
+        "Name": "/platform/account/vpc/cidr",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineNetworkVpc03811D27",
+            "CidrBlock",
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineNetworkVpcDynamoDb72AA403B": {
+      "Properties": {
+        "RouteTableIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1RouteTable6C6999D2",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2RouteTable5CE13A4A",
+          },
+        ],
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".dynamodb",
+            ],
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Gateway",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcFlowLog7F8F5799": {
+      "Properties": {
+        "DeliverLogsPermissionArn": {
+          "Fn::GetAtt": [
+            "BaselineNetworkVpcFlowLogIAMRole66A7EC0E",
+            "Arn",
+          ],
+        },
+        "LogDestinationType": "cloud-watch-logs",
+        "LogGroupName": {
+          "Ref": "BaselineNetworkFlowLogsC57684C4",
+        },
+        "ResourceId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+        "ResourceType": "VPC",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Network/Vpc/FlowLog",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "TrafficType": "REJECT",
+      },
+      "Type": "AWS::EC2::FlowLog",
+    },
+    "BaselineNetworkVpcFlowLogIAMRole66A7EC0E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "vpc-flow-logs.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Network/Vpc/FlowLog",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineNetworkVpcFlowLogIAMRoleDefaultPolicy53F15C3E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BaselineNetworkFlowLogsC57684C4",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineNetworkVpcFlowLogIAMRoleDefaultPolicy53F15C3E",
+        "Roles": [
+          {
+            "Ref": "BaselineNetworkVpcFlowLogIAMRole66A7EC0E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineNetworkVpcIdParamE21A0AD8": {
+      "Properties": {
+        "Name": "/platform/account/vpc/id",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineNetworkVpcS37F712153": {
+      "Properties": {
+        "RouteTableIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1RouteTable6C6999D2",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2RouteTable5CE13A4A",
+          },
+        ],
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".s3",
+            ],
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Gateway",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpceventsEndpoint29247644": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.events",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpckmsEndpoint51AD192C": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.kms",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpclambdaEndpointBD2E55C2": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.lambda",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpclogsEndpointA8170EEA": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.logs",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcmonitoringEndpoint2C2AA811": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.monitoring",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcprivateSubnet1RouteTable6C6999D2": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Network/Vpc/privateSubnet1",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "BaselineNetworkVpcprivateSubnet1RouteTableAssociation61572D92": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "BaselineNetworkVpcprivateSubnet1RouteTable6C6999D2",
+        },
+        "SubnetId": {
+          "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.0.0/20",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "private",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Network/Vpc/privateSubnet1",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "BaselineNetworkVpcprivateSubnet2RouteTable5CE13A4A": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Network/Vpc/privateSubnet2",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "BaselineNetworkVpcprivateSubnet2RouteTableAssociation203824D3": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "BaselineNetworkVpcprivateSubnet2RouteTable5CE13A4A",
+        },
+        "SubnetId": {
+          "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "BaselineNetworkVpcprivateSubnet2SubnetB591B302": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.16.0/20",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "private",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Name",
+            "Value": "AccountBaseline/Baseline/Network/Vpc/privateSubnet2",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "BaselineNetworkVpcsecretsmanagerEndpoint3F1D99FE": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.secretsmanager",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcsnsEndpointB6FD2657": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.sns",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcsqsEndpoint077F0970": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.sqs",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcssmEndpoint4F3CFE8D": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.ssm",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineNetworkVpcstsEndpointB215E1E8": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "BaselineNetworkEndpointSecurityGroup3F3379F7",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.eu-west-1.sts",
+        "SubnetIds": [
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet1Subnet6C9A53AF",
+          },
+          {
+            "Ref": "BaselineNetworkVpcprivateSubnet2SubnetB591B302",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "platform-dev-vpc",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "BaselineNetworkVpc03811D27",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "BaselineSecurityAuditBucket2D1CA339": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "BucketKeyEnabled": true,
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "BaselineEncryptionKey6B41E5DE",
+                    "Arn",
+                  ],
+                },
+                "SSEAlgorithm": "aws:kms",
+              },
+            },
+          ],
+        },
+        "BucketName": "platform-dev-audit-111111111111",
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "ExpirationInDays": 365,
+              "Id": "expire-audit-logs",
+              "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 30,
+              },
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineSecurityAuditBucketAutoDeleteObjectsCustomResourceA5FE82CD": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "BaselineSecurityAuditBucketPolicyA38FE163",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "BaselineSecurityAuditBucket2D1CA339",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineSecurityAuditBucketParamD85060D0": {
+      "Properties": {
+        "Name": "/platform/account/security/cloudtrail-bucket-name",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineSecurityAuditBucket2D1CA339",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineSecurityAuditBucketPolicyA38FE163": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "BaselineSecurityAuditBucket2D1CA339",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "BaselineSecurityAuditBucket2D1CA339",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BaselineSecurityAuditBucket2D1CA339",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "BaselineSecurityAuditBucket2D1CA339",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BaselineSecurityAuditBucket2D1CA339",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "s3:GetBucketAcl",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BaselineSecurityAuditBucket2D1CA339",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "StringEquals": {
+                  "s3:x-amz-acl": "bucket-owner-full-control",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "BaselineSecurityAuditBucket2D1CA339",
+                        "Arn",
+                      ],
+                    },
+                    "/cloudtrail/AWSLogs/111111111111/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BaselineSecurityConfigRole2C925C05": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "config.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWS_ConfigRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineSecurityConfigRoleDefaultPolicy2A85955D": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "BaselineSecurityAuditBucket2D1CA339",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BaselineSecurityAuditBucket2D1CA339",
+                          "Arn",
+                        ],
+                      },
+                      "/config/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+                "kms:Encrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BaselineEncryptionKey6B41E5DE",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "BaselineSecurityAuditBucket2D1CA339",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "BaselineSecurityAuditBucket2D1CA339",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:DescribeKey",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BaselineEncryptionKey6B41E5DE",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineSecurityConfigRoleDefaultPolicy2A85955D",
+        "Roles": [
+          {
+            "Ref": "BaselineSecurityConfigRole2C925C05",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineSecurityDeliveryChannel006741F1": {
+      "DependsOn": [
+        "BaselineSecurityRecorderDF0618C7",
+      ],
+      "Properties": {
+        "ConfigSnapshotDeliveryProperties": {
+          "DeliveryFrequency": "TwentyFour_Hours",
+        },
+        "Name": "default",
+        "S3BucketName": {
+          "Ref": "BaselineSecurityAuditBucket2D1CA339",
+        },
+        "S3KeyPrefix": "config",
+      },
+      "Type": "AWS::Config::DeliveryChannel",
+    },
+    "BaselineSecurityFoundationalStandard186088DE": {
+      "DependsOn": [
+        "BaselineSecuritySecurityHub596C9106",
+      ],
+      "Properties": {
+        "StandardsArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":securityhub:eu-west-1::standards/aws-foundational-security-best-practices/v/1.0.0",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SecurityHub::Standard",
+    },
+    "BaselineSecurityGuardDuty1289774C": {
+      "Properties": {
+        "Enable": true,
+        "Features": [
+          {
+            "Name": "S3_DATA_EVENTS",
+            "Status": "ENABLED",
+          },
+          {
+            "Name": "LAMBDA_NETWORK_LOGS",
+            "Status": "ENABLED",
+          },
+        ],
+        "FindingPublishingFrequency": "FIFTEEN_MINUTES",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::GuardDuty::Detector",
+    },
+    "BaselineSecurityRecorderDF0618C7": {
+      "Properties": {
+        "Name": "default",
+        "RecordingGroup": {
+          "AllSupported": true,
+          "IncludeGlobalResourceTypes": false,
+        },
+        "RoleARN": {
+          "Fn::GetAtt": [
+            "BaselineSecurityConfigRole2C925C05",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Config::ConfigurationRecorder",
+    },
+    "BaselineSecuritySecurityHub596C9106": {
+      "Properties": {
+        "ControlFindingGenerator": "SECURITY_CONTROL",
+        "EnableDefaultStandards": false,
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+      },
+      "Type": "AWS::SecurityHub::Hub",
+    },
+    "BaselineSecurityTrail02F91F65": {
+      "DependsOn": [
+        "BaselineSecurityAuditBucketPolicyA38FE163",
+        "BaselineSecurityTrailLogsRoleDefaultPolicyBE8EE649",
+        "BaselineSecurityTrailLogsRole353AACCA",
+      ],
+      "Properties": {
+        "CloudWatchLogsLogGroupArn": {
+          "Fn::GetAtt": [
+            "BaselineSecurityTrailLogGroup44934577",
+            "Arn",
+          ],
+        },
+        "CloudWatchLogsRoleArn": {
+          "Fn::GetAtt": [
+            "BaselineSecurityTrailLogsRole353AACCA",
+            "Arn",
+          ],
+        },
+        "EnableLogFileValidation": true,
+        "EventSelectors": [
+          {
+            "IncludeManagementEvents": true,
+            "ReadWriteType": "All",
+          },
+        ],
+        "IncludeGlobalServiceEvents": true,
+        "IsLogging": true,
+        "IsMultiRegionTrail": true,
+        "IsOrganizationTrail": false,
+        "KMSKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+        "S3BucketName": {
+          "Ref": "BaselineSecurityAuditBucket2D1CA339",
+        },
+        "S3KeyPrefix": "cloudtrail",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+        "TrailName": "platform-dev-trail",
+      },
+      "Type": "AWS::CloudTrail::Trail",
+    },
+    "BaselineSecurityTrailLogGroup44934577": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/platform-dev-cloudtrail",
+        "RetentionInDays": 365,
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineSecurityTrailLogsRole353AACCA": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudtrail.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "BaselineSecurityTrailLogsRoleDefaultPolicyBE8EE649": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BaselineSecurityTrailLogGroup44934577",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "BaselineSecurityTrailLogsRoleDefaultPolicyBE8EE649",
+        "Roles": [
+          {
+            "Ref": "BaselineSecurityTrailLogsRole353AACCA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "BaselineSharedParametersAuth0Domain52CE5944": {
+      "Properties": {
+        "Name": "/platform/config/auth0-domain",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": "example.eu.auth0.com",
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "BaselineSharedSecretsNeonApiKey6591FA4A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "GenerateSecretString": {
+          "ExcludePunctuation": true,
+          "PasswordLength": 32,
+        },
+        "KmsKeyId": {
+          "Fn::GetAtt": [
+            "BaselineEncryptionKey6B41E5DE",
+            "Arn",
+          ],
+        },
+        "Name": "platform-dev-neon-api-key",
+        "Tags": [
+          {
+            "Key": "platform:env",
+            "Value": "dev",
+          },
+          {
+            "Key": "platform:managed-by",
+            "Value": "outcrop",
+          },
+          {
+            "Key": "platform:project",
+            "Value": "example-platform",
+          },
+          {
+            "Key": "platform:service",
+            "Value": "platform",
+          },
+        ],
+      },
+      "Type": "AWS::SecretsManager::Secret",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "BaselineSharedSecretsNeonApiKeyArnParamE565B9E3": {
+      "Properties": {
+        "Name": "/platform/secrets/neon-api-key/arn",
+        "Tags": {
+          "platform:env": "dev",
+          "platform:managed-by": "outcrop",
+          "platform:project": "example-platform",
+          "platform:service": "platform",
+        },
+        "Tier": "Standard",
+        "Type": "String",
+        "Value": {
+          "Ref": "BaselineSharedSecretsNeonApiKey6591FA4A",
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
+    "CdkJsonStringifyFnGetAttBaselineDnsZone168E52CDNameServers75DC40E9": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57",
+            "Arn",
+          ],
+        },
+        "Value": {
+          "Fn::GetAtt": [
+            "BaselineDnsZone168E52CD",
+            "NameServers",
+          ],
+        },
+      },
+      "Type": "Custom::AWSCDKCfnJsonStringify",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CustomCrossRegionExportWriterCustomResourceProviderHandlerD8786E8A": {
+      "DependsOn": [
+        "CustomCrossRegionExportWriterCustomResourceProviderRoleC951B1E1",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomCrossRegionExportWriterCustomResourceProviderRoleC951B1E1",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCrossRegionExportWriterCustomResourceProviderRoleC951B1E1": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ssm:DeleteParameters",
+                    "ssm:ListTagsForResource",
+                    "ssm:GetParameters",
+                    "ssm:PutParameter",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":ssm:us-east-1:111111111111:parameter/cdk/exports/*",
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-west-1",
+          "S3Key": "<ASSET_HASH>.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "BaselineSecurityAuditBucket2D1CA339",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ExportsWriteruseast10F67B507DDE2E818": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCrossRegionExportWriterCustomResourceProviderHandlerD8786E8A",
+            "Arn",
+          ],
+        },
+        "WriterProps": {
+          "exports": {
+            "/cdk/exports/PlatformAccountEdge-dev/PlatformAccountdeveuwest1RefBaselineDnsZone168E52CDEFB66C9B": {
+              "Ref": "BaselineDnsZone168E52CD",
+            },
+          },
+          "region": "us-east-1",
+        },
+      },
+      "Type": "Custom::CrossRegionExportWriter",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

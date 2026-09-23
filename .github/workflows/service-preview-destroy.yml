@@ -21,7 +21,7 @@
 #       types: [closed]
 #   jobs:
 #     destroy:
-#       uses: rpallas/platform-cdk/.github/workflows/service-preview-destroy.yml@v1
+#       uses: rpallas/outcrop/.github/workflows/service-preview-destroy.yml@v1
 #       with:
 #         aws-region: ${{ vars.AWS_REGION }}
 #         role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
@@ -88,12 +88,12 @@ on:
         required: false
         default: ubuntu-latest
       cli-version:
-        description: Version of `@rpallas/platform-cdk-cli` run via `npx --yes`.
+        description: Version of `@rpallas/outcrop-cli` run via `npx --yes`.
         type: string
         required: false
         default: latest
       cli-command:
-        description: Explicit CLI command (e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`).
+        description: Explicit CLI command (e.g. `node packages/outcrop-cli/bin/outcrop.js`).
         type: string
         required: false
         default: ""
@@ -125,31 +125,31 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -163,7 +163,7 @@ jobs:
 
       - name: Preview id
         id: preview-id
-        uses: ./.platform-cdk/.github/actions/preview-id
+        uses: ./.outcrop/.github/actions/preview-id
         with:
           strategy: ${{ inputs.strategy }}
           cli-version: ${{ inputs.cli-version }}
@@ -171,14 +171,14 @@ jobs:
           working-directory: ${{ inputs.working-directory }}
 
       - name: AWS login
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ inputs.role-arn }}
           aws-region: ${{ inputs.aws-region }}
 
       - name: cdk destroy (preview)
         id: destroy
-        uses: ./.platform-cdk/.github/actions/cdk-destroy
+        uses: ./.outcrop/.github/actions/cdk-destroy
         with:
           working-directory: ${{ inputs.working-directory }}
           env: ${{ inputs.target-env }}
@@ -188,7 +188,7 @@ jobs:
           extra-context: ${{ inputs.extra-context }}
 
       - name: Comment (destroyed)
-        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        uses: ./.outcrop/.github/actions/pr-preview-comment
         with:
           status: destroyed
           preview-id: ${{ steps.preview-id.outputs.preview-id }}

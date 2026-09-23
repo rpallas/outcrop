@@ -1,4 +1,4 @@
-# Reusable workflow: deploy a platform-cdk service to one or more environments, in order.
+# Reusable workflow: deploy a outcrop service to one or more environments, in order.
 #
 # Trigger it from the caller on `push: branches: [main]` (or `workflow_dispatch`).
 #
@@ -35,7 +35,7 @@
 #   smoke-test-command         Optional command run from working-directory after each deploy, with
 #                              the stack outputs and `DEPLOY_ENV` in the environment.
 #   output-prefix              Prefix for exported stack outputs (default `STACK_`).
-#   cli-version / cli-command  How to run `@rpallas/platform-cdk-cli` for stack outputs (optional).
+#   cli-version / cli-command  How to run `@rpallas/outcrop-cli` for stack outputs (optional).
 #   runs-on                    Runner label.
 #
 # Caller permissions required: contents: read, id-token: write.
@@ -46,7 +46,7 @@
 #       branches: [main]
 #   jobs:
 #     deploy:
-#       uses: rpallas/platform-cdk/.github/workflows/service-deploy.yml@v1
+#       uses: rpallas/outcrop/.github/workflows/service-deploy.yml@v1
 #       with:
 #         environments: dev,stage,prod
 #         aws-region: ${{ vars.AWS_REGION }}
@@ -56,7 +56,7 @@
 #         id-token: write
 #
 # Implementation note: composite actions are checked out from the repository/commit this workflow
-# runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.platform-cdk`.
+# runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.outcrop`.
 name: Service deploy
 
 on:
@@ -122,12 +122,12 @@ on:
         required: false
         default: ubuntu-latest
       cli-version:
-        description: Version of `@rpallas/platform-cdk-cli` used for stack outputs (empty = jq/aws only).
+        description: Version of `@rpallas/outcrop-cli` used for stack outputs (empty = jq/aws only).
         type: string
         required: false
         default: ""
       cli-command:
-        description: Explicit CLI command (e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`).
+        description: Explicit CLI command (e.g. `node packages/outcrop-cli/bin/outcrop.js`).
         type: string
         required: false
         default: ""
@@ -244,31 +244,31 @@ jobs:
             exit 1
           fi
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -281,14 +281,14 @@ jobs:
         run: eval "$BUILD_COMMAND"
 
       - name: AWS login
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ env.ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
 
       - name: cdk deploy
         id: deploy
-        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        uses: ./.outcrop/.github/actions/cdk-deploy
         with:
           working-directory: ${{ inputs.working-directory }}
           env: ${{ env.DEPLOY_ENV }}
@@ -296,7 +296,7 @@ jobs:
           extra-context: ${{ inputs.extra-context }}
 
       - name: Export stack outputs
-        uses: ./.platform-cdk/.github/actions/stack-outputs
+        uses: ./.outcrop/.github/actions/stack-outputs
         with:
           outputs-file: ${{ steps.deploy.outputs.outputs-file }}
           prefix: ${{ inputs.output-prefix }}
@@ -340,31 +340,31 @@ jobs:
             exit 1
           fi
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -377,14 +377,14 @@ jobs:
         run: eval "$BUILD_COMMAND"
 
       - name: AWS login
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ env.ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
 
       - name: cdk deploy
         id: deploy
-        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        uses: ./.outcrop/.github/actions/cdk-deploy
         with:
           working-directory: ${{ inputs.working-directory }}
           env: ${{ env.DEPLOY_ENV }}
@@ -392,7 +392,7 @@ jobs:
           extra-context: ${{ inputs.extra-context }}
 
       - name: Export stack outputs
-        uses: ./.platform-cdk/.github/actions/stack-outputs
+        uses: ./.outcrop/.github/actions/stack-outputs
         with:
           outputs-file: ${{ steps.deploy.outputs.outputs-file }}
           prefix: ${{ inputs.output-prefix }}
@@ -436,31 +436,31 @@ jobs:
             exit 1
           fi
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -473,14 +473,14 @@ jobs:
         run: eval "$BUILD_COMMAND"
 
       - name: AWS login
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ env.ROLE_ARN }}
           aws-region: ${{ inputs.aws-region }}
 
       - name: cdk deploy
         id: deploy
-        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        uses: ./.outcrop/.github/actions/cdk-deploy
         with:
           working-directory: ${{ inputs.working-directory }}
           env: ${{ env.DEPLOY_ENV }}
@@ -488,7 +488,7 @@ jobs:
           extra-context: ${{ inputs.extra-context }}
 
       - name: Export stack outputs
-        uses: ./.platform-cdk/.github/actions/stack-outputs
+        uses: ./.outcrop/.github/actions/stack-outputs
         with:
           outputs-file: ${{ steps.deploy.outputs.outputs-file }}
           prefix: ${{ inputs.output-prefix }}

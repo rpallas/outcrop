@@ -1,10 +1,10 @@
 # examples/hello-http
 
-The reference service for platform-cdk: an HTTP API backed by a Lambda function and a DynamoDB
+The reference service for outcrop: an HTTP API backed by a Lambda function and a DynamoDB
 table, with preview stacks per pull request. It is the output of
 
 ```sh
-npx @rpallas/platform-cdk-cli create service hello-http --http-api --dynamodb \
+npx @rpallas/outcrop-cli create service hello-http --http-api --dynamodb \
   --project "Example Platform" --owner example-org
 ```
 
@@ -22,7 +22,7 @@ preview stack named after the ticket in the branch name, and merges to `main` de
 - `platform.config.ts` - environments, isolation, preview settings
 - `infra/bin/app.ts`, `infra/lib/service-stack.ts` - CDK app and stack
 - `infra/tests/` - CloudFormation snapshot tests (base and preview)
-- `app/src/handlers/http.ts` - Lambda handler using `@rpallas/platform-cdk-runtime`
+- `app/src/handlers/http.ts` - Lambda handler using `@rpallas/outcrop-runtime`
 - `app/src/lib/items-repository.ts` - DynamoDB access
 - `app/tests/unit` - handler unit tests with mocked AWS SDK clients
 - `app/tests/integration` - smoke tests run against the deployed preview URL

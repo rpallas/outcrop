@@ -1,6 +1,6 @@
 # pr-preview-comment
 
-Creates or updates one sticky pull request comment (marker `<!-- platform-cdk-preview -->`) with
+Creates or updates one sticky pull request comment (marker `<!-- outcrop-preview -->`) with
 the preview status, preview id, stack names, URL, a link to the workflow run and a timestamp.
 
 Requires `permissions: pull-requests: write`. Silently skips when there is no pull request number.
@@ -8,14 +8,14 @@ Requires `permissions: pull-requests: write`. Silently skips when there is no pu
 ## Usage
 
 ```yaml
-- uses: rpallas/platform-cdk/.github/actions/pr-preview-comment@v1
+- uses: rpallas/outcrop/.github/actions/pr-preview-comment@v1
   with:
     status: deployed
     preview-id: ${{ steps.preview.outputs.preview-id }}
     stack-names: ${{ steps.deploy.outputs.stack-names }}
     base-url: ${{ steps.base.outputs.base-url }}
 - if: failure()
-  uses: rpallas/platform-cdk/.github/actions/pr-preview-comment@v1
+  uses: rpallas/outcrop/.github/actions/pr-preview-comment@v1
   with:
     status: failed
     preview-id: ${{ steps.preview.outputs.preview-id }}

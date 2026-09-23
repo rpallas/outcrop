@@ -6,7 +6,7 @@ import {
   PutCommand,
   ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { requireEnv } from "@rpallas/platform-cdk-runtime";
+import { requireEnv } from "@rpallas/outcrop-runtime";
 
 export interface Item {
   id: string;

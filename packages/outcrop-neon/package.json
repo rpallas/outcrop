@@ -1,0 +1,50 @@
+{
+  "name": "@rpallas/outcrop-neon",
+  "version": "0.1.0",
+  "description": "Neon Postgres integration for outcrop: a database branch per preview stack with the connection string in Secrets Manager.",
+  "license": "MIT",
+  "author": "Robbie Pallas",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rpallas/outcrop.git",
+    "directory": "packages/outcrop-neon"
+  },
+  "keywords": [
+    "aws",
+    "cdk",
+    "neon",
+    "postgres",
+    "preview",
+    "platform"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.1130.0",
+    "@rpallas/outcrop": "0.1.0"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.200.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "aws-sdk-client-mock": "^4.1.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

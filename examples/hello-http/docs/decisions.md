@@ -1,8 +1,8 @@
 # Decisions
 
-Record service-level architecture decisions here. Platform-wide decisions live in the platform-cdk repository (`docs/adr`).
+Record service-level architecture decisions here. Platform-wide decisions live in the outcrop repository (`docs/adr`).
 
-## 0001: Generated with platform-cdk
+## 0001: Generated with outcrop
 
 - Variants: http-api, dynamodb
 - Auth: none

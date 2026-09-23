@@ -1,4 +1,4 @@
-# Reusable workflow: pull request / push checks for a platform-cdk service.
+# Reusable workflow: pull request / push checks for a outcrop service.
 #
 # Jobs
 #   secret-scan - gitleaks over the full history (opt out with `secret-scan: false`).
@@ -27,7 +27,7 @@
 # Example caller (service repository):
 #   jobs:
 #     checks:
-#       uses: rpallas/platform-cdk/.github/workflows/service-checks.yml@v1
+#       uses: rpallas/outcrop/.github/workflows/service-checks.yml@v1
 #       with:
 #         diff: true
 #         aws-region: ${{ vars.AWS_REGION }}
@@ -39,7 +39,7 @@
 #
 # Implementation note: the composite actions live next to this workflow. Because `uses: ./...`
 # resolves against the *caller's* checkout, every job checks out the repository/commit this
-# workflow runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.platform-cdk` and
+# workflow runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.outcrop` and
 # references the actions from there, so workflows and actions are always the same version.
 name: Service checks
 
@@ -142,31 +142,31 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -182,16 +182,16 @@ jobs:
       # `cdk.context.json` is committed. The read-only role makes `cdk synth` work on every run.
       - name: AWS login (read-only, for context lookups)
         if: inputs.readonly-role-arn != ''
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ inputs.readonly-role-arn }}
           aws-region: ${{ inputs.aws-region }}
-          session-name: platform-cdk-checks-${{ github.run_id }}
+          session-name: outcrop-checks-${{ github.run_id }}
 
       # No further local actions are needed in this job; remove the helper checkout so repository
       # wide linters (prettier/eslint on `.`) do not see it.
-      - name: Remove platform-cdk actions checkout
-        run: rm -rf .platform-cdk
+      - name: Remove outcrop actions checkout
+        run: rm -rf .outcrop
 
       - name: Lint
         working-directory: ${{ inputs.working-directory }}
@@ -238,31 +238,31 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -275,13 +275,13 @@ jobs:
         run: eval "$BUILD_COMMAND"
 
       - name: AWS login (read-only)
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ inputs.readonly-role-arn }}
           aws-region: ${{ inputs.aws-region }}
 
       - name: cdk diff comment
-        uses: ./.platform-cdk/.github/actions/cdk-diff-comment
+        uses: ./.outcrop/.github/actions/cdk-diff-comment
         with:
           working-directory: ${{ inputs.working-directory }}
           env: ${{ inputs.synth-env }}

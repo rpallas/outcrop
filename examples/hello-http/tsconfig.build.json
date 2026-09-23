@@ -9,10 +9,10 @@
   "exclude": ["infra/tests", "app/tests"],
   "references": [
     {
-      "path": "../../packages/platform-cdk/tsconfig.build.json"
+      "path": "../../packages/outcrop/tsconfig.build.json"
     },
     {
-      "path": "../../packages/platform-cdk-runtime/tsconfig.build.json"
+      "path": "../../packages/outcrop-runtime/tsconfig.build.json"
     }
   ]
 }

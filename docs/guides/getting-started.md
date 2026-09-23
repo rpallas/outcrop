@@ -14,7 +14,7 @@ Follow `account-setup.md`. At the end you will have:
 ## 2. Create a service
 
 ```bash
-npx @rpallas/platform-cdk-cli create service orders --http-api --dynamodb
+npx @rpallas/outcrop-cli create service orders --http-api --dynamodb
 cd orders
 npm ci
 npx cdk synth -c env=dev

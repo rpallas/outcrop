@@ -189,7 +189,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/id",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -204,7 +204,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/name",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -224,7 +224,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -421,7 +421,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -515,7 +515,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -609,7 +609,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -703,7 +703,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -786,7 +786,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/alerts/topic-arn/critical",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -803,7 +803,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/alerts/topic-arn/high",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -820,7 +820,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/alerts/topic-arn/low",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -837,7 +837,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/alerts/topic-arn/medium",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -930,7 +930,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/domain",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -945,7 +945,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/certs/regional-arn",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -982,7 +982,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1010,7 +1010,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1031,7 +1031,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/dns/zone-id",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1048,7 +1048,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/dns/zone-name",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1180,7 +1180,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1212,7 +1212,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/kms/key-arn",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1232,7 +1232,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/kms/key-id",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1249,7 +1249,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/name",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1271,7 +1271,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1321,7 +1321,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/events/bus-arn",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1341,7 +1341,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/env/dev/events/bus-name",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1483,7 +1483,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1502,7 +1502,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/deploy/role-arn/example-platform",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1522,7 +1522,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/deploy/readonly-role-arn/example-platform",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1630,7 +1630,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1656,7 +1656,7 @@ exports[`account baseline synthesises dev 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1676,7 +1676,7 @@ exports[`account baseline synthesises dev 1`] = `
         "Name": "/platform/account/deploy/oidc-provider-arn",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1750,7 +1750,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1777,7 +1777,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1827,7 +1827,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1903,7 +1903,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -1952,7 +1952,7 @@ exports.handler = async (event) => {
         "Name": "/platform/account/log-retention-days",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -1974,7 +1974,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -2074,7 +2074,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -2116,7 +2116,7 @@ exports.handler = async (event) => {
         "Name": "/platform/account/security/cloudtrail-bucket-name",
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -2288,7 +2288,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -2471,7 +2471,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -2507,7 +2507,7 @@ exports.handler = async (event) => {
         "EnableDefaultStandards": false,
         "Tags": {
           "platform:env": "dev",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -2561,7 +2561,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -2588,7 +2588,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -2624,7 +2624,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -3365,7 +3365,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/id",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -3380,7 +3380,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/name",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -3400,7 +3400,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -3597,7 +3597,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -3691,7 +3691,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -3785,7 +3785,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -3879,7 +3879,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -3962,7 +3962,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/alerts/topic-arn/critical",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -3979,7 +3979,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/alerts/topic-arn/high",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -3996,7 +3996,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/alerts/topic-arn/low",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4013,7 +4013,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/alerts/topic-arn/medium",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4106,7 +4106,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/domain",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4121,7 +4121,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/certs/regional-arn",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4158,7 +4158,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4186,7 +4186,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4207,7 +4207,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/dns/zone-id",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4224,7 +4224,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/dns/zone-name",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4356,7 +4356,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4388,7 +4388,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/kms/key-arn",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4408,7 +4408,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/kms/key-id",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4425,7 +4425,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/name",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4447,7 +4447,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4497,7 +4497,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/events/bus-arn",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4517,7 +4517,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/env/prod/events/bus-name",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4659,7 +4659,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4678,7 +4678,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/deploy/role-arn/example-platform",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4698,7 +4698,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/deploy/readonly-role-arn/example-platform",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4806,7 +4806,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4832,7 +4832,7 @@ exports[`account baseline synthesises prod 1`] = `
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4852,7 +4852,7 @@ exports[`account baseline synthesises prod 1`] = `
         "Name": "/platform/account/deploy/oidc-provider-arn",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -4926,7 +4926,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -4953,7 +4953,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5003,7 +5003,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5079,7 +5079,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5128,7 +5128,7 @@ exports.handler = async (event) => {
         "Name": "/platform/account/log-retention-days",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -5150,7 +5150,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5246,7 +5246,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5269,7 +5269,7 @@ exports.handler = async (event) => {
         "Name": "/platform/account/security/cloudtrail-bucket-name",
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -5402,7 +5402,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5585,7 +5585,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5621,7 +5621,7 @@ exports.handler = async (event) => {
         "EnableDefaultStandards": false,
         "Tags": {
           "platform:env": "prod",
-          "platform:managed-by": "platform-cdk",
+          "platform:managed-by": "outcrop",
           "platform:project": "example-platform",
           "platform:service": "platform",
         },
@@ -5675,7 +5675,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5702,7 +5702,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",
@@ -5738,7 +5738,7 @@ exports.handler = async (event) => {
           },
           {
             "Key": "platform:managed-by",
-            "Value": "platform-cdk",
+            "Value": "outcrop",
           },
           {
             "Key": "platform:project",

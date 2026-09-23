@@ -1,4 +1,4 @@
-import { defineAccountConfig } from "@rpallas/platform-cdk-account";
+import { defineAccountConfig } from "@rpallas/outcrop-account";
 
 /**
  * Environments of the example-platform platform. Each environment is an AWS account

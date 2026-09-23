@@ -11,7 +11,7 @@ Installs Node.js with the npm cache enabled and runs a reproducible `npm ci`.
 ## Usage
 
 ```yaml
-- uses: rpallas/platform-cdk/.github/actions/setup-node-project@v1
+- uses: rpallas/outcrop/.github/actions/setup-node-project@v1
   with:
     working-directory: .
 ```

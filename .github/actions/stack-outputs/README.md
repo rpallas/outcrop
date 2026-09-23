@@ -5,7 +5,7 @@ Exports CloudFormation stack outputs as environment variables / step outputs nam
 
 Sources, in order of preference:
 
-1. `@rpallas/platform-cdk-cli stack-outputs --stack ... --json <file>` when `cli-command` or
+1. `@rpallas/outcrop-cli stack-outputs --stack ... --json <file>` when `cli-command` or
    `cli-version` is set (falls back when the CLI is unavailable).
 2. The `cdk deploy --outputs-file` JSON (`outputs-file` input).
 3. `aws cloudformation describe-stacks` for each of `stack-names`.
@@ -14,7 +14,7 @@ Sources, in order of preference:
 
 ```yaml
 - id: outputs
-  uses: rpallas/platform-cdk/.github/actions/stack-outputs@v1
+  uses: rpallas/outcrop/.github/actions/stack-outputs@v1
   with:
     outputs-file: ${{ steps.deploy.outputs.outputs-file }}
     prefix: PREVIEW_

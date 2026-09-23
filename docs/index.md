@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: platform-cdk
+  name: outcrop
   text: Lambda-first AWS CDK constructs with preview stacks per pull request
   tagline: Opinionated constructs, an account baseline, runtime helpers, a CLI and reusable GitHub Actions workflows. Open source, MIT licensed.
   actions:
@@ -13,7 +13,7 @@ hero:
       link: /constructs/
     - theme: alt
       text: GitHub
-      link: https://github.com/rpallas/platform-cdk
+      link: https://github.com/rpallas/outcrop
 features:
   - title: Preview stack per pull request
     details: Every PR deploys an isolated copy of the service under its own hostname and is destroyed on close. Ticket id or PR number becomes the preview id.
@@ -26,20 +26,20 @@ features:
   - title: Reusable workflows
     details: Checks, preview deploy and destroy, promotion through dev, stage and prod, and account baseline deploys as workflow_call workflows pinned to a floating v1 tag.
   - title: CLI and agent skills
-    details: npx @rpallas/platform-cdk-cli create service scaffolds infra, handlers, tests, workflows and docs. Bundled skills teach coding agents the conventions.
+    details: npx @rpallas/outcrop-cli create service scaffolds infra, handlers, tests, workflows and docs. Bundled skills teach coding agents the conventions.
 ---
 
 ## Packages
 
-| Package                         | Purpose                                                                     |
-| ------------------------------- | --------------------------------------------------------------------------- |
-| `@rpallas/platform-cdk`         | Constructs, naming, SSM contract, alarms, `PlatformApp` and `PlatformStack` |
-| `@rpallas/platform-cdk-account` | Account baseline modules, `createAccountBaseline`, StackSets                |
-| `@rpallas/platform-cdk-runtime` | Lambda runtime helpers and the Powertools layer                             |
-| `@rpallas/platform-cdk-cli`     | `create service`, `create account`, `preview-id`, `stack-outputs`, skills   |
-| `@rpallas/platform-cdk-neon`    | Neon Postgres branch per preview                                            |
-| `@rpallas/platform-cdk-chatops` | Alarm notifications to Slack and Microsoft Teams                            |
+| Package                    | Purpose                                                                     |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `@rpallas/outcrop`         | Constructs, naming, SSM contract, alarms, `PlatformApp` and `PlatformStack` |
+| `@rpallas/outcrop-account` | Account baseline modules, `createAccountBaseline`, StackSets                |
+| `@rpallas/outcrop-runtime` | Lambda runtime helpers and the Powertools layer                             |
+| `@rpallas/outcrop-cli`     | `create service`, `create account`, `preview-id`, `stack-outputs`, skills   |
+| `@rpallas/outcrop-neon`    | Neon Postgres branch per preview                                            |
+| `@rpallas/outcrop-chatops` | Alarm notifications to Slack and Microsoft Teams                            |
 
 ```sh
-npx @rpallas/platform-cdk-cli create service orders --http-api --dynamodb
+npx @rpallas/outcrop-cli create service orders --http-api --dynamodb
 ```

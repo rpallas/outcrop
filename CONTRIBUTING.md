@@ -20,11 +20,11 @@ npm run lint
 
 ## Repository layout
 
-- `packages/platform-cdk` - core constructs (`PlatformApp`, `PlatformStack`, primitives, naming, SSM contract, alerting)
-- `packages/platform-cdk-account` - account and organisation baseline constructs
-- `packages/platform-cdk-runtime` - Lambda runtime helpers
-- `packages/platform-cdk-cli` - scaffolding CLI and bundled agent skills
-- `packages/platform-cdk-neon`, `packages/platform-cdk-chatops` - optional integrations
+- `packages/outcrop` - core constructs (`PlatformApp`, `PlatformStack`, primitives, naming, SSM contract, alerting)
+- `packages/outcrop-account` - account and organisation baseline constructs
+- `packages/outcrop-runtime` - Lambda runtime helpers
+- `packages/outcrop-cli` - scaffolding CLI and bundled agent skills
+- `packages/outcrop-neon`, `packages/outcrop-chatops` - optional integrations
 - `.github/workflows` - repository CI and reusable workflows consumed by services
 - `examples/` - reference service and account baseline, deployed by CI
 - `docs/` - conventions, guides and architecture decision records

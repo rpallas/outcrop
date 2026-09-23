@@ -34,10 +34,10 @@ const apiSection = (): DefaultTheme.SidebarItem[] => {
 };
 
 export default defineConfig({
-  title: "platform-cdk",
+  title: "outcrop",
   description:
     "Lambda-first AWS CDK constructs, account baseline, runtime helpers, CLI and reusable GitHub Actions workflows with preview stacks per pull request.",
-  base: process.env["DOCS_BASE"] ?? "/platform-cdk/",
+  base: process.env["DOCS_BASE"] ?? "/outcrop/",
   lastUpdated: true,
   cleanUrls: true,
   // Links that leave `docs/` point at repository files (package READMEs, actions) and are
@@ -58,7 +58,7 @@ export default defineConfig({
             token.attrSet("href", `/${docsMatch[1] ?? ""}${docsMatch[2] ?? ""}`);
           } else {
             const repoPath = href.replace(/^(\.\/)?(\.\.\/)+/, "");
-            token.attrSet("href", `https://github.com/rpallas/platform-cdk/blob/main/${repoPath}`);
+            token.attrSet("href", `https://github.com/rpallas/outcrop/blob/main/${repoPath}`);
           }
         }
         return defaultLinkOpen
@@ -81,7 +81,7 @@ export default defineConfig({
       { text: "Guides", link: "/guides/getting-started" },
       { text: "Constructs", link: "/constructs/" },
       { text: "API", link: "/api/" },
-      { text: "GitHub", link: "https://github.com/rpallas/platform-cdk" },
+      { text: "GitHub", link: "https://github.com/rpallas/outcrop" },
     ],
     sidebar: [
       { text: "Guides", items: section("guides") },
@@ -93,10 +93,10 @@ export default defineConfig({
       { text: "API reference", collapsed: true, items: apiSection() },
       { text: "Roadmap", link: "/roadmap" },
     ],
-    socialLinks: [{ icon: "github", link: "https://github.com/rpallas/platform-cdk" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/rpallas/outcrop" }],
     search: { provider: "local" },
     editLink: {
-      pattern: "https://github.com/rpallas/platform-cdk/edit/main/docs/:path",
+      pattern: "https://github.com/rpallas/outcrop/edit/main/docs/:path",
       text: "Edit this page on GitHub",
     },
     footer: { message: "Released under the MIT License." },

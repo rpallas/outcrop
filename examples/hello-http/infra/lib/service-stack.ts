@@ -8,7 +8,7 @@ import {
   PlatformStack,
   type PlatformStackProps,
   PlatformTable,
-} from "@rpallas/platform-cdk";
+} from "@rpallas/outcrop";
 import type { Construct } from "constructs";
 
 export class HelloHttpStack extends PlatformStack {

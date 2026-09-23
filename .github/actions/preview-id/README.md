@@ -13,14 +13,14 @@ Rules (identical in the CLI and the bash fallback):
    dropped, cut to 20 characters).
 5. The result must match `^[a-z][a-z0-9]*(-[a-z0-9]+)*$` and be at most 20 characters.
 
-The CLI (`npx --yes @rpallas/platform-cdk-cli@<cli-version> preview-id ...`, or `cli-command` when
+The CLI (`npx --yes @rpallas/outcrop-cli@<cli-version> preview-id ...`, or `cli-command` when
 set) is tried first; when it is unavailable or returns nothing usable the bash fallback is used.
 
 ## Usage
 
 ```yaml
 - id: preview
-  uses: rpallas/platform-cdk/.github/actions/preview-id@v1
+  uses: rpallas/outcrop/.github/actions/preview-id@v1
 - run: echo "${{ steps.preview.outputs.preview-id }}"
 ```
 

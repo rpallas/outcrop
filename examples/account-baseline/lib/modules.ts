@@ -1,4 +1,4 @@
-import type { AccountBaselineModules } from "@rpallas/platform-cdk-account";
+import type { AccountBaselineModules } from "@rpallas/outcrop-account";
 
 /**
  * Modules deployed to every environment. Everything is opt-in; `true` uses the

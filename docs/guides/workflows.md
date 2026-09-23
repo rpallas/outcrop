@@ -1,10 +1,10 @@
 # Reusable workflows
 
-platform-cdk ships reusable GitHub Actions workflows and composite actions so a service repository
+outcrop ships reusable GitHub Actions workflows and composite actions so a service repository
 only needs three thin caller workflows. Everything authenticates with GitHub OIDC - no AWS access
 keys are ever stored in GitHub.
 
-Reference them as `rpallas/platform-cdk/.github/workflows/<file>@v1` (floating major) or pin a full
+Reference them as `rpallas/outcrop/.github/workflows/<file>@v1` (floating major) or pin a full
 tag for reproducibility. The composite actions used by the workflows are documented in
 [`.github/actions/README.md`](../../.github/actions/README.md).
 
@@ -77,24 +77,24 @@ ends with `BaseUrl`, optional integration tests (with `PREVIEW_ID`, `PREVIEW_BAS
 outputs in the environment), then the comment (`deployed`, or `failed` on error). Concurrency group
 `preview-<repo>-<pr>` cancels superseded runs.
 
-| Input                       | Type   | Default                    | Description                                        |
-| --------------------------- | ------ | -------------------------- | -------------------------------------------------- |
-| `working-directory`         | string | `.`                        | CDK app directory.                                 |
-| `install-working-directory` | string | `""` (= working-directory) | Where `npm ci` runs.                               |
-| `build-command`             | string | `""`                       | Optional build command.                            |
-| `node-version`              | string | `""`                       | Node.js version (empty = `.nvmrc`).                |
-| `aws-region`                | string | required                   |                                                    |
-| `role-arn`                  | string | required                   | Deploy role assumed via OIDC.                      |
-| `target-env`                | string | `dev`                      | Environment hosting previews.                      |
-| `strategy`                  | string | `ticket-then-pr`           | `ticket-then-pr`, `pr` or `branch-slug`.           |
-| `skip-label`                | string | `skip-preview`             | Label that skips the preview.                      |
-| `integration-test-command`  | string | `""`                       | Run from working-directory after deploy.           |
-| `stacks`                    | string | `--all`                    | Stack names / wildcards.                           |
-| `extra-context`             | string | `""`                       | Newline separated `key=value` context.             |
-| `runs-on`                   | string | `ubuntu-latest`            |                                                    |
-| `cli-version`               | string | `latest`                   | `@rpallas/platform-cdk-cli` version (`npx --yes`). |
-| `cli-command`               | string | `""`                       | Explicit CLI command (local build).                |
-| `output-prefix`             | string | `PREVIEW_`                 | Prefix for exported outputs.                       |
+| Input                       | Type   | Default                    | Description                                   |
+| --------------------------- | ------ | -------------------------- | --------------------------------------------- |
+| `working-directory`         | string | `.`                        | CDK app directory.                            |
+| `install-working-directory` | string | `""` (= working-directory) | Where `npm ci` runs.                          |
+| `build-command`             | string | `""`                       | Optional build command.                       |
+| `node-version`              | string | `""`                       | Node.js version (empty = `.nvmrc`).           |
+| `aws-region`                | string | required                   |                                               |
+| `role-arn`                  | string | required                   | Deploy role assumed via OIDC.                 |
+| `target-env`                | string | `dev`                      | Environment hosting previews.                 |
+| `strategy`                  | string | `ticket-then-pr`           | `ticket-then-pr`, `pr` or `branch-slug`.      |
+| `skip-label`                | string | `skip-preview`             | Label that skips the preview.                 |
+| `integration-test-command`  | string | `""`                       | Run from working-directory after deploy.      |
+| `stacks`                    | string | `--all`                    | Stack names / wildcards.                      |
+| `extra-context`             | string | `""`                       | Newline separated `key=value` context.        |
+| `runs-on`                   | string | `ubuntu-latest`            |                                               |
+| `cli-version`               | string | `latest`                   | `@rpallas/outcrop-cli` version (`npx --yes`). |
+| `cli-command`               | string | `""`                       | Explicit CLI command (local build).           |
+| `output-prefix`             | string | `PREVIEW_`                 | Prefix for exported outputs.                  |
 
 Outputs: `preview-id`, `base-url`, `stack-names`.
 Permissions: `contents: read`, `id-token: write`, `pull-requests: write`.
@@ -162,7 +162,7 @@ Permissions: `contents: read`, `id-token: write`.
 
 `examples-preview.yml`, `examples-preview-destroy.yml` and `examples-deploy.yml` call the local
 reusable workflows for `examples/hello-http`, passing `install-working-directory: .`,
-`build-command: npm run build` and `cli-command: node ../../packages/platform-cdk-cli/bin/platform-cdk.js`
+`build-command: npm run build` and `cli-command: node ../../packages/outcrop-cli/bin/outcrop.js`
 so the freshly built packages and CLI are exercised. They are skipped unless the repository
 variable `SANDBOX_DEPLOY_ROLE_ARN` (and `AWS_REGION`) is set.
 
@@ -171,7 +171,7 @@ variable `SANDBOX_DEPLOY_ROLE_ARN` (and `AWS_REGION`) is set.
 The reusable workflows use the composite actions in this repository. Because `uses: ./...` inside a
 reusable workflow resolves against the _caller's_ checkout, each job checks out the repository and
 commit the workflow itself runs from (`job.workflow_repository` @ `job.workflow_sha`) into
-`.platform-cdk` and references the actions from there. Workflows and actions are therefore always
+`.outcrop` and references the actions from there. Workflows and actions are therefore always
 the same version. The `checks` job removes that directory again before linting so repository-wide
 linters do not see it.
 
@@ -196,7 +196,7 @@ permissions:
 
 jobs:
   checks:
-    uses: rpallas/platform-cdk/.github/workflows/service-checks.yml@v1
+    uses: rpallas/outcrop/.github/workflows/service-checks.yml@v1
     with:
       diff: true
       aws-region: ${{ vars.AWS_REGION }}
@@ -224,7 +224,7 @@ permissions:
 jobs:
   deploy:
     if: github.event.action != 'closed'
-    uses: rpallas/platform-cdk/.github/workflows/service-preview-deploy.yml@v1
+    uses: rpallas/outcrop/.github/workflows/service-preview-deploy.yml@v1
     with:
       aws-region: ${{ vars.AWS_REGION }}
       role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
@@ -236,7 +236,7 @@ jobs:
 
   destroy:
     if: github.event.action == 'closed'
-    uses: rpallas/platform-cdk/.github/workflows/service-preview-destroy.yml@v1
+    uses: rpallas/outcrop/.github/workflows/service-preview-destroy.yml@v1
     with:
       aws-region: ${{ vars.AWS_REGION }}
       role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
@@ -261,7 +261,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: rpallas/platform-cdk/.github/workflows/service-deploy.yml@v1
+    uses: rpallas/outcrop/.github/workflows/service-deploy.yml@v1
     with:
       environments: dev,stage,prod
       aws-region: ${{ vars.AWS_REGION }}

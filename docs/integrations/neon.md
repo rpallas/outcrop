@@ -1,6 +1,6 @@
 # Neon Postgres branches for previews
 
-`@rpallas/platform-cdk-neon` gives every preview stack its own Neon Postgres branch, created from
+`@rpallas/outcrop-neon` gives every preview stack its own Neon Postgres branch, created from
 the environment's base branch and deleted with the stack. The connection details are written to a
 Secrets Manager secret owned by the stack, so the same service code reads one secret everywhere:
 in previews it points at the branch, in base environments at the shared `neon-connection` secret.
@@ -15,7 +15,7 @@ in previews it points at the branch, in base environments at the shared `neon-co
 4. Add the construct to the service stack:
 
 ```ts
-import { NeonBranch } from "@rpallas/platform-cdk-neon";
+import { NeonBranch } from "@rpallas/outcrop-neon";
 
 const db = new NeonBranch(this, "Db", { projectId: "proud-lake-123456" });
 db.grantRead(apiFunction);
@@ -31,5 +31,5 @@ Branches are copy-on-write and auto-suspend, so idle previews cost close to noth
 The stack output `DbConnectionSecretArn` lets the deploy workflow run migrations against the new
 branch right after `cdk deploy`; the package README has a GitHub Actions snippet.
 
-See the [package README](../../packages/platform-cdk-neon/README.md) for all props, the secret
+See the [package README](../../packages/outcrop-neon/README.md) for all props, the secret
 format, update semantics and limitations.

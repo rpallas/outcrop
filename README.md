@@ -1,4 +1,4 @@
-# platform-cdk
+# outcrop
 
 Lambda-first AWS CDK constructs, an account baseline, Lambda runtime helpers, a scaffolding CLI and reusable GitHub Actions workflows for building services with a full preview-stack development workflow.
 
@@ -6,18 +6,18 @@ Open a pull request and get an isolated, fully deployed copy of your service on 
 
 ## Packages
 
-- `@rpallas/platform-cdk` - `PlatformApp`, `PlatformStack`, naming, the SSM contract, alerting, and constructs for Lambda, HTTP API, DynamoDB, SQS, SNS, S3, EventBridge, Step Functions, CloudFront, Cognito, KMS, Secrets Manager, WAF and more.
-- `@rpallas/platform-cdk-account` - `AccountBaseline`: GitHub OIDC deploy roles, DNS and certificates, alerting topics, event bus, KMS, shared parameters and secrets, budgets, security services, networking, plus StackSet wrappers for organisation-wide rollout.
-- `@rpallas/platform-cdk-runtime` - structured logging, config and secrets resolution, EventBridge envelopes and handler middleware for Lambda code.
-- `@rpallas/platform-cdk-cli` - `platform-cdk create service`, `create account`, `preview-id`, `stack-outputs`, `sync-skills`.
-- `@rpallas/platform-cdk-neon` - Neon Postgres branch per preview stack.
-- `@rpallas/platform-cdk-chatops` - Slack and Microsoft Teams alarm delivery.
+- `@rpallas/outcrop` - `PlatformApp`, `PlatformStack`, naming, the SSM contract, alerting, and constructs for Lambda, HTTP API, DynamoDB, SQS, SNS, S3, EventBridge, Step Functions, CloudFront, Cognito, KMS, Secrets Manager, WAF and more.
+- `@rpallas/outcrop-account` - `AccountBaseline`: GitHub OIDC deploy roles, DNS and certificates, alerting topics, event bus, KMS, shared parameters and secrets, budgets, security services, networking, plus StackSet wrappers for organisation-wide rollout.
+- `@rpallas/outcrop-runtime` - structured logging, config and secrets resolution, EventBridge envelopes and handler middleware for Lambda code.
+- `@rpallas/outcrop-cli` - `outcrop create service`, `create account`, `preview-id`, `stack-outputs`, `sync-skills`.
+- `@rpallas/outcrop-neon` - Neon Postgres branch per preview stack.
+- `@rpallas/outcrop-chatops` - Slack and Microsoft Teams alarm delivery.
 - Reusable workflows in `.github/workflows` - `service-checks`, `service-preview-deploy`, `service-preview-destroy`, `service-deploy`, `account-baseline-deploy`.
 
 ## Quick start
 
 ```bash
-npx @rpallas/platform-cdk-cli create service orders --http-api --dynamodb
+npx @rpallas/outcrop-cli create service orders --http-api --dynamodb
 cd orders
 npm ci
 npx cdk synth -c env=dev
@@ -53,7 +53,7 @@ The documentation site is published from `docs/` with VitePress (`npm run docs:d
 
 ## Agent skills
 
-`npx @rpallas/platform-cdk-cli sync-skills` copies the bundled skills (`create-platform-service`, `add-platform-construct`, `account-baseline`) into `.agents/skills` so coding agents follow the platform conventions.
+`npx @rpallas/outcrop-cli sync-skills` copies the bundled skills (`create-platform-service`, `add-platform-construct`, `account-baseline`) into `.agents/skills` so coding agents follow the platform conventions.
 
 ## Requirements
 

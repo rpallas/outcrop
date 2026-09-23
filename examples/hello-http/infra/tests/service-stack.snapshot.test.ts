@@ -1,5 +1,5 @@
 import { Template } from "aws-cdk-lib/assertions";
-import { PlatformApp } from "@rpallas/platform-cdk";
+import { PlatformApp } from "@rpallas/outcrop";
 import config from "../../platform.config";
 import { HelloHttpStack } from "../lib/service-stack";
 
