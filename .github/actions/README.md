@@ -6,7 +6,7 @@ used on its own from a service repository. Authentication is GitHub OIDC only - 
 | Action                                      | Description                                                                                       |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [`setup-node-project`](setup-node-project/) | Node.js from `.nvmrc` (or input) with npm cache and `npm ci --ignore-scripts`.                    |
-| [`aws-oidc-login`](aws-oidc-login/)         | Assume an IAM role via OIDC (`aws-actions/configure-aws-credentials@v4`); outputs the account id. |
+| [`aws-oidc-login`](aws-oidc-login/)         | Assume an IAM role via OIDC (`aws-actions/configure-aws-credentials@v6`); outputs the account id. |
 | [`preview-id`](preview-id/)                 | Derive the preview id from the branch / PR (CLI with identical bash fallback).                    |
 | [`cdk-deploy`](cdk-deploy/)                 | `cdk deploy` with `env` / preview context, outputs file + artifact, stack names.                  |
 | [`cdk-destroy`](cdk-destroy/)               | `cdk destroy --force`, skipping gracefully when the stacks do not exist.                          |
@@ -34,7 +34,7 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: rpallas/outcrop/.github/actions/setup-node-project@v1
       - id: preview
         uses: rpallas/outcrop/.github/actions/preview-id@v1

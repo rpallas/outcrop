@@ -1,6 +1,6 @@
 # aws-oidc-login
 
-Assumes an IAM role with the GitHub OIDC token using `aws-actions/configure-aws-credentials@v4`.
+Assumes an IAM role with the GitHub OIDC token using `aws-actions/configure-aws-credentials@v6`.
 No access keys are ever used. The job needs `permissions: id-token: write`.
 
 ## Usage

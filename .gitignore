@@ -1,5 +1,8 @@
 node_modules/
-dist/
+# Ignore files inside any dist directory, but not the directory itself, so the
+# static-site scaffolder placeholder can be re-included below.
+**/dist/**
+!packages/outcrop-cli/templates/**/dist/**
 coverage/
 cdk.out/
 *.tsbuildinfo

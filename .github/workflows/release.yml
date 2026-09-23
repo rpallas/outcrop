@@ -18,11 +18,11 @@ jobs:
     name: Version or publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -36,20 +36,21 @@ jobs:
 
       - name: Create release pull request or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: npm run version-packages
-          publish: npx changeset publish
-          commit: "chore: version packages"
-          title: "chore: version packages"
+          version-script: npm run version-packages
+          publish-script: npx changeset publish
+          commit-message: "chore: version packages"
+          pr-title: "chore: version packages"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Move floating major tag
         if: steps.changesets.outputs.published == 'true'
         env:
-          PUBLISHED: ${{ steps.changesets.outputs.publishedPackages }}
+          PUBLISHED: ${{ steps.changesets.outputs.published-packages }}
         run: |
           VERSION=$(echo "$PUBLISHED" | node -e 'const p=JSON.parse(require("fs").readFileSync(0,"utf8"));process.stdout.write(p[0]?.version ?? "")')
           if [ -z "$VERSION" ]; then echo "no version"; exit 0; fi

@@ -173,7 +173,7 @@ jobs:
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
       - name: Check out outcrop actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ steps.outcrop.outputs.repository }}
           ref: ${{ steps.outcrop.outputs.ref }}
@@ -206,7 +206,7 @@ jobs:
       stack-names: ${{ steps.deploy.outputs.stack-names }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Locate outcrop actions
         id: outcrop
@@ -224,7 +224,7 @@ jobs:
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
       - name: Check out outcrop actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ steps.outcrop.outputs.repository }}
           ref: ${{ steps.outcrop.outputs.ref }}

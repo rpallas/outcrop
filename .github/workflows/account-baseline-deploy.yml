@@ -199,7 +199,7 @@ jobs:
       ROLE_VAR: ${{ needs.plan.outputs.var1 }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Resolve deploy role
         run: |
@@ -224,7 +224,7 @@ jobs:
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
       - name: Check out outcrop actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ steps.outcrop.outputs.repository }}
           ref: ${{ steps.outcrop.outputs.ref }}
@@ -276,7 +276,7 @@ jobs:
       ROLE_VAR: ${{ needs.plan.outputs.var2 }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Resolve deploy role
         run: |
@@ -301,7 +301,7 @@ jobs:
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
       - name: Check out outcrop actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ steps.outcrop.outputs.repository }}
           ref: ${{ steps.outcrop.outputs.ref }}
@@ -353,7 +353,7 @@ jobs:
       ROLE_VAR: ${{ needs.plan.outputs.var3 }}
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Resolve deploy role
         run: |
@@ -378,7 +378,7 @@ jobs:
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
       - name: Check out outcrop actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ steps.outcrop.outputs.repository }}
           ref: ${{ steps.outcrop.outputs.ref }}

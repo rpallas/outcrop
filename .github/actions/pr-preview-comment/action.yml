@@ -44,7 +44,7 @@ runs:
   steps:
     - name: Create or update preview comment
       id: comment
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       env:
         PREVIEW_ID: ${{ inputs.preview-id }}
         STACK_NAMES: ${{ inputs.stack-names }}

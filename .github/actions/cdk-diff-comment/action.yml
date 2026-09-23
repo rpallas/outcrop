@@ -106,7 +106,7 @@ runs:
 
     - name: Create or update diff comment
       id: comment
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       env:
         DIFF_FILE: ${{ steps.diff.outputs.diff-file }}
         EXIT_CODE: ${{ steps.diff.outputs.exit-code }}
