@@ -6,7 +6,7 @@
 - `platform:service` - `config.service`
 - `platform:env` - environment name
 - `platform:preview-id` - preview id, only on preview stacks
-- `platform:managed-by` - `platform-cdk`
+- `platform:managed-by` - `outcrop`
 
 Plus any `config.tags` entries. Alarms additionally carry `platform:severity`.
 

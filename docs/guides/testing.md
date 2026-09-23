@@ -16,4 +16,4 @@ Handler and library code with mocked AWS SDK clients (`aws-sdk-client-mock`). Ru
 
 ## Library tests
 
-Every construct in this repository has assertion tests using `aws-cdk-lib/assertions`. The kitchen-sink stack in `packages/platform-cdk/test/kitchen-sink.test.ts` is snapshot tested and checked with `cdk-nag` (AwsSolutions pack).
+Every construct in this repository has assertion tests using `aws-cdk-lib/assertions`. The kitchen-sink stack in `packages/outcrop/test/kitchen-sink.test.ts` is snapshot tested and checked with `cdk-nag` (AwsSolutions pack).

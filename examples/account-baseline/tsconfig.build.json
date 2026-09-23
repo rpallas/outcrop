@@ -8,7 +8,7 @@
   "include": ["account.config.ts", "bin/**/*.ts", "lib/**/*.ts"],
   "references": [
     {
-      "path": "../../packages/platform-cdk-account/tsconfig.build.json"
+      "path": "../../packages/outcrop-account/tsconfig.build.json"
     }
   ]
 }

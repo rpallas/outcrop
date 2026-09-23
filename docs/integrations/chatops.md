@@ -1,6 +1,6 @@
 # Slack and Microsoft Teams notifications
 
-`@rpallas/platform-cdk-chatops` turns the platform alert topics into chat messages. The account
+`@rpallas/outcrop-chatops` turns the platform alert topics into chat messages. The account
 baseline creates one SNS topic per severity (`critical`, `high`, `medium`, `low`) and every
 `PlatformAlarm` publishes to the topic of its severity. `ChatOpsNotifier` subscribes a Lambda
 function to those topics and posts formatted messages to Slack and Teams incoming webhooks.
@@ -22,7 +22,7 @@ function to those topics and posts formatted messages to Slack and Teams incomin
    `webhookSecret`s:
 
 ```ts
-import { ChatOpsNotifier } from "@rpallas/platform-cdk-chatops";
+import { ChatOpsNotifier } from "@rpallas/outcrop-chatops";
 
 new ChatOpsNotifier(this, "ChatOps", {
   destinations: [
@@ -41,5 +41,5 @@ reason and a console deep link.
 
 Failed deliveries are retried once and then land in the function's dead letter queue.
 
-See the [package README](../../packages/platform-cdk-chatops/README.md) for props, message
+See the [package README](../../packages/outcrop-chatops/README.md) for props, message
 formats, baseline usage and limitations.

@@ -1,7 +1,7 @@
 name: CDK diff comment
 description: >-
   Runs `cdk diff --no-color` against the deployed stacks and posts the result as a single sticky
-  pull request comment (marker `<!-- platform-cdk-diff -->`) inside a collapsible block. The job
+  pull request comment (marker `<!-- outcrop-diff -->`) inside a collapsible block. The job
   does not fail when the diff reports differences. Requires read-only AWS credentials (see
   `aws-oidc-login`) and `permissions: pull-requests: write`.
 
@@ -118,7 +118,7 @@ runs:
         github-token: ${{ inputs.github-token }}
         script: |
           const fs = require("node:fs");
-          const marker = "<!-- platform-cdk-diff -->";
+          const marker = "<!-- outcrop-diff -->";
           const env = process.env;
           const prNumber = Number.parseInt(env.PR_NUMBER ?? "", 10);
           if (!Number.isFinite(prNumber)) {

@@ -26,7 +26,7 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   preview:
-    uses: rpallas/platform-cdk/.github/workflows/service-preview-deploy.yml@v1
+    uses: rpallas/outcrop/.github/workflows/service-preview-deploy.yml@v1
     with:
       aws-region: ${{ vars.AWS_REGION }}
       role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}

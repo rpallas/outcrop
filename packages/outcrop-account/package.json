@@ -1,0 +1,48 @@
+{
+  "name": "@rpallas/outcrop-account",
+  "version": "0.1.0",
+  "description": "Account and organisation baseline constructs for outcrop: GitHub OIDC deploy roles, DNS and certificates, alerting, event bus, KMS, shared parameters and secrets, budgets, security services, networking and StackSet wrappers.",
+  "license": "MIT",
+  "author": "Robbie Pallas",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rpallas/outcrop.git",
+    "directory": "packages/outcrop-account"
+  },
+  "keywords": [
+    "aws",
+    "cdk",
+    "account",
+    "baseline",
+    "oidc",
+    "stacksets",
+    "platform"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@rpallas/outcrop": "0.1.0",
+    "zod": "^4.6.1"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.200.0",
+    "constructs": "^10.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

@@ -1,9 +1,9 @@
 # examples/account-baseline
 
-Reference account baseline app using `@rpallas/platform-cdk-account`. It is the output of
+Reference account baseline app using `@rpallas/outcrop-account`. It is the output of
 
 ```sh
-npx @rpallas/platform-cdk-cli create account example-platform \
+npx @rpallas/outcrop-cli create account example-platform \
   --project example-platform --owner example-org --domain example.com
 ```
 

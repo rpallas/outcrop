@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Only the latest minor release of each `@rpallas/platform-cdk*` package receives security fixes.
+Only the latest minor release of each `@rpallas/outcrop*` package receives security fixes.
 
 ## Reporting a vulnerability
 

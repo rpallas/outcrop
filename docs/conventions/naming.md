@@ -1,6 +1,6 @@
 # Naming
 
-All physical names go through `PlatformNaming` (`@rpallas/platform-cdk`). See ADR 0002.
+All physical names go through `PlatformNaming` (`@rpallas/outcrop`). See ADR 0002.
 
 ## Segments
 

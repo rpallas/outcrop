@@ -55,4 +55,4 @@ When a change touches IAM, network exposure or the SSM/Secrets contract, the pul
 
 1. Which trust boundary does the change cross or introduce?
 2. Which row in the table above covers it, or what new row is needed?
-3. Does cdk-nag stay green (`packages/platform-cdk/test/kitchen-sink.test.ts`, `packages/platform-cdk-account/test/account-baseline.test.ts`) without new `IAM5`/`APIG4`/`COG4` suppressions? If not, why is the suppression justified?
+3. Does cdk-nag stay green (`packages/outcrop/test/kitchen-sink.test.ts`, `packages/outcrop-account/test/account-baseline.test.ts`) without new `IAM5`/`APIG4`/`COG4` suppressions? If not, why is the suppression justified?

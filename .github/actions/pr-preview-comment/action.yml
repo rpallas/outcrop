@@ -2,7 +2,7 @@ name: PR preview comment
 description: >-
   Creates or updates a single sticky pull request comment describing the preview environment
   (status, preview id, stacks, URL, workflow run and timestamp). The comment is identified by the
-  hidden marker `<!-- platform-cdk-preview -->`, so repeated runs edit the same comment. Requires
+  hidden marker `<!-- outcrop-preview -->`, so repeated runs edit the same comment. Requires
   `permissions: pull-requests: write`.
 
 inputs:
@@ -55,7 +55,7 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
-          const marker = "<!-- platform-cdk-preview -->";
+          const marker = "<!-- outcrop-preview -->";
           const env = process.env;
           const prNumber = Number.parseInt(env.PR_NUMBER ?? "", 10);
           if (!Number.isFinite(prNumber)) {

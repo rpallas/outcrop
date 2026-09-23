@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { PlatformApp } from "@rpallas/platform-cdk";
+import { PlatformApp } from "@rpallas/outcrop";
 import config from "../../platform.config";
 import { HelloHttpStack } from "../lib/service-stack";
 

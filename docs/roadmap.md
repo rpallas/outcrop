@@ -15,11 +15,11 @@ The library is Lambda-first by design ([ADR 0001](adr/0001-monorepo-and-packagin
 
 ### Containers (ECS / App Runner / EKS)
 
-Not planned for the core library. The naming, SSM and preview model are all compute-agnostic, so an `@rpallas/platform-cdk-containers` package could exist, but the reusable workflows, cost model (per-preview stacks that idle at zero cost) and alarm set are all built around Lambda. Services that outgrow Lambda should move to a dedicated ECS platform rather than force the preview model onto long-running tasks. Lambda container images (`DockerImageFunction`) are a supported middle ground and can be added to `PlatformFunction` without changing the model.
+Not planned for the core library. The naming, SSM and preview model are all compute-agnostic, so an `@rpallas/outcrop-containers` package could exist, but the reusable workflows, cost model (per-preview stacks that idle at zero cost) and alarm set are all built around Lambda. Services that outgrow Lambda should move to a dedicated ECS platform rather than force the preview model onto long-running tasks. Lambda container images (`DockerImageFunction`) are a supported middle ground and can be added to `PlatformFunction` without changing the model.
 
 ### Relational databases on AWS (RDS / Aurora)
 
-Deferred in favour of Neon branches per preview (`@rpallas/platform-cdk-neon`). Aurora Serverless v2 previews take 10+ minutes to create and cost money while idle, which breaks the "a preview per PR" promise. Aurora for `prod` only is a reasonable extension once the Neon integration has stabilised.
+Deferred in favour of Neon branches per preview (`@rpallas/outcrop-neon`). Aurora Serverless v2 previews take 10+ minutes to create and cost money while idle, which breaks the "a preview per PR" promise. Aurora for `prod` only is a reasonable extension once the Neon integration has stabilised.
 
 ### Multi-region
 

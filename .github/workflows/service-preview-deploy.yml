@@ -1,4 +1,4 @@
-# Reusable workflow: deploy a per-pull-request preview environment of a platform-cdk service.
+# Reusable workflow: deploy a per-pull-request preview environment of a outcrop service.
 #
 # Trigger it from the caller on `pull_request: types: [opened, synchronize, reopened]`.
 #
@@ -27,7 +27,7 @@
 #   skip-label                 PR label that skips the preview (default `skip-preview`).
 #   integration-test-command   Optional command run from working-directory after deploy.
 #   stacks, extra-context      Passed to `cdk deploy`.
-#   cli-version / cli-command  How to run `@rpallas/platform-cdk-cli` (consumers: cli-version;
+#   cli-version / cli-command  How to run `@rpallas/outcrop-cli` (consumers: cli-version;
 #                              this repository: cli-command pointing at the local build).
 #   output-prefix              Prefix for exported stack outputs (default `PREVIEW_`).
 #   runs-on                    Runner label.
@@ -39,7 +39,7 @@
 # Example caller (service repository):
 #   jobs:
 #     preview:
-#       uses: rpallas/platform-cdk/.github/workflows/service-preview-deploy.yml@v1
+#       uses: rpallas/outcrop/.github/workflows/service-preview-deploy.yml@v1
 #       with:
 #         aws-region: ${{ vars.AWS_REGION }}
 #         role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
@@ -50,7 +50,7 @@
 #         pull-requests: write
 #
 # Implementation note: composite actions are checked out from the repository/commit this workflow
-# runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.platform-cdk`, because
+# runs from (`job.workflow_repository` @ `job.workflow_sha`) into `.outcrop`, because
 # `uses: ./...` resolves against the caller's checkout.
 name: Service preview deploy
 
@@ -121,12 +121,12 @@ on:
         required: false
         default: ubuntu-latest
       cli-version:
-        description: Version of `@rpallas/platform-cdk-cli` run via `npx --yes`.
+        description: Version of `@rpallas/outcrop-cli` run via `npx --yes`.
         type: string
         required: false
         default: latest
       cli-command:
-        description: Explicit CLI command (e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`).
+        description: Explicit CLI command (e.g. `node packages/outcrop-cli/bin/outcrop.js`).
         type: string
         required: false
         default: ""
@@ -157,31 +157,31 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Comment (skipped)
-        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        uses: ./.outcrop/.github/actions/pr-preview-comment
         with:
           status: skipped
           extra-markdown: Remove the `${{ inputs.skip-label }}` label and push again to deploy a preview.
@@ -208,31 +208,31 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
 
-      - name: Locate platform-cdk actions
-        id: platform-cdk
+      - name: Locate outcrop actions
+        id: outcrop
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: |
           repository="$(jq -r '.workflow_repository // empty' <<< "$JOB_CONTEXT")"
           ref="$(jq -r '.workflow_sha // empty' <<< "$JOB_CONTEXT")"
           if [ -z "$repository" ] || [ -z "$ref" ]; then
-            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/platform-cdk@v1"
-            repository="rpallas/platform-cdk"
+            echo "::warning::job.workflow_repository / job.workflow_sha are unavailable; using rpallas/outcrop@v1"
+            repository="rpallas/outcrop"
             ref="v1"
           fi
           echo "repository=$repository" >> "$GITHUB_OUTPUT"
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
 
-      - name: Check out platform-cdk actions
+      - name: Check out outcrop actions
         uses: actions/checkout@v4
         with:
-          repository: ${{ steps.platform-cdk.outputs.repository }}
-          ref: ${{ steps.platform-cdk.outputs.ref }}
-          path: .platform-cdk
+          repository: ${{ steps.outcrop.outputs.repository }}
+          ref: ${{ steps.outcrop.outputs.ref }}
+          path: .outcrop
           sparse-checkout: .github/actions
 
       - name: Setup Node.js and install
-        uses: ./.platform-cdk/.github/actions/setup-node-project
+        uses: ./.outcrop/.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
           working-directory: ${{ inputs.install-working-directory || inputs.working-directory }}
@@ -246,7 +246,7 @@ jobs:
 
       - name: Preview id
         id: preview-id
-        uses: ./.platform-cdk/.github/actions/preview-id
+        uses: ./.outcrop/.github/actions/preview-id
         with:
           strategy: ${{ inputs.strategy }}
           cli-version: ${{ inputs.cli-version }}
@@ -254,14 +254,14 @@ jobs:
           working-directory: ${{ inputs.working-directory }}
 
       - name: AWS login
-        uses: ./.platform-cdk/.github/actions/aws-oidc-login
+        uses: ./.outcrop/.github/actions/aws-oidc-login
         with:
           role-arn: ${{ inputs.role-arn }}
           aws-region: ${{ inputs.aws-region }}
 
       - name: cdk deploy (preview)
         id: deploy
-        uses: ./.platform-cdk/.github/actions/cdk-deploy
+        uses: ./.outcrop/.github/actions/cdk-deploy
         with:
           working-directory: ${{ inputs.working-directory }}
           env: ${{ inputs.target-env }}
@@ -272,7 +272,7 @@ jobs:
 
       - name: Export stack outputs
         id: outputs
-        uses: ./.platform-cdk/.github/actions/stack-outputs
+        uses: ./.outcrop/.github/actions/stack-outputs
         with:
           outputs-file: ${{ steps.deploy.outputs.outputs-file }}
           prefix: ${{ inputs.output-prefix }}
@@ -309,7 +309,7 @@ jobs:
         run: eval "$INTEGRATION_TEST_COMMAND"
 
       - name: Comment (deployed)
-        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        uses: ./.outcrop/.github/actions/pr-preview-comment
         with:
           status: deployed
           preview-id: ${{ steps.preview-id.outputs.preview-id }}
@@ -318,7 +318,7 @@ jobs:
 
       - name: Comment (failed)
         if: failure()
-        uses: ./.platform-cdk/.github/actions/pr-preview-comment
+        uses: ./.outcrop/.github/actions/pr-preview-comment
         with:
           status: failed
           preview-id: ${{ steps.preview-id.outputs.preview-id }}

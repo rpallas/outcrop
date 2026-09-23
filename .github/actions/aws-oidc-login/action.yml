@@ -14,7 +14,7 @@ inputs:
   session-name:
     description: Role session name shown in CloudTrail.
     required: false
-    default: platform-cdk-${{ github.run_id }}
+    default: outcrop-${{ github.run_id }}
   duration-seconds:
     description: Session duration in seconds (must not exceed the role's maximum session duration).
     required: false

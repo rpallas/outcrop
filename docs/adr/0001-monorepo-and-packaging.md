@@ -10,7 +10,7 @@ The project delivers CDK constructs, account provisioning constructs, Lambda run
 
 One repository, npm workspaces, several packages under the `@rpallas` scope:
 
-- `platform-cdk` (core), `platform-cdk-account`, `platform-cdk-runtime`, `platform-cdk-cli`, `platform-cdk-neon`, `platform-cdk-chatops`.
+- `outcrop` (core), `outcrop-account`, `outcrop-runtime`, `outcrop-cli`, `outcrop-neon`, `outcrop-chatops`.
 - All packages are versioned together (changesets `fixed` group) so a single version number describes a compatible set.
 - Reusable workflows live in the same repo and are consumed by tag (`@v1`), moved on every release.
 - `aws-cdk-lib` and `constructs` are peer dependencies of every CDK package.

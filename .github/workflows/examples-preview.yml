@@ -34,7 +34,7 @@ jobs:
       build-command: npm run build
       aws-region: ${{ vars.AWS_REGION }}
       role-arn: ${{ vars.SANDBOX_DEPLOY_ROLE_ARN }}
-      cli-command: node ../../packages/platform-cdk-cli/bin/platform-cdk.js
+      cli-command: node ../../packages/outcrop-cli/bin/outcrop.js
       integration-test-command: npm run test:integration
     permissions:
       contents: read

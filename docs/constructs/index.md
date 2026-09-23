@@ -1,6 +1,6 @@
 # Constructs
 
-Every construct in `@rpallas/platform-cdk` extends the corresponding `aws-cdk-lib` L2 and adds the platform conventions: names from `PlatformNaming`, removal policies and retention from the environment, encryption with the account key, alarms through `PlatformAlarm` and dashboard widgets. The pages in this section document the options that differ from the underlying L2; everything else is the standard CDK API.
+Every construct in `@rpallas/outcrop` extends the corresponding `aws-cdk-lib` L2 and adds the platform conventions: names from `PlatformNaming`, removal policies and retention from the environment, encryption with the account key, alarms through `PlatformAlarm` and dashboard widgets. The pages in this section document the options that differ from the underlying L2; everything else is the standard CDK API.
 
 | Area          | Constructs                                                                                                 |
 | ------------- | ---------------------------------------------------------------------------------------------------------- |

@@ -1,7 +1,7 @@
 # cdk-diff-comment
 
 Runs `cdk diff --no-color -c env=<env> [...] --all` and posts the output in a collapsible sticky
-pull request comment (marker `<!-- platform-cdk-diff -->`). Output longer than `max-chars`
+pull request comment (marker `<!-- outcrop-diff -->`). Output longer than `max-chars`
 (default 60000) is truncated with a note. A non-zero `cdk diff` exit code (differences found) never
 fails the job.
 
@@ -10,11 +10,11 @@ Requires AWS credentials (a read-only role is enough) and `permissions: pull-req
 ## Usage
 
 ```yaml
-- uses: rpallas/platform-cdk/.github/actions/aws-oidc-login@v1
+- uses: rpallas/outcrop/.github/actions/aws-oidc-login@v1
   with:
     role-arn: ${{ vars.AWS_READONLY_ROLE_ARN_DEV }}
     aws-region: ${{ vars.AWS_REGION }}
-- uses: rpallas/platform-cdk/.github/actions/cdk-diff-comment@v1
+- uses: rpallas/outcrop/.github/actions/cdk-diff-comment@v1
   with:
     env: dev
 ```

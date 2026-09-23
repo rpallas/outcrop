@@ -12,7 +12,7 @@ AWS credentials must already be configured (use `aws-oidc-login`).
 ## Usage
 
 ```yaml
-- uses: rpallas/platform-cdk/.github/actions/cdk-destroy@v1
+- uses: rpallas/outcrop/.github/actions/cdk-destroy@v1
   with:
     env: dev
     preview: "true"

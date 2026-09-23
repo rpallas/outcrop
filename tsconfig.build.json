@@ -2,22 +2,22 @@
   "files": [],
   "references": [
     {
-      "path": "packages/platform-cdk-runtime/tsconfig.build.json"
+      "path": "packages/outcrop-runtime/tsconfig.build.json"
     },
     {
-      "path": "packages/platform-cdk/tsconfig.build.json"
+      "path": "packages/outcrop/tsconfig.build.json"
     },
     {
-      "path": "packages/platform-cdk-account/tsconfig.build.json"
+      "path": "packages/outcrop-account/tsconfig.build.json"
     },
     {
-      "path": "packages/platform-cdk-neon/tsconfig.build.json"
+      "path": "packages/outcrop-neon/tsconfig.build.json"
     },
     {
-      "path": "packages/platform-cdk-chatops/tsconfig.build.json"
+      "path": "packages/outcrop-chatops/tsconfig.build.json"
     },
     {
-      "path": "packages/platform-cdk-cli/tsconfig.build.json"
+      "path": "packages/outcrop-cli/tsconfig.build.json"
     },
     {
       "path": "examples/hello-http/tsconfig.build.json"

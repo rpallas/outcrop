@@ -1,6 +1,6 @@
 name: CDK destroy
 description: >-
-  Destroys the stacks of a platform-cdk app (`cdk destroy --force`) with the standard `env` /
+  Destroys the stacks of a outcrop app (`cdk destroy --force`) with the standard `env` /
   preview context. Lists the stacks with `cdk list` first and skips gracefully when none of them
   exist in CloudFormation. Requires AWS credentials to be configured beforehand.
 

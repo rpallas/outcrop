@@ -28,7 +28,7 @@ jobs:
       install-working-directory: .
       build-command: npm run build
       aws-region: ${{ vars.AWS_REGION }}
-      cli-command: node ../../packages/platform-cdk-cli/bin/platform-cdk.js
+      cli-command: node ../../packages/outcrop-cli/bin/outcrop.js
     permissions:
       contents: read
       id-token: write

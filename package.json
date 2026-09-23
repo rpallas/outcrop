@@ -1,5 +1,5 @@
 {
-  "name": "platform-cdk-monorepo",
+  "name": "outcrop-monorepo",
   "version": "0.0.0",
   "private": true,
   "description": "Lambda-first AWS CDK constructs, account baseline, runtime helpers, CLI and reusable GitHub Actions workflows for building services with preview stacks.",
@@ -7,19 +7,19 @@
   "author": "Robbie Pallas",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rpallas/platform-cdk.git"
+    "url": "https://github.com/rpallas/outcrop.git"
   },
   "engines": {
     "node": ">=22",
     "npm": ">=10"
   },
   "workspaces": [
-    "packages/platform-cdk-runtime",
-    "packages/platform-cdk",
-    "packages/platform-cdk-account",
-    "packages/platform-cdk-neon",
-    "packages/platform-cdk-chatops",
-    "packages/platform-cdk-cli",
+    "packages/outcrop-runtime",
+    "packages/outcrop",
+    "packages/outcrop-account",
+    "packages/outcrop-neon",
+    "packages/outcrop-chatops",
+    "packages/outcrop-cli",
     "examples/hello-http",
     "examples/account-baseline"
   ],

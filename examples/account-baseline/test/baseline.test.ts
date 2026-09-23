@@ -1,6 +1,6 @@
 import { App } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
-import { createAccountBaseline } from "@rpallas/platform-cdk-account";
+import { createAccountBaseline } from "@rpallas/outcrop-account";
 import config from "../account.config";
 import { modules } from "../lib/modules";
 

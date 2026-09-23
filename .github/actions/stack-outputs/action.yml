@@ -1,7 +1,7 @@
 name: Stack outputs
 description: >-
   Collects CloudFormation stack outputs - from the `cdk deploy --outputs-file` JSON, from the
-  platform-cdk CLI (`stack-outputs` command) or from `aws cloudformation describe-stacks` - and
+  outcrop CLI (`stack-outputs` command) or from `aws cloudformation describe-stacks` - and
   exports each as `<prefix><OutputKey>` to `$GITHUB_ENV` and `$GITHUB_OUTPUT`. Keys are sanitised
   to `[A-Za-z0-9_]`. A combined `outputs-json` output is always produced.
 
@@ -11,7 +11,7 @@ inputs:
     required: false
     default: ""
   stack-names:
-    description: Comma separated stack names to read outputs from when no outputs file is given (uses the AWS CLI / platform-cdk CLI).
+    description: Comma separated stack names to read outputs from when no outputs file is given (uses the AWS CLI / outcrop CLI).
     required: false
     default: ""
   prefix:
@@ -28,13 +28,13 @@ inputs:
     default: "true"
   cli-version:
     description: >-
-      Version of `@rpallas/platform-cdk-cli` to run via `npx --yes`. When either `cli-version` or
+      Version of `@rpallas/outcrop-cli` to run via `npx --yes`. When either `cli-version` or
       `cli-command` is set the CLI `stack-outputs` command is preferred for fetching outputs; leave
       both empty to use jq / the AWS CLI only.
     required: false
     default: ""
   cli-command:
-    description: Explicit command used to invoke the CLI, e.g. `node packages/platform-cdk-cli/bin/platform-cdk.js`.
+    description: Explicit command used to invoke the CLI, e.g. `node packages/outcrop-cli/bin/outcrop.js`.
     required: false
     default: ""
   working-directory:
@@ -78,7 +78,7 @@ runs:
           read -r -a stacks <<< "$(jq -r 'keys | join(" ")' "$OUTPUTS_FILE")"
         fi
 
-        # 1. platform-cdk CLI, when requested. The CLI reads the cdk outputs file when we have one
+        # 1. outcrop CLI, when requested. The CLI reads the cdk outputs file when we have one
         #    and otherwise describes the stacks; `--json` writes `{ "Stack": { "Key": "value" } }`.
         if [ -n "$CLI_COMMAND" ] || [ -n "$CLI_VERSION" ]; then
           if [ -z "$OUTPUTS_FILE" ] && [ "${#stacks[@]}" -eq 0 ]; then
@@ -87,7 +87,7 @@ runs:
             if [ -n "$CLI_COMMAND" ]; then
               read -r -a cli <<< "$CLI_COMMAND"
             else
-              cli=(npx --yes "@rpallas/platform-cdk-cli@${CLI_VERSION}")
+              cli=(npx --yes "@rpallas/outcrop-cli@${CLI_VERSION}")
             fi
             args=(stack-outputs)
             if [ -n "$OUTPUTS_FILE" ] && [ -f "$OUTPUTS_FILE" ]; then
@@ -102,7 +102,7 @@ runs:
             if "${cli[@]}" "${args[@]}" && [ -s "$raw" ] && jq -e 'type == "object"' "$raw" > /dev/null 2>&1; then
               echo "source=cli" >> "$GITHUB_OUTPUT"
             else
-              echo "::notice::platform-cdk CLI unavailable or returned no JSON; falling back to jq/aws"
+              echo "::notice::outcrop CLI unavailable or returned no JSON; falling back to jq/aws"
               rm -f "$raw"
             fi
           fi

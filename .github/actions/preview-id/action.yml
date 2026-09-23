@@ -1,6 +1,6 @@
 name: Preview id
 description: >-
-  Derives the preview environment id for a pull request. Uses the `platform-cdk preview-id` CLI
+  Derives the preview environment id for a pull request. Uses the `outcrop preview-id` CLI
   when available and falls back to an equivalent pure-bash implementation otherwise. The id is a
   DNS/CloudFormation friendly slug: lowercase, `^[a-z][a-z0-9]*(-[a-z0-9]+)*$`, at most 20 chars.
 
@@ -20,13 +20,13 @@ inputs:
     required: false
     default: ticket-then-pr
   cli-version:
-    description: Version of `@rpallas/platform-cdk-cli` to run via `npx --yes` (ignored when `cli-command` is set).
+    description: Version of `@rpallas/outcrop-cli` to run via `npx --yes` (ignored when `cli-command` is set).
     required: false
     default: latest
   cli-command:
     description: >-
       Explicit command used to invoke the CLI instead of npx, e.g.
-      `node packages/platform-cdk-cli/bin/platform-cdk.js` for a locally built checkout.
+      `node packages/outcrop-cli/bin/outcrop.js` for a locally built checkout.
     required: false
     default: ""
   working-directory:
@@ -70,7 +70,7 @@ runs:
         if [ -n "$CLI_COMMAND" ]; then
           read -r -a cli <<< "$CLI_COMMAND"
         else
-          cli=(npx --yes "@rpallas/platform-cdk-cli@${CLI_VERSION:-latest}")
+          cli=(npx --yes "@rpallas/outcrop-cli@${CLI_VERSION:-latest}")
         fi
         args=(preview-id --branch "$BRANCH" --strategy "$STRATEGY")
         if [ -n "$PR_NUMBER" ]; then
@@ -80,7 +80,7 @@ runs:
         if out="$("${cli[@]}" "${args[@]}" 2>"$RUNNER_TEMP/preview-id-cli.log")"; then
           cli_id="$(printf '%s\n' "$out" | sed '/^[[:space:]]*$/d' | tail -n 1 | tr -d '[:space:]')"
         else
-          echo "::notice::platform-cdk CLI unavailable or failed, using bash fallback"
+          echo "::notice::outcrop CLI unavailable or failed, using bash fallback"
           sed 's/^/  cli: /' "$RUNNER_TEMP/preview-id-cli.log" || true
         fi
 

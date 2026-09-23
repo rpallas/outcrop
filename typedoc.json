@@ -2,12 +2,12 @@
   "$schema": "https://typedoc.org/schema.json",
   "entryPointStrategy": "packages",
   "entryPoints": [
-    "packages/platform-cdk",
-    "packages/platform-cdk-account",
-    "packages/platform-cdk-runtime",
-    "packages/platform-cdk-neon",
-    "packages/platform-cdk-chatops",
-    "packages/platform-cdk-cli"
+    "packages/outcrop",
+    "packages/outcrop-account",
+    "packages/outcrop-runtime",
+    "packages/outcrop-neon",
+    "packages/outcrop-chatops",
+    "packages/outcrop-cli"
   ],
   "packageOptions": {
     "entryPoints": ["src/index.ts"],

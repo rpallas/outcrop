@@ -7,7 +7,7 @@ import {
   parseJsonBody,
   pathParam,
   withHttpHandler,
-} from "@rpallas/platform-cdk-runtime";
+} from "@rpallas/outcrop-runtime";
 import { deleteItem, getItem, listItems, putItem } from "../lib/items-repository";
 
 const logger = getLogger();

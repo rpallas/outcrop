@@ -2,7 +2,7 @@
   "name": "@rpallas/example-hello-http",
   "version": "0.0.0",
   "private": true,
-  "description": "Reference platform-cdk service: HTTP API + Lambda + DynamoDB with preview stacks. Deployed by this repository's CI.",
+  "description": "Reference outcrop service: HTTP API + Lambda + DynamoDB with preview stacks. Deployed by this repository's CI.",
   "license": "MIT",
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
@@ -13,11 +13,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@rpallas/platform-cdk-runtime": "0.1.0",
+    "@rpallas/outcrop-runtime": "0.1.0",
     "@aws-sdk/client-dynamodb": "^3.1130.0",
     "@aws-sdk/lib-dynamodb": "^3.1130.0"
   },
   "devDependencies": {
-    "@rpallas/platform-cdk": "0.1.0"
+    "@rpallas/outcrop": "0.1.0"
   }
 }

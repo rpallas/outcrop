@@ -76,7 +76,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["packages/platform-cdk-cli/src/**/*.ts"],
+    files: ["packages/outcrop-cli/src/**/*.ts"],
     rules: {
       "no-console": "off",
     },

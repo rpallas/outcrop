@@ -35,25 +35,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: rpallas/platform-cdk/.github/actions/setup-node-project@v1
+      - uses: rpallas/outcrop/.github/actions/setup-node-project@v1
       - id: preview
-        uses: rpallas/platform-cdk/.github/actions/preview-id@v1
-      - uses: rpallas/platform-cdk/.github/actions/aws-oidc-login@v1
+        uses: rpallas/outcrop/.github/actions/preview-id@v1
+      - uses: rpallas/outcrop/.github/actions/aws-oidc-login@v1
         with:
           role-arn: ${{ vars.AWS_DEPLOY_ROLE_ARN_DEV }}
           aws-region: ${{ vars.AWS_REGION }}
       - id: deploy
-        uses: rpallas/platform-cdk/.github/actions/cdk-deploy@v1
+        uses: rpallas/outcrop/.github/actions/cdk-deploy@v1
         with:
           env: dev
           preview: "true"
           preview-id: ${{ steps.preview.outputs.preview-id }}
       - id: outputs
-        uses: rpallas/platform-cdk/.github/actions/stack-outputs@v1
+        uses: rpallas/outcrop/.github/actions/stack-outputs@v1
         with:
           outputs-file: ${{ steps.deploy.outputs.outputs-file }}
           prefix: PREVIEW_
-      - uses: rpallas/platform-cdk/.github/actions/pr-preview-comment@v1
+      - uses: rpallas/outcrop/.github/actions/pr-preview-comment@v1
         with:
           status: deployed
           preview-id: ${{ steps.preview.outputs.preview-id }}
@@ -68,5 +68,5 @@ jobs:
   such as branch names cannot inject shell.
 - Every action writes a short section to the job summary (`$GITHUB_STEP_SUMMARY`).
 - Local development of this repository invokes the CLI with
-  `cli-command: node packages/platform-cdk-cli/bin/platform-cdk.js`; consumers use the published
-  `@rpallas/platform-cdk-cli` via `cli-version`.
+  `cli-command: node packages/outcrop-cli/bin/outcrop.js`; consumers use the published
+  `@rpallas/outcrop-cli` via `cli-version`.
