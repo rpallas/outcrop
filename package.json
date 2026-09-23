@@ -28,7 +28,7 @@
     "clean": "tsc -b tsconfig.build.json --clean && rimraf packages/*/dist examples/*/dist",
     "typecheck": "tsc -b tsconfig.build.json && tsc -p tools/tsconfig.json",
     "test": "jest",
-    "test:ci": "jest --ci --maxWorkers=2",
+    "test:ci": "jest --ci",
     "test:update": "jest -u",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",

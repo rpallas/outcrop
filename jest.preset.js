@@ -7,6 +7,7 @@ const path = require("node:path");
  * @returns {import('jest').Config}
  */
 function createJestConfig(rootDir, overrides = {}) {
+  const { setupFiles: extraSetupFiles, ...rest } = overrides;
   return {
     rootDir,
     displayName: path.basename(rootDir),
@@ -18,14 +19,24 @@ function createJestConfig(rootDir, overrides = {}) {
         "ts-jest",
         {
           tsconfig: path.join(rootDir, "tsconfig.json"),
-          diagnostics: { ignoreCodes: [151001] },
+          // Transpile only. Type-checking each test file re-checks aws-cdk-lib
+          // and made every suite take about a minute. `tsc` and type-aware
+          // ESLint already cover the types. `isolatedModules` comes from tsconfig.
+          diagnostics: false,
         },
       ],
     },
     moduleFileExtensions: ["ts", "js", "json"],
     snapshotSerializers: [path.join(__dirname, "tools", "jest", "cdk-snapshot-serializer.js")],
+    // aws-cdk-lib prints a stack trace for deprecations inside its own
+    // constructors. Quieting them keeps the log readable; we do not call
+    // those deprecated properties ourselves.
+    setupFiles: [
+      path.join(__dirname, "tools", "jest", "quiet-jsii.js"),
+      ...(extraSetupFiles ?? []),
+    ],
     clearMocks: true,
-    ...overrides,
+    ...rest,
   };
 }
 
