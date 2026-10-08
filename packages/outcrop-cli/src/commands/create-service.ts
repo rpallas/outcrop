@@ -11,6 +11,7 @@ import {
   SERVICE_VARIANTS,
   type ServiceVariant,
 } from "../scaffold/service-stack";
+import { packageSpec, packageVersion } from "../scaffold/package-spec";
 import { type TemplateVars, toPascalCase } from "../scaffold/template";
 
 export const CREATE_SERVICE_HELP = `Usage: outcrop create service <name> [options]
@@ -91,8 +92,7 @@ export const dependenciesFor = (
   return { dependencies, devDependencies };
 };
 
-const withVersion = (pkg: string, platformVersion: string): string =>
-  pkg.startsWith("@rpallas/") ? `${pkg}@${platformVersion}` : `${pkg}@latest`;
+const withVersion = packageSpec;
 
 export const templateVars = (options: CreateServiceOptions): TemplateVars => {
   const vars: TemplateVars = {
@@ -233,16 +233,10 @@ export const scaffoldService = (
       const pkgPath = path.join(options.targetDir, "package.json");
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as Record<string, unknown>;
       pkg["dependencies"] = Object.fromEntries(
-        dependencies.map((d) => [
-          d,
-          d.startsWith("@rpallas/") ? options.platformVersion : "latest",
-        ]),
+        dependencies.map((d) => [d, packageVersion(d, options.platformVersion)]),
       );
       pkg["devDependencies"] = Object.fromEntries(
-        devDependencies.map((d) => [
-          d,
-          d.startsWith("@rpallas/") ? options.platformVersion : "latest",
-        ]),
+        devDependencies.map((d) => [d, packageVersion(d, options.platformVersion)]),
       );
       writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
     }
