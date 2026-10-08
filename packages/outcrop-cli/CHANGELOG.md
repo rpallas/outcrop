@@ -1,5 +1,11 @@
 # @rpallas/outcrop-cli
 
+## 1.0.1
+
+### Patch Changes
+
+- [#2](https://github.com/rpallas/outcrop/pull/2) [`b660b7a`](https://github.com/rpallas/outcrop/commit/b660b7acd01423dc24fb0d82d075f036eab5f17a) Thanks [@rpallas](https://github.com/rpallas)! - `create account` and `create service` now install TypeScript 6.0. `typescript@latest` is 7, which ts-jest and typescript-eslint do not support yet, so `npm install` failed. Generated `tsconfig.json` files use `Node16` module resolution, because TypeScript 6 rejects `Node10`.
+
 ## 1.0.0
 
 ### Major Changes
