@@ -4,6 +4,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { CliError, type Io } from "../io";
 import { copyTemplateDir, type CopyResult, templatesRoot } from "../scaffold/files";
+import { packageSpec, packageVersion } from "../scaffold/package-spec";
 import { type TemplateVars, toPascalCase } from "../scaffold/template";
 
 export const CREATE_ACCOUNT_HELP = `Usage: outcrop create account <name> [options]
@@ -140,9 +141,7 @@ export const scaffoldAccount = (
     },
   );
   if (!options.dryRun) {
-    const specs = DEV_DEPS.map((d) =>
-      d.startsWith("@rpallas/") ? `${d}@${options.platformVersion}` : `${d}@latest`,
-    );
+    const specs = DEV_DEPS.map((d) => packageSpec(d, options.platformVersion));
     if (options.install) {
       io.out("Installing dependencies...");
       deps.npmInstall(["--save-dev", ...specs], options.targetDir);
@@ -150,7 +149,7 @@ export const scaffoldAccount = (
       const pkgPath = path.join(options.targetDir, "package.json");
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as Record<string, unknown>;
       pkg["devDependencies"] = Object.fromEntries(
-        DEV_DEPS.map((d) => [d, d.startsWith("@rpallas/") ? options.platformVersion : "latest"]),
+        DEV_DEPS.map((d) => [d, packageVersion(d, options.platformVersion)]),
       );
       writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
     }

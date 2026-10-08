@@ -36,9 +36,9 @@ const COMMANDS: Record<string, CommandHandler> = {
   "stack-outputs": stackOutputsCommand,
   "create:service": createServiceCommand,
   "create:account": lazy(
-    async () => (await import("./commands/create-account")).createAccountCommand,
+    async () => (await import("./commands/create-account.js")).createAccountCommand,
   ),
-  "sync-skills": lazy(async () => (await import("./commands/sync-skills")).syncSkillsCommand),
+  "sync-skills": lazy(async () => (await import("./commands/sync-skills.js")).syncSkillsCommand),
 };
 
 export const HELP_TEXT: Record<string, string> = {
