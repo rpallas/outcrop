@@ -144,6 +144,18 @@ describe("AccountSettings", () => {
     });
   });
 
+  it("grants the account-level IAM action for S3 Block Public Access", () => {
+    const { stack, context } = stackFor();
+    new AccountSettings(stack, "Settings", { context });
+    Template.fromStack(stack).hasResourceProperties("AWS::IAM::Policy", {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({ Action: "s3:PutAccountPublicAccessBlock", Effect: "Allow" }),
+        ]),
+      },
+    });
+  });
+
   it("can be trimmed down", () => {
     const { stack, context } = stackFor();
     new AccountSettings(stack, "Settings", {

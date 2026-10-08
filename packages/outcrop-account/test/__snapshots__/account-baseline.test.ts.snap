@@ -421,7 +421,7 @@ exports[`AccountBaselineStack matches the snapshot 1`] = `
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": "s3:PutPublicAccessBlock",
+              "Action": "s3:PutAccountPublicAccessBlock",
               "Effect": "Allow",
               "Resource": "*",
             },
