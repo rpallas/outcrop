@@ -5,14 +5,15 @@ import { getLogger, withHandler } from "@rpallas/outcrop-runtime";
  * Scheduled job invoked by EventBridge Scheduler. Keep it idempotent: the
  * schedule may fire twice around deployments and retries.
  */
-export const handler = withHandler<ScheduledEvent | Record<string, unknown>, { processed: number }>(async (event) => {
+export const handler = withHandler<ScheduledEvent | Record<string, unknown>, { processed: number }>((event) => {
   const logger = getLogger();
   const scheduledAt = "time" in event ? String(event["time"]) : new Date().toISOString();
   logger.info("scheduled job started", { scheduledAt });
 
-  // Replace with the real work, e.g. cleaning up expired items or sending digests.
+  // Replace with the real work, e.g. cleaning up expired items or sending digests. Make the
+  // function `async` once it awaits something.
   const processed = 0;
 
   logger.info("scheduled job finished", { processed });
-  return { processed };
+  return Promise.resolve({ processed });
 });

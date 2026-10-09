@@ -121,6 +121,8 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+      # gitleaks-action lists the pull request's commits on pull_request events.
+      pull-requests: read
     steps:
       - name: Check out
         uses: actions/checkout@v7
@@ -188,10 +190,11 @@ jobs:
           aws-region: ${{ inputs.aws-region }}
           session-name: outcrop-checks-${{ github.run_id }}
 
-      # No further local actions are needed in this job; remove the helper checkout so repository
-      # wide linters (prettier/eslint on `.`) do not see it.
-      - name: Remove outcrop actions checkout
-        run: rm -rf .outcrop
+      # Move the helper checkout aside so repository wide linters (prettier/eslint on `.`) do not
+      # see it. It is restored at the end because the local actions' post steps (e.g. the
+      # setup-node cache save) need their action.yml.
+      - name: Move outcrop actions checkout aside
+        run: mv .outcrop "$RUNNER_TEMP/outcrop-actions"
 
       - name: Lint
         working-directory: ${{ inputs.working-directory }}
@@ -224,6 +227,13 @@ jobs:
           path: ${{ inputs.working-directory }}/cdk.out
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Restore outcrop actions checkout
+        if: always()
+        run: |
+          if [ -d "$RUNNER_TEMP/outcrop-actions" ]; then
+            mv "$RUNNER_TEMP/outcrop-actions" .outcrop
+          fi
 
   diff:
     name: cdk diff

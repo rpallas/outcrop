@@ -4,6 +4,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { CliError, type Io } from "../io";
 import { copyTemplateDir, type CopyResult, templatesRoot, writeFile } from "../scaffold/files";
+import { formatScaffold, formatWithProjectPrettier } from "../scaffold/format";
 import {
   AUTH_MODES,
   type AuthMode,
@@ -180,12 +181,14 @@ export const parseCreateServiceArgs = (
 
 export interface ScaffoldDeps {
   readonly npmInstall: (args: string[], cwd: string) => void;
+  readonly format?: (files: readonly string[], cwd: string) => void;
 }
 
 export const defaultScaffoldDeps: ScaffoldDeps = {
   npmInstall: (args, cwd) => {
     execFileSync("npm", ["install", "--no-audit", "--no-fund", ...args], { cwd, stdio: "inherit" });
   },
+  format: formatWithProjectPrettier,
 };
 
 /** Render the service into `options.targetDir`. */
@@ -228,6 +231,7 @@ export const scaffoldService = (
         ["--save-dev", ...devDependencies.map((d) => withVersion(d, options.platformVersion))],
         options.targetDir,
       );
+      formatScaffold(result.written, options.targetDir, io, deps.format);
     } else {
       // Record the dependency names so `npm install` can resolve them later.
       const pkgPath = path.join(options.targetDir, "package.json");

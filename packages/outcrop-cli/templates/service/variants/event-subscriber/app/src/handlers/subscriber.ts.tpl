@@ -11,8 +11,9 @@ interface ExampleEventBody {
  * other services with `publishEvent`; large bodies are transparently fetched
  * from S3. Throwing lets EventBridge retry and finally dead-letter the event.
  */
-export const handler = withEventHandler<ExampleEventBody>(async (envelope) => {
+export const handler = withEventHandler<ExampleEventBody>((envelope) => {
   const logger = getLogger();
+  // Make the function `async` once a case awaits something.
   switch (envelope.eventName) {
     case "example.created":
       logger.info("example created", { id: envelope.eventBody.id });
@@ -23,4 +24,5 @@ export const handler = withEventHandler<ExampleEventBody>(async (envelope) => {
     default:
       logger.warn("unhandled event", { eventName: envelope.eventName });
   }
+  return Promise.resolve();
 });

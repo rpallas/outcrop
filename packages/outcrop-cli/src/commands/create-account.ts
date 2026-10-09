@@ -4,6 +4,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { CliError, type Io } from "../io";
 import { copyTemplateDir, type CopyResult, templatesRoot } from "../scaffold/files";
+import { formatScaffold, formatWithProjectPrettier } from "../scaffold/format";
 import { packageSpec, packageVersion } from "../scaffold/package-spec";
 import { type TemplateVars, toPascalCase } from "../scaffold/template";
 
@@ -38,6 +39,10 @@ const DEV_DEPS = [
   "ts-jest",
   "@types/jest",
   "@types/node",
+  "eslint",
+  "@eslint/js",
+  "typescript-eslint",
+  "eslint-config-prettier",
   "prettier",
 ];
 
@@ -118,12 +123,14 @@ export const accountTemplateVars = (options: CreateAccountOptions): TemplateVars
 
 export interface AccountScaffoldDeps {
   readonly npmInstall: (args: string[], cwd: string) => void;
+  readonly format?: (files: readonly string[], cwd: string) => void;
 }
 
 const defaultDeps: AccountScaffoldDeps = {
   npmInstall: (args, cwd) => {
     execFileSync("npm", ["install", "--no-audit", "--no-fund", ...args], { cwd, stdio: "inherit" });
   },
+  format: formatWithProjectPrettier,
 };
 
 export const scaffoldAccount = (
@@ -145,6 +152,7 @@ export const scaffoldAccount = (
     if (options.install) {
       io.out("Installing dependencies...");
       deps.npmInstall(["--save-dev", ...specs], options.targetDir);
+      formatScaffold(result.written, options.targetDir, io, deps.format);
     } else {
       const pkgPath = path.join(options.targetDir, "package.json");
       const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as Record<string, unknown>;

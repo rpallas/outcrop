@@ -80,10 +80,34 @@ Confirm the SNS email subscriptions from your inbox.
 
 The baseline creates the service deploy roles, so it cannot deploy itself with one of them the
 first time. Create one administration role per account trusted by the GitHub OIDC provider (the
-provider ARN is in the `/platform/account/deploy/oidc-provider-arn` parameter) restricted to
-`repo:my-org/my-platform:ref:refs/heads/main`, store its ARN as `AWS_BASELINE_ROLE_ARN_<ENV>`,
-and let the generated `.github/workflows/deploy.yml` call the
+provider ARN is in the `/platform/account/deploy/oidc-provider-arn` parameter), store its ARN as
+`AWS_BASELINE_ROLE_ARN_<ENV>`, and let the generated `.github/workflows/deploy.yml` call the
 `account-baseline-deploy.yml` reusable workflow on merges to `main`.
+
+The deploy jobs run in a GitHub environment named after the platform environment, so the OIDC
+`sub` claim is `repo:my-org/my-platform:environment:<env>` rather than the branch ref. Trust that
+value, and restrict the GitHub environment's deployment branches to `main`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<account>:oidc-provider/token.actions.githubusercontent.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+          "token.actions.githubusercontent.com:sub": "repo:my-org/my-platform:environment:dev"
+        }
+      }
+    }
+  ]
+}
+```
 
 ## Shared secrets
 

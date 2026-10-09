@@ -11,18 +11,17 @@ const ddb = mockClient(DynamoDBDocumentClient);
 
 const context = { awsRequestId: "req-1", functionName: "test" } as Context;
 
-const request = (method: string, path: string, body?: unknown): APIGatewayProxyEventV2 =>
-  ({
-    version: "2.0",
-    routeKey: `${method} ${path.replace(/\/[0-9a-f-]{36}$/, "/{id}")}`,
-    rawPath: path,
-    rawQueryString: "",
-    headers: { "content-type": "application/json" },
-    requestContext: { http: { method, path }, requestId: "r-1" } as APIGatewayProxyEventV2["requestContext"],
-    pathParameters: /\/[0-9a-f-]{36}$/.test(path) ? { id: path.split("/").pop() ?? "" } : undefined,
-    isBase64Encoded: false,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  }) as APIGatewayProxyEventV2;
+const request = (method: string, path: string, body?: unknown): APIGatewayProxyEventV2 => ({
+  version: "2.0",
+  routeKey: `${method} ${path.replace(/\/[0-9a-f-]{36}$/, "/{id}")}`,
+  rawPath: path,
+  rawQueryString: "",
+  headers: { "content-type": "application/json" },
+  requestContext: { http: { method, path }, requestId: "r-1" } as APIGatewayProxyEventV2["requestContext"],
+  pathParameters: /\/[0-9a-f-]{36}$/.test(path) ? { id: path.split("/").pop() ?? "" } : undefined,
+  isBase64Encoded: false,
+  body: body === undefined ? undefined : JSON.stringify(body),
+});
 
 const invoke = (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyStructuredResultV2> =>
   handler(event, context);
