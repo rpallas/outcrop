@@ -1,6 +1,6 @@
 {
   "name": "@rpallas/outcrop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lambda-first AWS CDK constructs with preview-stack support: PlatformApp, PlatformStack, naming, SSM contract, alerting and opinionated primitives.",
   "license": "MIT",
   "author": "Robbie Pallas",
@@ -41,10 +41,10 @@
     "constructs": "^10.0.0"
   },
   "optionalDependencies": {
-    "@rpallas/outcrop-runtime": "1.0.1"
+    "@rpallas/outcrop-runtime": "1.0.2"
   },
   "devDependencies": {
-    "@rpallas/outcrop-runtime": "1.0.1"
+    "@rpallas/outcrop-runtime": "1.0.2"
   },
   "publishConfig": {
     "access": "public",
