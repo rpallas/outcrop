@@ -389,7 +389,7 @@ exports[`account baseline synthesises dev 1`] = `
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": "s3:PutPublicAccessBlock",
+              "Action": "s3:PutAccountPublicAccessBlock",
               "Effect": "Allow",
               "Resource": "*",
             },
@@ -3565,7 +3565,7 @@ exports[`account baseline synthesises prod 1`] = `
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": "s3:PutPublicAccessBlock",
+              "Action": "s3:PutAccountPublicAccessBlock",
               "Effect": "Allow",
               "Resource": "*",
             },

@@ -1,5 +1,6 @@
 import { Stack } from "aws-cdk-lib";
 import { CfnAnalyzer } from "aws-cdk-lib/aws-accessanalyzer";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import {
   AwsCustomResource,
   AwsCustomResourcePolicy,
@@ -118,9 +119,13 @@ export class AccountSettings extends Construct {
           },
           physicalResourceId: PhysicalResourceId.of(`${stack.account}-s3-public-access-block`),
         },
-        policy: AwsCustomResourcePolicy.fromSdkCalls({
-          resources: AwsCustomResourcePolicy.ANY_RESOURCE,
-        }),
+        // IAM names the account-level action PutAccountPublicAccessBlock, which fromSdkCalls can't derive.
+        policy: AwsCustomResourcePolicy.fromStatements([
+          new PolicyStatement({
+            actions: ["s3:PutAccountPublicAccessBlock"],
+            resources: ["*"],
+          }),
+        ]),
         installLatestAwsSdk: false,
       });
     }
