@@ -11,6 +11,6 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@rpallas/outcrop-account": "1.0.2"
+    "@rpallas/outcrop-account": "1.0.3"
   }
 }
