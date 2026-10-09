@@ -4,18 +4,30 @@ const KEBAB_CASE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 const ACCOUNT_ID = /^\d{12}$/;
 
 /** A GitHub repository allowed to deploy into an environment. */
-export const GitHubRepositorySchema = z.object({
-  owner: z.string().min(1),
-  repo: z.string().min(1),
-  /** Allow `pull_request` workflows (preview stacks) to assume the deploy role. Default true. */
-  allowPullRequests: z.boolean().default(true),
-  /** Additional branches (besides GitHub environments) allowed to assume the deploy role. */
-  branches: z.array(z.string().min(1)).default([]),
-  /** GitHub environment names that map to this AWS environment. Defaults to the AWS environment name. */
-  githubEnvironments: z.array(z.string().min(1)).optional(),
-  /** Also create a read-only role for `cdk diff` on pull requests. Default true. */
-  readOnlyRole: z.boolean().default(true),
-});
+export const GitHubRepositorySchema = z
+  .object({
+    owner: z.string().min(1),
+    repo: z.string().min(1),
+    /**
+     * Numeric owner and repository ids. Set both when the repository uses GitHub's immutable OIDC
+     * subject format (`repo:owner@<ownerId>/repo@<repoId>:...`), the default for repositories
+     * created after 15 July 2026. `outcrop oidc-subject <owner>/<repo>` prints them.
+     */
+    ownerId: z.number().int().positive().optional(),
+    repoId: z.number().int().positive().optional(),
+    /** Allow `pull_request` workflows (preview stacks) to assume the deploy role. Default true. */
+    allowPullRequests: z.boolean().default(true),
+    /** Additional branches (besides GitHub environments) allowed to assume the deploy role. */
+    branches: z.array(z.string().min(1)).default([]),
+    /** GitHub environment names that map to this AWS environment. Defaults to the AWS environment name. */
+    githubEnvironments: z.array(z.string().min(1)).optional(),
+    /** Also create a read-only role for `cdk diff` on pull requests. Default true. */
+    readOnlyRole: z.boolean().default(true),
+  })
+  .refine((r) => (r.ownerId === undefined) === (r.repoId === undefined), {
+    message: "set both ownerId and repoId, or neither",
+    path: ["repoId"],
+  });
 export type GitHubRepository = z.output<typeof GitHubRepositorySchema>;
 export type GitHubRepositoryInput = z.input<typeof GitHubRepositorySchema>;
 

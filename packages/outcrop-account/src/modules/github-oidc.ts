@@ -18,6 +18,20 @@ import { type BaselineModuleProps, output, pascal, publishParameter, repoSlug } 
 export const GITHUB_OIDC_URL = "https://token.actions.githubusercontent.com";
 export const GITHUB_OIDC_AUDIENCE = "sts.amazonaws.com";
 
+/**
+ * The `repo:` prefix of the OIDC `sub` claim for a repository. With ids this is GitHub's immutable
+ * format (`repo:owner@123/repo@456`), which only that repository can mint, even after the name is
+ * reused; without ids it is the name-based format used by repositories created before July 2026.
+ */
+export const oidcSubjectPrefix = (repository: GitHubRepository): string => {
+  const { owner, repo, ownerId, repoId } = repository;
+  if (ownerId === undefined && repoId === undefined) return `repo:${owner}/${repo}`;
+  if (ownerId === undefined || repoId === undefined) {
+    throw new Error(`${owner}/${repo}: set both ownerId and repoId, or neither`);
+  }
+  return `repo:${owner}@${ownerId}/${repo}@${repoId}`;
+};
+
 export interface GitHubOidcProps extends BaselineModuleProps {
   /** Import an existing provider instead of creating one (there can be only one per account). */
   readonly existingProviderArn?: string;
@@ -119,7 +133,7 @@ export class GitHubOidc extends Construct {
     const repositories = props.repositories ?? context.environment.github;
     for (const repository of repositories) {
       const slug = repoSlug(repository.owner, repository.repo);
-      const repo = `repo:${repository.owner}/${repository.repo}`;
+      const repo = oidcSubjectPrefix(repository);
       const githubEnvironments = repository.githubEnvironments ?? [context.env];
       const deploySubjects = [
         ...githubEnvironments.map((e) => `${repo}:environment:${e}`),

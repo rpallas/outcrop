@@ -17,6 +17,8 @@ export default defineAccountConfig({
       monthlyBudgetUsd: 200,
       github: [
         // Every service repository that deploys to dev; pull requests get preview stacks.
+        // Repositories created after 15 July 2026 also need ownerId and repoId:
+        // run `npx @rpallas/outcrop-cli oidc-subject <owner>/<repo>` to print them.
         { owner: "{{owner}}", repo: "{{name}}", allowPullRequests: false, branches: ["main"] },
       ],
     },

@@ -20,6 +20,7 @@ Commands:
   create account <name>   Scaffold an account baseline app
   preview-id              Derive the preview id for a pull request
   stack-outputs           Print / export CloudFormation stack outputs
+  oidc-subject <owner/repo>  Print a repository's OIDC subject and ids for account.config.ts
   sync-skills             Copy the bundled agent skills into ./.agents/skills
   help                    Show this help
 
@@ -39,6 +40,7 @@ const COMMANDS: Record<string, CommandHandler> = {
     async () => (await import("./commands/create-account.js")).createAccountCommand,
   ),
   "sync-skills": lazy(async () => (await import("./commands/sync-skills.js")).syncSkillsCommand),
+  "oidc-subject": lazy(async () => (await import("./commands/oidc-subject.js")).oidcSubjectCommand),
 };
 
 export const HELP_TEXT: Record<string, string> = {

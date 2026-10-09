@@ -10,6 +10,7 @@ CI needs to deploy CDK apps into AWS accounts. Long-lived access keys and admini
 
 - `AccountBaseline` creates the GitHub OIDC provider once per account and one deploy role per repository and environment.
 - Trust policies use the `sub` claim: `repo:<owner>/<repo>:pull_request` for preview roles, `repo:<owner>/<repo>:environment:<env>` for environment roles, and optionally `repo:<owner>/<repo>:ref:refs/heads/<branch>`.
+  - Amendment (October 2026): repositories created after 15 July 2026 use GitHub's immutable subject, `repo:<owner>@<owner-id>/<repo>@<repo-id>:...`. When a repository is configured with `ownerId` and `repoId`, its roles trust only that form.
 - Deploy roles are least privilege: they may only `sts:AssumeRole` into the CDK bootstrap roles (`cdk-<qualifier>-deploy-role`, `file-publishing-role`, `image-publishing-role`, `lookup-role`) for the account, and read CloudFormation stack descriptions and outputs. The CDK deploy role's own permissions define what CloudFormation may do.
 - A separate read-only role (`lookup-role` only, plus describe permissions) is created for `cdk diff` on pull requests.
 - Role ARNs are published to SSM and surfaced as GitHub repository variables; workflows never contain account ids.

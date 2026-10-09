@@ -42,6 +42,27 @@ export default defineAccountConfig({
 });
 ```
 
+### Repositories created after 15 July 2026
+
+GitHub issues OIDC tokens for repositories created (or renamed or transferred) after 15 July 2026
+with an
+[immutable subject](https://docs.github.com/en/actions/reference/security/oidc) that includes
+the numeric owner and repository ids, e.g. `repo:my-org@123456/orders@789012:environment:dev`.
+Unlike names, the ids can't be reused by someone who later takes over the name. A deploy role
+that only trusts `repo:my-org/orders:...` rejects these tokens, so add the ids to the repository's
+entry:
+
+```ts
+github: [{ owner: "my-org", repo: "orders", ownerId: 123456, repoId: 789012 }],
+```
+
+With ids set, the roles trust only the immutable subject. To print a repository's subject prefix
+and ids (uses the GitHub CLI, so private repositories work):
+
+```bash
+npx @rpallas/outcrop-cli oidc-subject my-org/orders
+```
+
 `lib/modules.ts` chooses the modules. Everything not listed is off:
 
 ```ts
@@ -85,8 +106,11 @@ provider ARN is in the `/platform/account/deploy/oidc-provider-arn` parameter), 
 `account-baseline-deploy.yml` reusable workflow on merges to `main`.
 
 The deploy jobs run in a GitHub environment named after the platform environment, so the OIDC
-`sub` claim is `repo:my-org/my-platform:environment:<env>` rather than the branch ref. Trust that
-value, and restrict the GitHub environment's deployment branches to `main`:
+`sub` claim ends in `:environment:<env>` rather than the branch ref. Its `repo:` prefix is
+`repo:my-org/my-platform` for older repositories and the immutable
+`repo:my-org@<owner-id>/my-platform@<repo-id>` for repositories created after 15 July 2026;
+`npx @rpallas/outcrop-cli oidc-subject my-org/my-platform` prints which. Trust that value, and
+restrict the GitHub environment's deployment branches to `main`:
 
 ```json
 {

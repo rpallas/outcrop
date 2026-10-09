@@ -7,7 +7,7 @@ import { Budgets } from "../src/modules/budgets";
 import { Dns } from "../src/modules/dns";
 import { Encryption } from "../src/modules/encryption";
 import { EventBusModule } from "../src/modules/event-bus";
-import { GitHubOidc } from "../src/modules/github-oidc";
+import { GitHubOidc, oidcSubjectPrefix } from "../src/modules/github-oidc";
 import { LogRetention } from "../src/modules/log-retention";
 import { Network } from "../src/modules/network";
 import { Security } from "../src/modules/security";
@@ -124,6 +124,57 @@ describe("GitHubOidc", () => {
       JSON.stringify(r).includes("platform-prod-deploy-"),
     );
     expect(JSON.stringify(deployRole)).not.toContain("pull_request");
+  });
+
+  it("trusts only the immutable subject when repository ids are set", () => {
+    const { stack, context } = stackFor();
+    new GitHubOidc(stack, "Oidc", {
+      context,
+      repositories: [
+        {
+          owner: "example-org",
+          repo: "orders",
+          ownerId: 123,
+          repoId: 456,
+          allowPullRequests: true,
+          branches: ["main"],
+          readOnlyRole: true,
+        },
+      ],
+    });
+    const template = Template.fromStack(stack);
+    template.hasResourceProperties("AWS::IAM::Role", {
+      RoleName: "platform-dev-deploy-example-org-orders",
+      AssumeRolePolicyDocument: {
+        Statement: [
+          Match.objectLike({
+            Condition: Match.objectLike({
+              StringLike: {
+                "token.actions.githubusercontent.com:sub": [
+                  "repo:example-org@123/orders@456:environment:dev",
+                  "repo:example-org@123/orders@456:ref:refs/heads/main",
+                  "repo:example-org@123/orders@456:pull_request",
+                ],
+              },
+            }),
+          }),
+        ],
+      },
+    });
+    expect(JSON.stringify(template.toJSON())).not.toContain("repo:example-org/orders");
+  });
+});
+
+describe("oidcSubjectPrefix", () => {
+  const base = { owner: "o", repo: "r", allowPullRequests: true, branches: [], readOnlyRole: true };
+
+  it("uses the name-based or immutable format", () => {
+    expect(oidcSubjectPrefix(base)).toBe("repo:o/r");
+    expect(oidcSubjectPrefix({ ...base, ownerId: 1, repoId: 2 })).toBe("repo:o@1/r@2");
+  });
+
+  it("rejects a single id", () => {
+    expect(() => oidcSubjectPrefix({ ...base, ownerId: 1 })).toThrow(/both ownerId and repoId/);
   });
 });
 

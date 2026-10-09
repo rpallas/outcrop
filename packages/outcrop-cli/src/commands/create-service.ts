@@ -273,6 +273,9 @@ export const createServiceCommand = (
     if (!options.install) io.out("  npm install");
     io.out("  npm run lint && npm test && npm run synth");
     io.out(
+      `  Add the repository to account.config.ts in the account baseline (\`npx @rpallas/outcrop-cli oidc-subject ${options.owner}/${options.repo}\` prints its ids) and redeploy the baseline.`,
+    );
+    io.out(
       "  Set repository variables AWS_REGION and AWS_DEPLOY_ROLE_ARN_DEV, then open a pull request.",
     );
   }
