@@ -1,5 +1,21 @@
 # @rpallas/outcrop-account
 
+## 1.1.0
+
+### Minor Changes
+
+- [#8](https://github.com/rpallas/outcrop/pull/8) [`b1e00d3`](https://github.com/rpallas/outcrop/commit/b1e00d3921041f3010e9e1e9c7728ad90ac4405e) Thanks [@rpallas](https://github.com/rpallas)! - Support GitHub's immutable OIDC subject claims.
+  
+  GitHub repositories created after 15 July 2026 present `repo:<owner>@<owner-id>/<repo>@<repo-id>:...` as the token subject, so deploy and read-only roles that trusted `repo:<owner>/<repo>:...` rejected them.
+  
+  - `@rpallas/outcrop-account`: `github` entries accept optional `ownerId` and `repoId`, which must be set together. When they're set, the repository's roles trust only the immutable subject. `oidcSubjectPrefix` is exported.
+  - `@rpallas/outcrop-cli`: the new `outcrop oidc-subject <owner>/<repo>` command uses the GitHub CLI to print a repository's subject prefix and the ids to add to `account.config.ts`. `create service` mentions it in its next steps.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @rpallas/outcrop@1.1.0
+
 ## 1.0.3
 
 ### Patch Changes
