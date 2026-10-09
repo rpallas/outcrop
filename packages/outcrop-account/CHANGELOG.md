@@ -1,5 +1,16 @@
 # @rpallas/outcrop-account
 
+## 1.0.2
+
+### Patch Changes
+
+- [#4](https://github.com/rpallas/outcrop/pull/4) [`a63950f`](https://github.com/rpallas/outcrop/commit/a63950f8224eac878091e47c37e460082cca334f) Thanks [@rpallas](https://github.com/rpallas)! - Fix two account baseline permission bugs:
+  
+  - `AccountSettings`: the S3 Block Public Access custom resource now grants `s3:PutAccountPublicAccessBlock`. It previously granted `s3:PutPublicAccessBlock`, which doesn't exist at account level, so the first deploy failed with AccessDenied.
+  - `create account`: the scaffolded `checks.yml` now grants `id-token: write` and `pull-requests: write`, which the reusable `service-checks.yml` workflow requires. Without them the workflow failed with `startup_failure`.
+- Updated dependencies []:
+  - @rpallas/outcrop@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes
