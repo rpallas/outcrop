@@ -1,5 +1,12 @@
 # @rpallas/outcrop-neon
 
+## 1.1.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @rpallas/outcrop@1.1.0
+
 ## 1.0.3
 
 ### Patch Changes
