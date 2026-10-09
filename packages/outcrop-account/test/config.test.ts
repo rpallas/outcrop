@@ -34,6 +34,18 @@ describe("defineAccountConfig", () => {
         },
       }),
     ).toThrow();
+    expect(() =>
+      defineAccountConfig({
+        project: "ok",
+        environments: {
+          dev: {
+            account: "111111111111",
+            region: "eu-west-1",
+            github: [{ owner: "o", repo: "r", ownerId: 1 }],
+          },
+        },
+      }),
+    ).toThrow(/both ownerId and repoId/);
   });
 });
 

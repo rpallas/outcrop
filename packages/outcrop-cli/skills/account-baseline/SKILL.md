@@ -19,15 +19,15 @@ Outputs give the `AWS_DEPLOY_ROLE_ARN_<ENV>` / `AWS_READONLY_ROLE_ARN_<ENV>` val
 
 ## Common changes
 
-| Task                              | Edit                                                                                              |
-| --------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Let a repository deploy to an env | `account.config.ts` -> `environments.<env>.github.push({ owner, repo, allowPullRequests })`       |
-| Add shared config for services    | `lib/modules.ts` -> `sharedParameters.values["key"] = "value"` (read with `params.config("key")`) |
-| Add a shared secret               | `lib/modules.ts` -> `sharedSecrets.secrets["name"] = {}`; set the value with `put-secret-value`   |
-| Route alerts to Slack/Teams       | Add `@rpallas/outcrop-chatops` `ChatOpsNotifier` with the topics from `baseline.alerting`         |
-| Change budgets or alert emails    | `environments.<env>.monthlyBudgetUsd`, `environments.<env>.alertEmails`                           |
-| Give Lambda functions a VPC       | `lib/modules.ts` -> `network: { natGateways: 0 }` (endpoints only) or `natGateways: 1`            |
-| Organisation-wide rollout         | Wrap the template in `PlatformStackSet` from a delegated administrator account                    |
+| Task                              | Edit                                                                                                                                                                                                                        |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Let a repository deploy to an env | `account.config.ts` -> `environments.<env>.github.push({ owner, repo, ownerId, repoId })`; get the ids from `npx @rpallas/outcrop-cli oidc-subject owner/repo` (omit them for repositories that use the name-based subject) |
+| Add shared config for services    | `lib/modules.ts` -> `sharedParameters.values["key"] = "value"` (read with `params.config("key")`)                                                                                                                           |
+| Add a shared secret               | `lib/modules.ts` -> `sharedSecrets.secrets["name"] = {}`; set the value with `put-secret-value`                                                                                                                             |
+| Route alerts to Slack/Teams       | Add `@rpallas/outcrop-chatops` `ChatOpsNotifier` with the topics from `baseline.alerting`                                                                                                                                   |
+| Change budgets or alert emails    | `environments.<env>.monthlyBudgetUsd`, `environments.<env>.alertEmails`                                                                                                                                                     |
+| Give Lambda functions a VPC       | `lib/modules.ts` -> `network: { natGateways: 0 }` (endpoints only) or `natGateways: 1`                                                                                                                                      |
+| Organisation-wide rollout         | Wrap the template in `PlatformStackSet` from a delegated administrator account                                                                                                                                              |
 
 Then `npm test` (snapshots per environment) and merge; `.github/workflows/deploy.yml` deploys `dev` then `prod`.
 
