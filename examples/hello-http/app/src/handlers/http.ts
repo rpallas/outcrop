@@ -40,15 +40,13 @@ export const handler = withHttpHandler(
           env: process.env["PLATFORM_ENV"],
         });
 
-      case "GET /items": {
+      case "GET /items":
         return json(200, { items: await listItems() });
-      }
 
       case "POST /items": {
         const input = parseJsonBody(event, parseCreateItem);
         const item = { id: crypto.randomUUID(), name: input.name };
         await putItem(item);
-
         logger.info("item created", { itemId: item.id });
         return json(201, item);
       }
@@ -56,7 +54,6 @@ export const handler = withHttpHandler(
       case "GET /items/{id}": {
         const id = pathParam(event, "id");
         const item = await getItem(id);
-
         if (!item) throw notFound(`item ${id} not found`);
         return json(200, item);
       }
@@ -64,7 +61,6 @@ export const handler = withHttpHandler(
       case "DELETE /items/{id}": {
         const id = pathParam(event, "id");
         await deleteItem(id);
-
         return noContent();
       }
 
